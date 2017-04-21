@@ -35,8 +35,20 @@
         config.selector = '#chart';
         config.statsConfig = '[{"key":"VC invest","type":13,"atts":[1301]}]';
         config.baseUrl = 'http://kg.hiekn.com:8888/kg_exhibit_ws/sdk/';
+        config.images = buildImgas([2, 7, 9, 11, 12, 13], '../images/kg_ct');
         var service = new HieknRelationService(config);
         service.load({id: 1, nodes: [{'id': 110000000210}, {'id': 110000007603}]});
+
+        function buildImgas(arr, path) {
+            var images = {};
+            for (var i in arr) {
+                images[arr[i]] = {
+                    normal: path + '/' + arr[i] + '.png',
+                    emphases: path + '/' + arr[i] + '-w.png'
+                }
+            }
+            return images;
+        }
     });
 </script>
 </body>

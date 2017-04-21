@@ -55,6 +55,9 @@
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
+                            },
+                            style: {
+                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
                             }
                         }
                     },
