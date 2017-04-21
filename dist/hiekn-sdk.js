@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.2.1
+     *    v0.2.2
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -57,6 +57,7 @@
                         pageSize: 20
                     },
                     netChart: {
+
                         filter: {
                             enable: true,
                             filters: filters
@@ -765,15 +766,20 @@
                     node.lineWidth = 10;
                     if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
                         node.fillColor = self.settings.tgc2.settings.netChart.emphasesColor;
+                        node.lineColor = self.colorFade(node.fillColor, 0.3);
                         node.image = options.images[node.data.classId].emphases;
                     } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
                         node.fillColor = self.settings.tgc2.settings.netChart.reduceColor;
-                        node.image = options.images[node.data.classId].normal;
+                        node.lineColor = self.settings.tgc2.settings.netChart.reduceColor;
+                        node.image = '';
+                        // node.lineColor = self.colorFade(node.fillColor, 0.3);
+                        // node.image = options.images[node.data.classId].normal;
                     } else {
-                        node.fillColor = node.data.color || node.fillColor;
+                        node.lineWidth = 2;
+                        node.fillColor = node.data.color || '#fff';
+                        node.lineColor = '#00b38a';
                         node.image = options.images[node.data.classId].normal;
                     }
-                    node.lineColor = self.colorFade(node.fillColor, 0.3);
                 }
             }
         };

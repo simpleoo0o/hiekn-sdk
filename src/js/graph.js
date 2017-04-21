@@ -48,6 +48,7 @@
                         pageSize: 20
                     },
                     netChart: {
+
                         filter: {
                             enable: true,
                             filters: filters
