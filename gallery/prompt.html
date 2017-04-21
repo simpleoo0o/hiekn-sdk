@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <title>Prompt Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
+
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="../assets/zoomcharts/zoomcharts.js"></script>
+    <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
+    <script src="../lib/jquery.hieknjs.min.js"></script>
+    <script src="../lib/hiekn-prompt.min.js"></script>
+    <script src="../dist/hiekn-sdk.js"></script>
+    <!--<script src="../src/js/sdk-utils.js"></script>-->
+    <!--<script src="../src/js/graph.js"></script>-->
+</head>
+
+<body>
+<div id="prompt" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
+<script>
+    $(function () {
+        var config = {};
+        config.kgName = 'kg_ct';
+        config.container = '#prompt';
+        config.baseUrl = 'http://kg.hiekn.com:8888/kg_exhibit_ws/sdk/';
+        config.ready = function (prompt) {
+            prompt.$container.find('input').val('北京小桔').trigger('focus');
+        };
+        new HieknPromptService(config);
+    });
+</script>
+</body>
+</html>

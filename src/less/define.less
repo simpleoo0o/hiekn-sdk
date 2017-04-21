@@ -1,0 +1,57 @@
+@color-primary: #00b38a;
+@color-primary-deep: #049977;
+@color-primary-light: #7fd9c4;
+
+@color-gray-darker: #333;
+@color-gray-dark: #666;
+@color-gray: #999;
+
+@color-light: #fff;
+@color-divider: #dedede;
+@color-accent: #f7685e;
+@color-bg-gray-light: #f4f4f4;
+@color-emphases: #faa01b;
+@color-emphases-deep: #f50;
+
+@default-font: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', Roboto, Helvetica Neue, sans-serif;
+
+.middle() {
+  -webkit-box-flex: 1 1 0%;
+  -webkit-flex: 1 1 0%;
+  -moz-box-flex: 1 1 0%;
+  -moz-flex: 1 1 0%;
+  -ms-flex: 1 1 0%;
+  flex: 1 1 0%;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-direction: normal;
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-grid-row-align: center;
+  align-items: center;
+  -webkit-align-content: center;
+  align-content: center;
+  max-width: 100%;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+.line-hidden() {
+  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.normal-transition() {
+  -webkit-transition: all .5s cubic-bezier(.25, .8, .25, 1) 0s;
+  -moz-transition: all .5s cubic-bezier(.25, .8, .25, 1) 0s;
+  -o-transition: all .5s cubic-bezier(.25, .8, .25, 1) 0s;
+  transition: all .5s cubic-bezier(.25, .8, .25, 1) 0s;
+}

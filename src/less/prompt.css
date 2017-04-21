@@ -1,0 +1,26 @@
+ul.hiekn-search-prompt li {
+  height: 30px;
+  line-height: 30px;
+}
+ul.hiekn-search-prompt li .prompt-tip-type {
+  margin-right: 16px;
+  min-width: 60px;
+  display: inline-block;
+  color: #999;
+  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ul.hiekn-search-prompt li .prompt-tip-title {
+  display: inline-block;
+  width: calc(100% - 80px);
+  color: #333;
+  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ul.hiekn-search-prompt li .prompt-tip-title .highlight {
+  font-weight: bold;
+}
