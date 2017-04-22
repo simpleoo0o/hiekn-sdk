@@ -1,12 +1,3 @@
-/**
-     * @author: 
-     *    jiangrun002
-     * @version: 
-     *    v0.2.6
-     * @license:
-     *    Copyright 2017, jiangrun. All rights reserved.
-     */
-
 (function (window, $) {
     'use strict';
 
@@ -762,23 +753,42 @@
             return function (node) {
                 self.settings.tgc2.nodeStyleFunction(node);
                 node.imageCropping = 'fit';
+                node.fillColor = node.data.color || '#fff';
+                node.lineColor = '#00b38a';
+                if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
+                } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
+                    node.fillColor = self.settings.tgc2.settings.netChart.reduceColor;
+                    node.lineColor = node.fillColor;
+                    node.label = '';
+                } else {
+                    if (node.hovered) {
+                        node.fillColor = node.lineColor;
+                        node.shadowBlur = 0;
+                    }
+                }
                 if (options.images && options.images[node.data.classId]) {
-                    node.lineWidth = 10;
                     if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
-                        node.fillColor = self.settings.tgc2.settings.netChart.emphasesColor;
-                        node.lineColor = self.colorFade(node.fillColor, 0.3);
                         node.image = options.images[node.data.classId].emphases;
                     } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
-                        node.fillColor = self.settings.tgc2.settings.netChart.reduceColor;
-                        node.lineColor = self.settings.tgc2.settings.netChart.reduceColor;
                         node.image = '';
-                        // node.lineColor = self.colorFade(node.fillColor, 0.3);
-                        // node.image = options.images[node.data.classId].normal;
                     } else {
-                        node.lineWidth = 2;
-                        node.fillColor = node.data.color || '#fff';
-                        node.lineColor = '#00b38a';
-                        node.image = options.images[node.data.classId].normal;
+                        if (node.hovered) {
+                            node.image = options.images[node.data.classId].emphases;
+                        }else{
+                            node.image = options.images[node.data.classId].normal;
+                        }
+                    }
+                }
+                if (options.nodeColors && options.nodeColors[node.data.classId]) {
+                    node.lineWidth = 2;
+                    if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
+                        node.fillColor = self.settings.tgc2.settings.netChart.emphasesColor;
+                        node.lineColor = node.fillColor;
+                    } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
+                    } else {
+                        if (!node.hovered) {
+                            node.lineColor = options.nodeColors[node.data.classId];
+                        }
                     }
                 }
             }
@@ -870,7 +880,7 @@
                             callback(data);
                         }
                     },
-                    that:$(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -903,7 +913,7 @@
                     error: function () {
                         toastr.error('网络接口错误！');
                     },
-                    that:$(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -936,7 +946,7 @@
                     error: function () {
                         toastr.error('网络接口错误！');
                     },
-                    that:$(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
