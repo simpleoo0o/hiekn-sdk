@@ -1,3 +1,12 @@
+/**
+     * @author: 
+     *    jiangrun002
+     * @version: 
+     *    v0.2.8
+     * @license:
+     *    Copyright 2017, jiangrun. All rights reserved.
+     */
+
 (function (window, $) {
     'use strict';
 
@@ -774,7 +783,7 @@
                     } else {
                         if (node.hovered) {
                             node.image = options.images[node.data.classId].emphases;
-                        }else{
+                        } else {
                             node.image = options.images[node.data.classId].normal;
                         }
                     }
@@ -786,8 +795,9 @@
                         node.lineColor = node.fillColor;
                     } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
                     } else {
-                        if (!node.hovered) {
-                            node.lineColor = options.nodeColors[node.data.classId];
+                        node.lineColor = options.nodeColors[node.data.classId];
+                        if (node.hovered) {
+                            node.fillColor = node.lineColor;
                         }
                     }
                 }
