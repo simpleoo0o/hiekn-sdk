@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.2.5
+     *    v0.2.6
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -414,8 +414,8 @@
                     onPrompt: sdk.onPrompt(self.settings)
                 };
                 $.extend(true, promptSettings, self.settings);
-                var instance = new hieknPrompt(promptSettings);
-                self.settings.ready(instance);
+                self.instance = new hieknPrompt(promptSettings);
+                self.settings.ready(self.instance);
             });
         };
 

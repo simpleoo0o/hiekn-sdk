@@ -26,8 +26,8 @@
                     onPrompt: sdk.onPrompt(self.settings)
                 };
                 $.extend(true, promptSettings, self.settings);
-                var instance = new hieknPrompt(promptSettings);
-                self.settings.ready(instance);
+                self.instance = new hieknPrompt(promptSettings);
+                self.settings.ready(self.instance);
             });
         };
 
