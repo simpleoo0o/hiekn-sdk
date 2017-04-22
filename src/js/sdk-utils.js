@@ -253,7 +253,7 @@
             return function (node) {
                 self.settings.tgc2.nodeStyleFunction(node);
                 node.imageCropping = 'fit';
-                if (options.images[node.data.classId]) {
+                if (options.images && options.images[node.data.classId]) {
                     node.lineWidth = 10;
                     if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
                         node.fillColor = self.settings.tgc2.settings.netChart.emphasesColor;
@@ -360,7 +360,8 @@
                             var data = response.rsData[0];
                             callback(data);
                         }
-                    }
+                    },
+                    that:$(self.settings.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -392,7 +393,8 @@
                     },
                     error: function () {
                         toastr.error('网络接口错误！');
-                    }
+                    },
+                    that:$(self.settings.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -424,7 +426,8 @@
                     },
                     error: function () {
                         toastr.error('网络接口错误！');
-                    }
+                    },
+                    that:$(self.settings.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };

@@ -21,7 +21,7 @@ var LICENSE_TEMPLATE =
      * @author: \n\
      *    jiangrun002\n\
      * @version: \n\
-     *    v0.2.4\n\
+     *    v0.2.5\n\
      * @license:\n\
      *    Copyright 2017, jiangrun. All rights reserved.\n\
      */';
