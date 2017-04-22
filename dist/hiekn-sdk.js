@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.2.9
+     *    v0.2.10
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -733,10 +733,12 @@
 
         Service.prototype.gentInfobox = function (selector) {
             var self = this;
+            var data = self.settings.data || {};
+            data.isRelationAtts = true;
             self.infoboxService = new HieknInfoboxService({
                 baseUrl: self.settings.baseUrl,
                 kgName: self.settings.kgName,
-                data: {isRelationAtts: true}
+                data: data
             });
             self.infoboxService.initEvent($(selector));
         };
