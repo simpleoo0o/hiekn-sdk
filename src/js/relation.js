@@ -22,18 +22,21 @@
                         style: {
                             left: '320px'
                         },
-                        filter: {
-                            enable: true,
-                            filters: filters
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                            },
+                            info: {
+                                linkContentsFunction: self.sdkUtils.linkContentsFunction
                             }
                         }
+                    },
+                    filter: {
+                        enable: true,
+                        filters: filters
                     },
                     stats: {
                         enable: true
@@ -41,7 +44,7 @@
                     connects: {
                         enable: true
                     },
-                    loader: self.sdkUtils.relation(options),
+                    loader: self.sdkUtils.relation(options, schema),
                     schema: schema,
                     relation: {
                         prompt: {
@@ -61,9 +64,9 @@
         Service.prototype.init = function () {
             var self = this;
             self.tgc2 = new Tgc2Relation(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2);
-            self.tgc2Stats = new Tgc2Stats(self.tgc2);
-            self.tgc2Connects = new Tgc2Connects(self.tgc2);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
+            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.options.stats);
+            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.options.connects);
             self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter});
             self.tgc2.init();
             self.isInit = true;

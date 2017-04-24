@@ -4,16 +4,6 @@
     window.HieknGraphService = gentService();
 
     function gentService() {
-        /**
-         * data?:{}
-         * baseUrl:string
-         * kgName:string
-         * selectedAtts?: []
-         * selectedTypes?: []
-         * selector:string
-         * graphSetting:{ selector:string }
-         * */
-
         var Service = function (options) {
             var self = this;
             self.isInit = false;
@@ -47,23 +37,24 @@
                         enable: true,
                         pageSize: 20
                     },
+                    filter: {
+                        enable: true,
+                        filters: filters
+                    },
                     netChart: {
-
-                        filter: {
-                            enable: true,
-                            filters: filters
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                            },
+                            info: {
+                                linkContentsFunction: self.sdkUtils.linkContentsFunction
                             }
                         }
                     },
-                    loader: self.sdkUtils.graph(options),
-                    schema: schema
+                    loader: self.sdkUtils.graph(options, schema)
                 };
                 self.options = $.extend(true, {}, defaultOptions, options.graphSetting);
                 self.sdkUtils.gentInfobox(options.selector || options.graphSetting.selector);
@@ -74,9 +65,9 @@
         Service.prototype.init = function () {
             var self = this;
             self.tgc2 = new Tgc2Graph(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2);
-            self.tgc2Prompt = new Tgc2Prompt(self.tgc2);
-            self.tgc2Page = new Tgc2Page(self.tgc2);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
+            self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.options.prompt);
+            self.tgc2Page = new Tgc2Page(self.tgc2, self.options.page);
             self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter, tgc2Page: self.tgc2Page});
             self.tgc2.init();
             self.isInit = true;

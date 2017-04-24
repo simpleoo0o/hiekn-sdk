@@ -357,7 +357,53 @@
             ]
         };
 
-        Service.prototype.graph = function (options) {
+        Service.prototype.dealGraphData = function (data, schema) {
+            data.nodes = data.entityList;
+            data.links = data.relationList;
+            delete data.entityList;
+            delete data.relationList;
+            var schemas = {};
+            var arr = _.concat(schema.types, schema.atts);
+            for (var j in arr) {
+                var kv = arr[j];
+                schemas[kv.k] = kv.v;
+            }
+            for (var i in data.nodes) {
+                var node = data.nodes[i];
+                node.typeName = schemas[node.classId];
+            }
+            for (var k in data.links) {
+                var link = data.links[k];
+                link.typeName = schemas[link.attId];
+            }
+            return data;
+        };
+
+        Service.prototype.linkContentsFunction = function(linkData) {
+            var self = this;
+            if (linkData.rInfo) {
+                var items = '';
+                for (var i in linkData.rInfo) {
+                    var d = linkData.rInfo[i];
+                    items += '<tr>';
+                    var kvs = d.kvs;
+                    var thead = '<tr>';
+                    var tbody = '<tr>';
+                    for (var j in kvs) {
+                        if (kvs.hasOwnProperty(j)) {
+                            thead += '<th><div class="link-info-key">' + kvs[j].k + '</div></th>';
+                            tbody += '<td><div class="link-info-value">' + kvs[j].v + '</div></td>';
+                        }
+                    }
+                    items += '<li><table><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></li>';
+                }
+                return '<ul class="link-info">' + items + '</ul>';
+            } else {
+                return linkData.typeName;
+            }
+        };
+
+        Service.prototype.graph = function (options, schema) {
             var self = this;
             return function ($self, callback) {
                 var param = options.data || {};
@@ -380,6 +426,9 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
+                            if(data){
+                                data = self.dealGraphData(data, schema);
+                            }
                             callback(data);
                         }
                     },
@@ -388,7 +437,7 @@
             }
         };
 
-        Service.prototype.relation = function (options) {
+        Service.prototype.relation = function (options, schema) {
             var self = this;
             return function (instance, callback) {
                 var ids = _.map(self.settings.tgc2.startInfo.nodes, 'id');
@@ -410,6 +459,9 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
+                            if(data){
+                                data = self.dealGraphData(data, schema);
+                            }
                             callback(data);
                         }
                     },
@@ -421,7 +473,7 @@
             }
         };
 
-        Service.prototype.path = function (options) {
+        Service.prototype.path = function (options, schema) {
             var self = this;
             return function (instance, callback) {
                 var param = options.data || {};
@@ -443,6 +495,9 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
+                            if(data){
+                                data = self.dealGraphData(data, schema);
+                            }
                             callback(data);
                         }
                     },

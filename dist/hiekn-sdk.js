@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.2.11
+     *    v0.3.0
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -13,16 +13,6 @@
     window.HieknGraphService = gentService();
 
     function gentService() {
-        /**
-         * data?:{}
-         * baseUrl:string
-         * kgName:string
-         * selectedAtts?: []
-         * selectedTypes?: []
-         * selector:string
-         * graphSetting:{ selector:string }
-         * */
-
         var Service = function (options) {
             var self = this;
             self.isInit = false;
@@ -56,23 +46,24 @@
                         enable: true,
                         pageSize: 20
                     },
+                    filter: {
+                        enable: true,
+                        filters: filters
+                    },
                     netChart: {
-
-                        filter: {
-                            enable: true,
-                            filters: filters
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                            },
+                            info: {
+                                linkContentsFunction: self.sdkUtils.linkContentsFunction
                             }
                         }
                     },
-                    loader: self.sdkUtils.graph(options),
-                    schema: schema
+                    loader: self.sdkUtils.graph(options, schema)
                 };
                 self.options = $.extend(true, {}, defaultOptions, options.graphSetting);
                 self.sdkUtils.gentInfobox(options.selector || options.graphSetting.selector);
@@ -83,9 +74,9 @@
         Service.prototype.init = function () {
             var self = this;
             self.tgc2 = new Tgc2Graph(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2);
-            self.tgc2Prompt = new Tgc2Prompt(self.tgc2);
-            self.tgc2Page = new Tgc2Page(self.tgc2);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
+            self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.options.prompt);
+            self.tgc2Page = new Tgc2Page(self.tgc2, self.options.page);
             self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter, tgc2Page: self.tgc2Page});
             self.tgc2.init();
             self.isInit = true;
@@ -325,18 +316,21 @@
                         style: {
                             left: '320px'
                         },
-                        filter: {
-                            enable: true,
-                            filters: filters
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                            },
+                            info: {
+                                linkContentsFunction: self.sdkUtils.linkContentsFunction
                             }
                         }
+                    },
+                    filter: {
+                        enable: true,
+                        filters: filters
                     },
                     stats: {
                         enable: true
@@ -344,7 +338,7 @@
                     connects: {
                         enable: true
                     },
-                    loader: self.sdkUtils.path(options),
+                    loader: self.sdkUtils.path(options, schema),
                     schema: schema,
                     path: {
                         prompt: {
@@ -364,9 +358,9 @@
         Service.prototype.init = function () {
             var self = this;
             self.tgc2 = new Tgc2Path(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2);
-            self.tgc2Stats = new Tgc2Stats(self.tgc2);
-            self.tgc2Connects = new Tgc2Connects(self.tgc2);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
+            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.options.stats);
+            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.options.connects);
             self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter});
             self.tgc2.init();
             self.isInit = true;
@@ -446,18 +440,21 @@
                         style: {
                             left: '320px'
                         },
-                        filter: {
-                            enable: true,
-                            filters: filters
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                            },
+                            info: {
+                                linkContentsFunction: self.sdkUtils.linkContentsFunction
                             }
                         }
+                    },
+                    filter: {
+                        enable: true,
+                        filters: filters
                     },
                     stats: {
                         enable: true
@@ -465,7 +462,7 @@
                     connects: {
                         enable: true
                     },
-                    loader: self.sdkUtils.relation(options),
+                    loader: self.sdkUtils.relation(options, schema),
                     schema: schema,
                     relation: {
                         prompt: {
@@ -485,9 +482,9 @@
         Service.prototype.init = function () {
             var self = this;
             self.tgc2 = new Tgc2Relation(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2);
-            self.tgc2Stats = new Tgc2Stats(self.tgc2);
-            self.tgc2Connects = new Tgc2Connects(self.tgc2);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
+            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.options.stats);
+            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.options.connects);
             self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter});
             self.tgc2.init();
             self.isInit = true;
@@ -866,7 +863,53 @@
             ]
         };
 
-        Service.prototype.graph = function (options) {
+        Service.prototype.dealGraphData = function (data, schema) {
+            data.nodes = data.entityList;
+            data.links = data.relationList;
+            delete data.entityList;
+            delete data.relationList;
+            var schemas = {};
+            var arr = _.concat(schema.types, schema.atts);
+            for (var j in arr) {
+                var kv = arr[j];
+                schemas[kv.k] = kv.v;
+            }
+            for (var i in data.nodes) {
+                var node = data.nodes[i];
+                node.typeName = schemas[node.classId];
+            }
+            for (var k in data.links) {
+                var link = data.links[k];
+                link.typeName = schemas[link.attId];
+            }
+            return data;
+        };
+
+        Service.prototype.linkContentsFunction = function(linkData) {
+            var self = this;
+            if (linkData.rInfo) {
+                var items = '';
+                for (var i in linkData.rInfo) {
+                    var d = linkData.rInfo[i];
+                    items += '<tr>';
+                    var kvs = d.kvs;
+                    var thead = '<tr>';
+                    var tbody = '<tr>';
+                    for (var j in kvs) {
+                        if (kvs.hasOwnProperty(j)) {
+                            thead += '<th><div class="link-info-key">' + kvs[j].k + '</div></th>';
+                            tbody += '<td><div class="link-info-value">' + kvs[j].v + '</div></td>';
+                        }
+                    }
+                    items += '<li><table><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></li>';
+                }
+                return '<ul class="link-info">' + items + '</ul>';
+            } else {
+                return linkData.typeName;
+            }
+        };
+
+        Service.prototype.graph = function (options, schema) {
             var self = this;
             return function ($self, callback) {
                 var param = options.data || {};
@@ -889,6 +932,9 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
+                            if(data){
+                                data = self.dealGraphData(data, schema);
+                            }
                             callback(data);
                         }
                     },
@@ -897,7 +943,7 @@
             }
         };
 
-        Service.prototype.relation = function (options) {
+        Service.prototype.relation = function (options, schema) {
             var self = this;
             return function (instance, callback) {
                 var ids = _.map(self.settings.tgc2.startInfo.nodes, 'id');
@@ -919,6 +965,9 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
+                            if(data){
+                                data = self.dealGraphData(data, schema);
+                            }
                             callback(data);
                         }
                     },
@@ -930,7 +979,7 @@
             }
         };
 
-        Service.prototype.path = function (options) {
+        Service.prototype.path = function (options, schema) {
             var self = this;
             return function (instance, callback) {
                 var param = options.data || {};
@@ -952,6 +1001,9 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
+                            if(data){
+                                data = self.dealGraphData(data, schema);
+                            }
                             callback(data);
                         }
                     },
