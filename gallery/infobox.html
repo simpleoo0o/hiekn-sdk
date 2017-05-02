@@ -3,39 +3,36 @@
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
-    <title>Prompt Demo</title>
+    <title>Infobox Demo</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="initial-scale=1"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
-    <link rel="stylesheet" href="../../lib/hiekn-prompt.min.css" type="text/css"/>
-    <link rel="stylesheet" href="../../dist/hiekn-sdk.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
 
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
-    <script src="http://oorm1yhwz.bkt.clouddn.com/zoomcharts-1.17.2/zoomcharts.js"></script>
     <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
-    <script src="../../lib/jquery.hieknjs.min.js"></script>
-    <script src="../../lib/hiekn-prompt.min.js"></script>
-    <script src="../../dist/hiekn-sdk.js"></script>
+    <script src="../lib/jquery.hieknjs.min.js"></script>
+    <script src="../lib/hiekn-prompt.min.js"></script>
+    <script src="../dist/hiekn-sdk.js"></script>
     <!--<script src="../src/js/sdk-utils.js"></script>-->
     <!--<script src="../src/js/graph.js"></script>-->
 </head>
 
 <body>
-<div id="prompt" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
+<div id="infobox" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
-        config.container = '#prompt';
+        config.selector = '#infobox';
+        config.enableLink = true;
         config.baseUrl = 'http://kg.hiekn.com:8888/kg_exhibit_ws/sdk/';
-        config.onSearch = function (data, $container) {
-            console.log(data);
-            console.log($container);
-        };
-        new HieknPromptService(config);
+        var service = new HieknInfoboxService(config);
+        service.load(110000000210);
     });
 </script>
 </body>

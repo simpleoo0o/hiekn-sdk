@@ -11,13 +11,13 @@ Add these tags to your document's `<head>`:
 
 > For the latest URLs, check out the [git][git-repository] page on our website.
  
- [Demo][Demo]
+ [Docs][Docs]
 
 ## [License][license]
 
 private.
 
 [git-repository]: https://github.com/jiangrun002/hiekn-sdk
-[Demo]: https://jiangrun002.github.io/hiekn-sdk/gallery/index.html
+[Docs]: https://jiangrun002.github.io/hiekn-sdk/index.html
 
 [license]: LICENSE
