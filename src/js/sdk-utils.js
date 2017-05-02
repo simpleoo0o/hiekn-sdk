@@ -3,7 +3,7 @@
     window.HieknSDKService = gentService();
 
     function gentService() {
-        var Service = function (options) {
+        var Service = function () {
             this.colorList = {
                 'aliceblue': '#f0f8ff',
                 'antiquewhite': '#faebd7',
@@ -154,18 +154,6 @@
                 'yellow': '#ffff00',
                 'yellowgreen': '#9acd32'
             };
-            var defaultSettings = {
-                data: {},
-                baseUrl: null,
-                tgc2: null,
-                tgc2Filter: null,
-                tgc2Page: null
-            };
-            this.settings = $.extend(true, {}, defaultSettings, options);
-        };
-
-        Service.prototype.updateSettings = function (options) {
-            $.extend(true, this.settings, options);
         };
 
         Service.prototype.drawPromptItem = function (schema) {
@@ -189,7 +177,7 @@
                 param.kgName = options.kgName;
                 param.kw = pre;
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'prompt',
+                    url: options.baseUrl + 'prompt',
                     params: param,
                     type: 1,
                     success: function (data) {
@@ -207,7 +195,7 @@
             var param = options.data || {};
             param.kgName = options.kgName;
             hieknjs.kgLoader({
-                url: self.settings.baseUrl + 'schema',
+                url: options.baseUrl + 'schema',
                 type: 1,
                 params: param,
                 success: function (response) {
@@ -222,16 +210,16 @@
             });
         };
 
-        Service.prototype.gentInfobox = function (selector) {
+        Service.prototype.gentInfobox = function (options) {
             var self = this;
-            var data = self.settings.data || {};
+            var data = options.data || {};
             data.isRelationAtts = true;
             self.infoboxService = new HieknInfoboxService({
-                baseUrl: self.settings.baseUrl,
-                kgName: self.settings.kgName,
+                baseUrl: options.baseUrl,
+                kgName: options.kgName,
                 data: data
             });
-            self.infoboxService.initEvent($(selector));
+            self.infoboxService.initEvent($(options.selector));
         };
 
         Service.prototype.infobox = function () {
@@ -253,11 +241,11 @@
         Service.prototype.nodeStyleFunction = function (options) {
             var self = this;
             return function (node) {
-                self.settings.tgc2.nodeStyleFunction(node);
+                options.tgc2.nodeStyleFunction(node);
                 node.imageCropping = 'fit';
-                if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
-                } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
-                    node.fillColor = self.settings.tgc2.settings.netChart.reduceColor;
+                if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                    node.fillColor = options.tgc2.settings.netChart.reduceColor;
                     node.lineColor = node.fillColor;
                     node.label = '';
                 } else {
@@ -269,9 +257,9 @@
                     }
                 }
                 if (options.images && options.images[node.data.classId]) {
-                    if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
+                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
                         node.image = options.images[node.data.classId].emphases;
-                    } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
+                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
                         node.image = '';
                     } else {
                         if (node.hovered) {
@@ -283,10 +271,10 @@
                 }
                 if (options.nodeColors && options.nodeColors[node.data.classId]) {
                     node.lineWidth = 2;
-                    if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
-                        node.fillColor = self.settings.tgc2.settings.netChart.emphasesColor;
+                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                        node.fillColor = options.tgc2.settings.netChart.emphasesColor;
                         node.lineColor = node.fillColor;
-                    } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
+                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
                     } else {
                         node.lineColor = options.nodeColors[node.data.classId];
                         if (node.hovered) {
@@ -408,19 +396,19 @@
             return function ($self, callback) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param.id = self.settings.tgc2.startInfo.id;
+                param.id = options.tgc2.startInfo.id;
                 param.isRelationMerge = true;
-                if (self.settings.tgc2Filter) {
-                    var filters = self.settings.tgc2Filter.getFilterOptions();
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param, filters);
                 }
-                if (self.settings.tgc2Page) {
-                    var page = self.settings.tgc2Page.page;
+                if (options.tgc2Page) {
+                    var page = options.tgc2Page.page;
                     param.pageNo = page.pageNo;
                     param.pageSize = page.pageSize;
                 }
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'graph',
+                    url: options.baseUrl + 'graph',
                     type: 1,
                     params: param,
                     success: function (response) {
@@ -432,7 +420,7 @@
                             callback(data);
                         }
                     },
-                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -440,7 +428,7 @@
         Service.prototype.relation = function (options, schema) {
             var self = this;
             return function (instance, callback) {
-                var ids = _.map(self.settings.tgc2.startInfo.nodes, 'id');
+                var ids = _.map(options.tgc2.startInfo.nodes, 'id');
                 var param = options.data || {};
                 param.ids = ids;
                 param.isShortest = true;
@@ -448,12 +436,12 @@
                 param.statsCompute = true;
                 param.kgName = options.kgName;
                 param.statsConfig = options.statsConfig;
-                if (self.settings.tgc2Filter) {
-                    var filters = self.settings.tgc2Filter.getFilterOptions();
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param, filters);
                 }
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'relation',
+                    url: options.baseUrl + 'relation',
                     type: 1,
                     params: param,
                     success: function (response) {
@@ -468,7 +456,7 @@
                     error: function () {
                         toastr.error('网络接口错误！');
                     },
-                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -477,19 +465,19 @@
             var self = this;
             return function (instance, callback) {
                 var param = options.data || {};
-                param.start = self.settings.tgc2.startInfo.start.id;
-                param.end = self.settings.tgc2.startInfo.end.id;
+                param.start = options.tgc2.startInfo.start.id;
+                param.end = options.tgc2.startInfo.end.id;
                 param.isShortest = true;
                 param.connectsCompute = true;
                 param.statsCompute = true;
                 param.kgName = options.kgName;
                 param.statsConfig = options.statsConfig;
-                if (self.settings.tgc2Filter) {
-                    var filters = self.settings.tgc2Filter.getFilterOptions();
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param, filters);
                 }
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'path',
+                    url: options.baseUrl + 'path',
                     type: 1,
                     params: param,
                     success: function (response) {
@@ -504,7 +492,7 @@
                     error: function () {
                         toastr.error('网络接口错误！');
                     },
-                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };

@@ -31,8 +31,9 @@
         config.kgName = 'kg_ct';
         config.container = '#prompt';
         config.baseUrl = 'http://kg.hiekn.com:8888/kg_exhibit_ws/sdk/';
-        config.ready = function (prompt) {
-            prompt.$container.find('input').val('北京小桔').trigger('focus');
+        config.onSearch = function (data, $container) {
+            console.log(data);
+            console.log($container);
         };
         new HieknPromptService(config);
     });

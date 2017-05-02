@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <title>Api文档</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
+          type="text/css"/>
+    <!--<link rel="stylesheet" href="https://oorm1yhwz.bkt.clouddn.com/hiekn-prompt/hiekn-prompt.min.css"-->
+    <!--type="text/css"/>-->
+    <link rel="stylesheet" href="index.css"
+          type="text/css"/>
+
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <!--<script src="https://oorm1yhwz.bkt.clouddn.com/hiekn-prompt/hiekn-prompt.min.js"></script>-->
+    <script src="index.js"></script>
+</head>
+
+<body>
+<i class="fa fa-bars control-bar"></i>
+<div class="nav">
+    <!--<div class="search">-->
+    <!--<div id="prompt"></div>-->
+    <!--</div>-->
+    <div class="tree">
+        <ul>
+            <li>
+                <div class="tree-item" data-page="introduction">
+                    Introduction
+                </div>
+            </li>
+            <li>
+                <div class="tree-item">
+                    HieknSDKService
+                </div>
+                <ul>
+                    <li>
+                        <div class="tree-item" data-page="HieknSDKService-api">
+                            HieknSDKService Api
+                        </div>
+                        <ul>
+                            <li>
+                                .ctor()
+                            </li>
+                            <li>
+                                schema(options,callback)
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <div class="tree-item">
+                    HieknPromptService
+                </div>
+                <ul>
+                    <li>
+                        <div class="tree-item" data-page="HieknPromptService-api">
+                            HieknPromptService Api
+                        </div>
+                        <ul>
+                            <li>
+                                .ctor(settings)
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="tree-item" data-page="HieknPromptService-Settings">
+                            HieknPromptService Settings
+                        </div>
+                        <ul>
+                            <li>
+                                baseUrl: string
+                            </li>
+                            <li>
+                                container: string
+                            </li>
+                            <li>
+                                data: {}
+                            </li>
+                            <li>
+                                kgName: string
+                            </li>
+                            <li>
+                                onSearch(data, $container): Function
+                            </li>
+                            <li>
+                                ready(instance): Function
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <div class="tree-item">
+                    HieknInfoboxService
+                </div>
+                <ul>
+                    <li>
+                        <div class="tree-item" data-page="HieknInfoboxService-api">
+                            HieknInfoboxService Api
+                        </div>
+                        <ul>
+                            <li>
+                                .ctor(settings)
+                            </li>
+                            <li>
+                                load(id)
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="tree-item" data-page="HieknInfoboxService-Settings">
+                            HieknInfoboxService Settings
+                        </div>
+                        <ul>
+                            <li>
+                                baseUrl: string
+                            </li>
+                            <li>
+                                data: {}
+                            </li>
+                            <li>
+                                enableLink: boolean
+                            </li>
+                            <li>
+                                href(id, instance): Function
+                            </li>
+                            <li>
+                                kgName: string
+                            </li>
+                            <li>
+                                selector: string
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <div class="tree-item">
+                    HieknGraphService
+                </div>
+                <ul>
+                    <li>
+                        <div class="tree-item" data-page="HieknGraphService-api">
+                            HieknGraphService Api
+                        </div>
+                        <ul>
+                            <li>
+                                .ctor(settings)
+                            </li>
+                            <li>
+                                load(startInfo)
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="tree-item" data-page="HieknGraphService-Settings">
+                            HieknGraphService Settings
+                        </div>
+                        <ul>
+                            <li>
+                                baseUrl: string
+                            </li>
+                            <li>
+                                data: {}
+                            </li>
+                            <li>
+                                images: {}
+                            </li>
+                            <li>
+                                kgName: string
+                            </li>
+                            <li>
+                                nodeColors: {}
+                            </li>
+                            <li>
+                                selectedAtts: []
+                            </li>
+                            <li>
+                                selectedTypes: []
+                            </li>
+                            <li>
+                                selector: string
+                            </li>
+                            <li>
+                                tgc2Settings: Tgc2Settings
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <div class="tree-item">
+                    HieknPathService
+                </div>
+                <ul>
+                    <li>
+                        <div class="tree-item" data-page="HieknPathService-api">
+                            HieknPathService Api
+                        </div>
+                        <ul>
+                            <li>
+                                .ctor(settings)
+                            </li>
+                            <li>
+                                load(startInfo)
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="tree-item" data-page="HieknPathService-Settings">
+                            HieknPathService Settings
+                        </div>
+                        <ul>
+                            <li>
+                                baseUrl: string
+                            </li>
+                            <li>
+                                data: {}
+                            </li>
+                            <li>
+                                images: {}
+                            </li>
+                            <li>
+                                kgName: string
+                            </li>
+                            <li>
+                                nodeColors: {}
+                            </li>
+                            <li>
+                                selectedAtts: []
+                            </li>
+                            <li>
+                                selectedTypes: []
+                            </li>
+                            <li>
+                                selector: string
+                            </li>
+                            <li>
+                                statsConfig: string
+                            </li>
+                            <li>
+                                tgc2Settings: Tgc2PathSetting
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <div class="tree-item">
+                    HieknRelationService
+                </div>
+                <ul>
+                    <li>
+                        <div class="tree-item" data-page="HieknRelationService-api">
+                            HieknRelationService Api
+                        </div>
+                        <ul>
+                            <li>
+                                .ctor(settings)
+                            </li>
+                            <li>
+                                load(startInfo)
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="tree-item" data-page="HieknRelationService-Settings">
+                            HieknRelationService Settings
+                        </div>
+                        <ul>
+                            <li>
+                                baseUrl: string
+                            </li>
+                            <li>
+                                data: {}
+                            </li>
+                            <li>
+                                images: {}
+                            </li>
+                            <li>
+                                kgName: string
+                            </li>
+                            <li>
+                                nodeColors: {}
+                            </li>
+                            <li>
+                                selectedAtts: []
+                            </li>
+                            <li>
+                                selectedTypes: []
+                            </li>
+                            <li>
+                                selector: string
+                            </li>
+                            <li>
+                                statsConfig: string
+                            </li>
+                            <li>
+                                tgc2Settings: Tgc2RelationSetting
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="main">
+    <div class="top-bar">
+        <div class="title">HiKonwledge</div>
+        <button class="btn btn-default">Download</button>
+    </div>
+    <div class="introduction api-page active">
+        <div class="page-title">
+            introduction
+        </div>
+        <div class="page-content">
+            <div>
+                v0.3.3
+            </div>
+            TODO
+        </div>
+    </div>
+    <div class="HieknSDKService-api api-page">
+        <div class="page-title">
+            HieknSDKService
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Constructors
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">.ctor</span>: ()
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="api-page-item">
+                <div class="title">
+                    Methods
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">schema</span>: (options, callback)
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">param</span> options.baseUrl:string <span class="desc">指定获取schema的SDK Base路径</span>
+                            </div>
+                            <div class="detail-line">
+                                <span class="kw">param</span> options.kgName:string <span
+                                    class="desc">指定获取schema的图谱</span>
+                            </div>
+                            <div class="detail-line">
+                                <span class="kw">param（Optional）</span> options.data:{} <span class="desc">指定获取schema时的其他参数</span>
+                            </div>
+                            <div class="detail-line">
+                                <span class="kw">param</span> callback:Function <span
+                                    class="desc">获取到schema后的回调函数</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknPromptService-api api-page">
+        <div class="page-title">
+            HieknPromptService Api
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Constructors
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">.ctor</span>: (settings: <span data-page="HieknPromptService-Settings">HieknPromptService Settings</span>)
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknPromptService-Settings api-page">
+        <div class="page-title">
+            HieknPromptService Settings extends <a href="https://github.com/jiangrun002/hiekn-prompt">hikenPrompt
+            Settings</a>
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Properties
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">baseUrl</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取schema以及搜索提示时的sdk服务地址前缀</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">container</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">指定生成搜索提示的Dom选择器</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">data</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">获取schema以及搜索提示时的默认发送参数</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">kgName</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取schema以及搜索提示时的kgName</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">onSearch(data, $container)</span>: Function
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">点击提示</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">ready(instance)</span>: Function
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">初始化完成后的回调函数</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknInfoboxService-api api-page">
+        <div class="page-title">
+            HieknInfoboxService Api
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Constructors
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">.ctor</span>: (settings: <span data-page="HieknInfoboxService-Settings">HieknInfoboxService Settings</span>)
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="api-page-item">
+                <div class="title">
+                    Methods
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">load</span>: (id)
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">param</span> id <span class="desc">获取infoxbox的对象ID</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknInfoboxService-Settings api-page">
+        <div class="page-title">
+            HieknInfoboxService Settings
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Properties
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">baseUrl</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取infobox时的sdk服务地址前缀</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">data</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">获取infobox时的默认发送参数</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">enableLink</span>: boolean
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">是否允许infobox内的链接，默认值为 <span class="kw">false</span></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">href(id, instance)</span>: Function
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span
+                                    class="desc">当enableLink为True时有效, 点击超链接时触发</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">kgName</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取infobox时的kgName</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selector</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">指定生成infobox的Dom选择器</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknGraphService-api api-page">
+        <div class="page-title">
+            HieknGraphService Api
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Constructors
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">.ctor</span>: (settings: <span data-page="HieknGraphService-Settings">HieknGraphService Settings</span>)
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="api-page-item">
+                <div class="title">
+                    Methods
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">load</span>: (startInfo)
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">param</span> startInfo <span class="desc">Tgc2GraphStartInfo类型</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknGraphService-Settings api-page">
+        <div class="page-title">
+            HieknGraphService Settings
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Properties
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">baseUrl</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取Graph时的sdk服务地址前缀</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">data</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">获取Graph时的默认发送参数</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">images</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">生成Graph的节点图形，{classId: {normal: imgUrl, emphases: imgUrl }}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">kgName</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取Graph时的kgName</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">nodeColors</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span
+                                    class="desc">生成Graph的节点的边框颜色，{classId: 颜色色值}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selectedAtts</span>: Array
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Graph的关系过滤项的默认选中</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selectedTypes</span>: Array
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Graph的节点过滤项的默认选中</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selector</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">指定生成Graph的Dom选择器</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">tgc2Settings</span>: Tgc2Settings
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Graph的配置项</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknPathService-api api-page">
+        <div class="page-title">
+            HieknPathService Api
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Constructors
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">.ctor</span>: (settings: <span data-page="HieknPathService-Settings">HieknPathService Settings</span>)
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="api-page-item">
+                <div class="title">
+                    Methods
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">load</span>: (startInfo)
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">param</span> startInfo <span class="desc">Tgc2PathStartInfo类型</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknPathService-Settings api-page">
+        <div class="page-title">
+            HieknPathService Settings
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Properties
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">baseUrl</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取Path时的sdk服务地址前缀</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">data</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">获取Path时的默认发送参数</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">images</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">生成Path的节点图形，{classId: {normal: imgUrl, emphases: imgUrl }}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">kgName</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取Path时的kgName</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">nodeColors</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span
+                                    class="desc">生成Path的节点的边框颜色，{classId: 颜色色值}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selectedAtts</span>: Array
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Path的关系过滤项的默认选中</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selectedTypes</span>: Array
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Path的节点过滤项的默认选中</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selector</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">指定生成Path的Dom选择器</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">statsConfig</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Path的statsConfig</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">tgc2Settings</span>: Tgc2PathSetting
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Path的配置项</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknRelationService-api api-page">
+        <div class="page-title">
+            HieknRelationService Api
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Constructors
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">.ctor</span>: (settings: <span data-page="HieknRelationService-Settings">HieknRelationService Settings</span>)
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="api-page-item">
+                <div class="title">
+                    Methods
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">load</span>: (startInfo)
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">param</span> startInfo <span
+                                    class="desc">Tgc2RelationStartInfo类型</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="HieknRelationService-Settings api-page">
+        <div class="page-title">
+            HieknRelationService Settings
+        </div>
+        <div class="page-content">
+            <div class="api-page-item">
+                <div class="title">
+                    Properties
+                </div>
+                <ul>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">baseUrl</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取Relation时的sdk服务地址前缀</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">data</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">获取Relation时的默认发送参数</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">images</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">生成Relation的节点图形，{classId: {normal: imgUrl, emphases: imgUrl }}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">kgName</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">获取Relation时的kgName</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">nodeColors</span>: {}
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span
+                                    class="desc">生成Relation的节点的边框颜色，{classId: 颜色色值}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selectedAtts</span>: Array
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Relation的关系过滤项的默认选中</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selectedTypes</span>: Array
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Relation的节点过滤项的默认选中</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">selector</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="desc">指定生成Relation的Dom选择器</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">statsConfig</span>: string
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Relation的statsConfig</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sub-title">
+                            <span class="kw">tgc2Settings</span>: Tgc2RelationSetting
+                        </div>
+                        <div class="api-detail">
+                            <div class="detail-line">
+                                <span class="kw">(Optional)</span> <span class="desc">指定生成Relation的配置项</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

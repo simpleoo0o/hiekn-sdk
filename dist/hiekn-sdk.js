@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.3.2
+     *    v0.3.3
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -16,9 +16,38 @@
         var Service = function (options) {
             var self = this;
             self.isInit = false;
-            self.sdkUtils = new window.HieknSDKService(options);
-            self.sdkUtils.schema(options, function (schema) {
-                var filters = self.sdkUtils.buildFilter(schema, options);
+            self.baseSettings = {
+                baseUrl: options.baseUrl,
+                data: options.data,
+                kgName: options.kgName
+            };
+            self.filterSettings = {
+                selectedAtts: options.selectedAtts,
+                selectedTypes: options.selectedTypes
+            };
+            self.infoboxSettings = {
+                selector: options.selector
+            };
+            $.extend(true, self.infoboxSettings, self.baseSettings);
+            self.loaderSettings = {
+                selector: options.selector,
+                tgc2: null,
+                tgc2Filter: null,
+                tgc2Page: null
+            };
+            $.extend(true, self.loaderSettings, self.baseSettings);
+            self.nodeSettings = {
+                images: options.images,
+                nodeColors: options.nodeColors,
+                tgc2: null
+            };
+            self.promptSettings = self.baseSettings;
+            self.schemaSettings = self.baseSettings;
+            self.tgc2Settings = {};
+
+            self.sdkUtils = new window.HieknSDKService();
+            self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
                     label: '设定显示层数',
@@ -35,7 +64,7 @@
                         },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
-                            onPrompt: self.sdkUtils.onPrompt(options)
+                            onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
                         }
                     },
                     page: {
@@ -62,30 +91,33 @@
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
-                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
                             },
                             info: {
                                 linkContentsFunction: self.sdkUtils.linkContentsFunction
                             }
                         }
                     },
-                    loader: self.sdkUtils.graph(options, schema)
+                    loader: self.sdkUtils.graph(self.loaderSettings, schema)
                 };
-                self.options = $.extend(true, {}, defaultOptions, options.graphSetting);
-                self.sdkUtils.gentInfobox(options.selector || options.graphSetting.selector);
+                self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
+                self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
             });
         };
 
         Service.prototype.init = function () {
             var self = this;
-            self.tgc2 = new Tgc2Graph(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
-            self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.options.prompt);
-            self.tgc2Page = new Tgc2Page(self.tgc2, self.options.page);
-            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.options.crumb);
-            self.tgc2Find = new Tgc2Find(self.tgc2, self.options.find);
-            self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter, tgc2Page: self.tgc2Page});
+            self.tgc2 = new Tgc2Graph(self.tgc2Settings);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
+            self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.tgc2Settings.prompt);
+            self.tgc2Page = new Tgc2Page(self.tgc2, self.tgc2Settings.page);
+            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
+            self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.loaderSettings.tgc2 = self.tgc2;
+            self.loaderSettings.tgc2Filter = self.tgc2Filter;
+            self.loaderSettings.tgc2Page = self.tgc2Page;
+            self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
         };
@@ -309,9 +341,39 @@
         var Service = function (options) {
             var self = this;
             self.isInit = false;
-            self.sdkUtils = new window.HieknSDKService(options);
-            self.sdkUtils.schema(options, function (schema) {
-                var filters = self.sdkUtils.buildFilter(schema, options);
+            self.baseSettings = {
+                baseUrl: options.baseUrl,
+                data: options.data,
+                kgName: options.kgName
+            };
+            self.filterSettings = {
+                selectedAtts: options.selectedAtts,
+                selectedTypes: options.selectedTypes
+            };
+            self.infoboxSettings = {
+                selector: options.selector
+            };
+            $.extend(true, self.infoboxSettings, self.baseSettings);
+            self.loaderSettings = {
+                selector: options.selector,
+                statsConfig: options.statsConfig,
+                tgc2: null,
+                tgc2Filter: null,
+                tgc2Page: null
+            };
+            $.extend(true, self.loaderSettings, self.baseSettings);
+            self.nodeSettings = {
+                images: options.images,
+                nodeColors: options.nodeColors,
+                tgc2: null
+            };
+            self.promptSettings = self.baseSettings;
+            self.schemaSettings = self.baseSettings;
+            self.tgc2Settings = {};
+
+            self.sdkUtils = new window.HieknSDKService();
+            self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
                     label: '设定分析步长',
@@ -329,7 +391,7 @@
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
-                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
                             },
                             info: {
                                 linkContentsFunction: self.sdkUtils.linkContentsFunction
@@ -352,32 +414,35 @@
                     find: {
                         enable: true
                     },
-                    loader: self.sdkUtils.path(options, schema),
+                    loader: self.sdkUtils.path(self.loaderSettings, schema),
                     schema: schema,
                     path: {
                         prompt: {
                             settings: {
                                 drawPromptItem: self.sdkUtils.drawPromptItem(schema),
-                                onPrompt: self.sdkUtils.onPrompt(options)
+                                onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
                             }
                         }
                     }
                 };
-                self.options = $.extend(true, {}, defaultOptions, options.pathSetting);
-                self.sdkUtils.gentInfobox(options.selector || options.pathSetting.selector);
+                self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
+                self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
             });
         };
 
         Service.prototype.init = function () {
             var self = this;
-            self.tgc2 = new Tgc2Path(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
-            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.options.stats);
-            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.options.connects);
-            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.options.crumb);
-            self.tgc2Find = new Tgc2Find(self.tgc2, self.options.find);
-            self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter});
+            self.tgc2 = new Tgc2Path(self.tgc2Settings);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
+            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.tgc2Settings.stats);
+            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.tgc2Settings.connects);
+            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
+            self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.loaderSettings.tgc2 = self.tgc2;
+            self.loaderSettings.tgc2Filter = self.tgc2Filter;
+            self.loaderSettings.tgc2Page = self.tgc2Page;
+            self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
         };
@@ -405,11 +470,12 @@
         var Service = function (options) {
             var self = this;
             var defaultSettings = {
-                selector: null,
+                container: null,
                 data: null,
-                url: null,
+                baseUrl: null,
                 kgName: null,
-                ready: $.noop
+                ready: $.noop,
+                onSearch: $.noop
             };
             self.settings = $.extend(true, {}, defaultSettings, options);
             self.init();
@@ -441,9 +507,39 @@
         var Service = function (options) {
             var self = this;
             self.isInit = false;
-            self.sdkUtils = new window.HieknSDKService(options);
-            self.sdkUtils.schema(options, function (schema) {
-                var filters = self.sdkUtils.buildFilter(schema, options);
+            self.baseSettings = {
+                baseUrl: options.baseUrl,
+                data: options.data,
+                kgName: options.kgName
+            };
+            self.filterSettings = {
+                selectedAtts: options.selectedAtts,
+                selectedTypes: options.selectedTypes
+            };
+            self.infoboxSettings = {
+                selector: options.selector
+            };
+            $.extend(true, self.infoboxSettings, self.baseSettings);
+            self.loaderSettings = {
+                selector: options.selector,
+                statsConfig: options.statsConfig,
+                tgc2: null,
+                tgc2Filter: null,
+                tgc2Page: null
+            };
+            $.extend(true, self.loaderSettings, self.baseSettings);
+            self.nodeSettings = {
+                images: options.images,
+                nodeColors: options.nodeColors,
+                tgc2: null
+            };
+            self.promptSettings = self.baseSettings;
+            self.schemaSettings = self.baseSettings;
+            self.tgc2Settings = {};
+
+            self.sdkUtils = new window.HieknSDKService();
+            self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
                     label: '设定分析步长',
@@ -461,7 +557,7 @@
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
-                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
                             },
                             info: {
                                 linkContentsFunction: self.sdkUtils.linkContentsFunction
@@ -484,32 +580,35 @@
                     find: {
                         enable: true
                     },
-                    loader: self.sdkUtils.relation(options, schema),
+                    loader: self.sdkUtils.relation(self.loaderSettings, schema),
                     schema: schema,
                     relation: {
                         prompt: {
                             settings: {
                                 drawPromptItem: self.sdkUtils.drawPromptItem(schema),
-                                onPrompt: self.sdkUtils.onPrompt(options)
+                                onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
                             }
                         }
                     }
                 };
-                self.options = $.extend(true, {}, defaultOptions, options.relationSetting);
-                self.sdkUtils.gentInfobox(options.selector || options.relationSetting.selector);
+                self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
+                self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
             });
         };
 
         Service.prototype.init = function () {
             var self = this;
-            self.tgc2 = new Tgc2Relation(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
-            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.options.stats);
-            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.options.connects);
-            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.options.crumb);
-            self.tgc2Find = new Tgc2Find(self.tgc2, self.options.find);
-            self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter});
+            self.tgc2 = new Tgc2Relation(self.tgc2Settings);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
+            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.tgc2Settings.stats);
+            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.tgc2Settings.connects);
+            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
+            self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.loaderSettings.tgc2 = self.tgc2;
+            self.loaderSettings.tgc2Filter = self.tgc2Filter;
+            self.loaderSettings.tgc2Page = self.tgc2Page;
+            self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
         };
@@ -533,7 +632,7 @@
     window.HieknSDKService = gentService();
 
     function gentService() {
-        var Service = function (options) {
+        var Service = function () {
             this.colorList = {
                 'aliceblue': '#f0f8ff',
                 'antiquewhite': '#faebd7',
@@ -684,18 +783,6 @@
                 'yellow': '#ffff00',
                 'yellowgreen': '#9acd32'
             };
-            var defaultSettings = {
-                data: {},
-                baseUrl: null,
-                tgc2: null,
-                tgc2Filter: null,
-                tgc2Page: null
-            };
-            this.settings = $.extend(true, {}, defaultSettings, options);
-        };
-
-        Service.prototype.updateSettings = function (options) {
-            $.extend(true, this.settings, options);
         };
 
         Service.prototype.drawPromptItem = function (schema) {
@@ -719,7 +806,7 @@
                 param.kgName = options.kgName;
                 param.kw = pre;
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'prompt',
+                    url: options.baseUrl + 'prompt',
                     params: param,
                     type: 1,
                     success: function (data) {
@@ -737,7 +824,7 @@
             var param = options.data || {};
             param.kgName = options.kgName;
             hieknjs.kgLoader({
-                url: self.settings.baseUrl + 'schema',
+                url: options.baseUrl + 'schema',
                 type: 1,
                 params: param,
                 success: function (response) {
@@ -752,16 +839,16 @@
             });
         };
 
-        Service.prototype.gentInfobox = function (selector) {
+        Service.prototype.gentInfobox = function (options) {
             var self = this;
-            var data = self.settings.data || {};
+            var data = options.data || {};
             data.isRelationAtts = true;
             self.infoboxService = new HieknInfoboxService({
-                baseUrl: self.settings.baseUrl,
-                kgName: self.settings.kgName,
+                baseUrl: options.baseUrl,
+                kgName: options.kgName,
                 data: data
             });
-            self.infoboxService.initEvent($(selector));
+            self.infoboxService.initEvent($(options.selector));
         };
 
         Service.prototype.infobox = function () {
@@ -783,11 +870,11 @@
         Service.prototype.nodeStyleFunction = function (options) {
             var self = this;
             return function (node) {
-                self.settings.tgc2.nodeStyleFunction(node);
+                options.tgc2.nodeStyleFunction(node);
                 node.imageCropping = 'fit';
-                if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
-                } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
-                    node.fillColor = self.settings.tgc2.settings.netChart.reduceColor;
+                if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                    node.fillColor = options.tgc2.settings.netChart.reduceColor;
                     node.lineColor = node.fillColor;
                     node.label = '';
                 } else {
@@ -799,9 +886,9 @@
                     }
                 }
                 if (options.images && options.images[node.data.classId]) {
-                    if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
+                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
                         node.image = options.images[node.data.classId].emphases;
-                    } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
+                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
                         node.image = '';
                     } else {
                         if (node.hovered) {
@@ -813,10 +900,10 @@
                 }
                 if (options.nodeColors && options.nodeColors[node.data.classId]) {
                     node.lineWidth = 2;
-                    if (self.settings.tgc2.inStart(node.id) || self.settings.tgc2.nodeIds[node.id]) {
-                        node.fillColor = self.settings.tgc2.settings.netChart.emphasesColor;
+                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                        node.fillColor = options.tgc2.settings.netChart.emphasesColor;
                         node.lineColor = node.fillColor;
-                    } else if (!$.isEmptyObject(self.settings.tgc2.nodeIds)) {
+                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
                     } else {
                         node.lineColor = options.nodeColors[node.data.classId];
                         if (node.hovered) {
@@ -938,19 +1025,19 @@
             return function ($self, callback) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param.id = self.settings.tgc2.startInfo.id;
+                param.id = options.tgc2.startInfo.id;
                 param.isRelationMerge = true;
-                if (self.settings.tgc2Filter) {
-                    var filters = self.settings.tgc2Filter.getFilterOptions();
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param, filters);
                 }
-                if (self.settings.tgc2Page) {
-                    var page = self.settings.tgc2Page.page;
+                if (options.tgc2Page) {
+                    var page = options.tgc2Page.page;
                     param.pageNo = page.pageNo;
                     param.pageSize = page.pageSize;
                 }
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'graph',
+                    url: options.baseUrl + 'graph',
                     type: 1,
                     params: param,
                     success: function (response) {
@@ -962,7 +1049,7 @@
                             callback(data);
                         }
                     },
-                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -970,7 +1057,7 @@
         Service.prototype.relation = function (options, schema) {
             var self = this;
             return function (instance, callback) {
-                var ids = _.map(self.settings.tgc2.startInfo.nodes, 'id');
+                var ids = _.map(options.tgc2.startInfo.nodes, 'id');
                 var param = options.data || {};
                 param.ids = ids;
                 param.isShortest = true;
@@ -978,12 +1065,12 @@
                 param.statsCompute = true;
                 param.kgName = options.kgName;
                 param.statsConfig = options.statsConfig;
-                if (self.settings.tgc2Filter) {
-                    var filters = self.settings.tgc2Filter.getFilterOptions();
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param, filters);
                 }
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'relation',
+                    url: options.baseUrl + 'relation',
                     type: 1,
                     params: param,
                     success: function (response) {
@@ -998,7 +1085,7 @@
                     error: function () {
                         toastr.error('网络接口错误！');
                     },
-                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };
@@ -1007,19 +1094,19 @@
             var self = this;
             return function (instance, callback) {
                 var param = options.data || {};
-                param.start = self.settings.tgc2.startInfo.start.id;
-                param.end = self.settings.tgc2.startInfo.end.id;
+                param.start = options.tgc2.startInfo.start.id;
+                param.end = options.tgc2.startInfo.end.id;
                 param.isShortest = true;
                 param.connectsCompute = true;
                 param.statsCompute = true;
                 param.kgName = options.kgName;
                 param.statsConfig = options.statsConfig;
-                if (self.settings.tgc2Filter) {
-                    var filters = self.settings.tgc2Filter.getFilterOptions();
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param, filters);
                 }
                 hieknjs.kgLoader({
-                    url: self.settings.baseUrl + 'path',
+                    url: options.baseUrl + 'path',
                     type: 1,
                     params: param,
                     success: function (response) {
@@ -1034,7 +1121,7 @@
                     error: function () {
                         toastr.error('网络接口错误！');
                     },
-                    that: $(self.settings.selector).find('.tgc2-netchart-container')[0]
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
             }
         };

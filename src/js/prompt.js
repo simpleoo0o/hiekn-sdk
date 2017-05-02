@@ -7,11 +7,12 @@
         var Service = function (options) {
             var self = this;
             var defaultSettings = {
-                selector: null,
+                container: null,
                 data: null,
-                url: null,
+                baseUrl: null,
                 kgName: null,
-                ready: $.noop
+                ready: $.noop,
+                onSearch: $.noop
             };
             self.settings = $.extend(true, {}, defaultSettings, options);
             self.init();

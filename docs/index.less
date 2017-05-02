@@ -1,0 +1,154 @@
+@import "../src/less/define";
+
+.control-bar {
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  font-size: 24px;
+  padding: 16px;
+  cursor: pointer;
+  width: 56px;
+  height: 56px;
+  color: @color-gray;
+  .normal-transition();
+  &:hover {
+    color: @color-primary;
+  }
+}
+
+.nav {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  z-index: 2;
+  width: 320px;
+  background: @color-light;
+  box-shadow: 1px 0 3px #999;
+  padding-top: 56px;
+  .normal-transition();
+  .search {
+    height: 56px;
+    border-top: 1px solid @color-divider;
+    #prompt {
+      width: 100%;
+      padding: 12px;
+      height: 54px;
+      border: 0;
+      .hiekn-search-prompt {
+        top: 55px;
+        width: 100%;
+        margin: 0;
+        left: 0;
+      }
+    }
+  }
+  .tree {
+    border-top: 1px solid @color-divider;
+    height: 100%;
+    overflow: auto;
+    color: @color-gray;
+    line-height: 30px;
+    [data-page] {
+      color: @color-gray-dark;
+    }
+    .tree-item{
+      cursor: pointer;
+      & + ul {
+        display: none;
+      }
+    }
+    li.on > ul {
+      display: block;
+      padding-left: 16px;
+    }
+  }
+}
+
+.main {
+  top: 0;
+  bottom: 0;
+  left: 320px;
+  right: 0;
+  position: fixed;
+  z-index: 1;
+  background: @color-light;
+  .normal-transition();
+  .top-bar {
+    height: 56px;
+    background: @color-primary;
+    .normal-transition();
+    .title {
+      margin-left: 16px;
+      font-size: 24px;
+      color: @color-light;
+      line-height: 56px;
+      display: inline-block;
+    }
+    .btn {
+      margin: 11px 16px 0 0;
+      float: right;
+    }
+  }
+  .api-page {
+    height: calc(~"100% - 56px");
+    overflow: auto;
+    display: none;
+    padding: 0 16px;
+    &.active {
+      display: block;
+    }
+    .page-title {
+      color: @color-primary;
+      height: 56px;
+      font-size: 24px;
+      line-height: 56px;
+    }
+    .api-page-item {
+      margin: 8px 0;
+      .title {
+        color: @color-primary;
+        font-size: 16px;
+      }
+      li {
+        margin-top: 8px;
+        list-style: none;
+      }
+      [data-page] {
+        color: @color-primary;
+        cursor: pointer;
+      }
+      .sub-title {
+        .kw {
+          font-weight: bold;
+        }
+      }
+      .api-detail {
+        padding-left: 32px;
+        .kw {
+          color: @color-primary;
+        }
+        .desc {
+          color: @color-gray;
+        }
+      }
+    }
+  }
+
+}
+
+.close-nav {
+  .control-bar {
+    color: @color-light;
+  }
+  .nav {
+    left: -320px;
+  }
+  .main {
+    left: 0;
+    .top-bar {
+      padding-left: 40px;
+    }
+  }
+}

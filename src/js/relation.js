@@ -7,9 +7,39 @@
         var Service = function (options) {
             var self = this;
             self.isInit = false;
-            self.sdkUtils = new window.HieknSDKService(options);
-            self.sdkUtils.schema(options, function (schema) {
-                var filters = self.sdkUtils.buildFilter(schema, options);
+            self.baseSettings = {
+                baseUrl: options.baseUrl,
+                data: options.data,
+                kgName: options.kgName
+            };
+            self.filterSettings = {
+                selectedAtts: options.selectedAtts,
+                selectedTypes: options.selectedTypes
+            };
+            self.infoboxSettings = {
+                selector: options.selector
+            };
+            $.extend(true, self.infoboxSettings, self.baseSettings);
+            self.loaderSettings = {
+                selector: options.selector,
+                statsConfig: options.statsConfig,
+                tgc2: null,
+                tgc2Filter: null,
+                tgc2Page: null
+            };
+            $.extend(true, self.loaderSettings, self.baseSettings);
+            self.nodeSettings = {
+                images: options.images,
+                nodeColors: options.nodeColors,
+                tgc2: null
+            };
+            self.promptSettings = self.baseSettings;
+            self.schemaSettings = self.baseSettings;
+            self.tgc2Settings = {};
+
+            self.sdkUtils = new window.HieknSDKService();
+            self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
                     label: '设定分析步长',
@@ -27,7 +57,7 @@
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
-                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(options)
+                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
                             },
                             info: {
                                 linkContentsFunction: self.sdkUtils.linkContentsFunction
@@ -50,32 +80,35 @@
                     find: {
                         enable: true
                     },
-                    loader: self.sdkUtils.relation(options, schema),
+                    loader: self.sdkUtils.relation(self.loaderSettings, schema),
                     schema: schema,
                     relation: {
                         prompt: {
                             settings: {
                                 drawPromptItem: self.sdkUtils.drawPromptItem(schema),
-                                onPrompt: self.sdkUtils.onPrompt(options)
+                                onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
                             }
                         }
                     }
                 };
-                self.options = $.extend(true, {}, defaultOptions, options.relationSetting);
-                self.sdkUtils.gentInfobox(options.selector || options.relationSetting.selector);
+                self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
+                self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
             });
         };
 
         Service.prototype.init = function () {
             var self = this;
-            self.tgc2 = new Tgc2Relation(self.options);
-            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
-            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.options.stats);
-            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.options.connects);
-            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.options.crumb);
-            self.tgc2Find = new Tgc2Find(self.tgc2, self.options.find);
-            self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter});
+            self.tgc2 = new Tgc2Relation(self.tgc2Settings);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
+            self.tgc2Stats = new Tgc2Stats(self.tgc2, self.tgc2Settings.stats);
+            self.tgc2Connects = new Tgc2Connects(self.tgc2, self.tgc2Settings.connects);
+            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
+            self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.loaderSettings.tgc2 = self.tgc2;
+            self.loaderSettings.tgc2Filter = self.tgc2Filter;
+            self.loaderSettings.tgc2Page = self.tgc2Page;
+            self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
         };
