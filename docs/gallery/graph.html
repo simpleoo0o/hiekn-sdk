@@ -3,28 +3,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
-    <title>关联Demo</title>
+    <title>Graph Demo</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="initial-scale=1"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css"/>
-    <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
-    <link rel="stylesheet" href="../lib/tgc2.min.css" type="text/css"/>
-    <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="../../lib/hiekn-prompt.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../lib/tgc2.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../dist/hiekn-sdk.min.css" type="text/css"/>
 
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="http://oorm1yhwz.bkt.clouddn.com/zoomcharts-1.17.2/zoomcharts.js"></script>
     <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
-    <script src="../lib/jquery.hieknjs.min.js"></script>
-    <script src="../bower_components/hieknjs/dist/jquery.hieknjs.js"></script>
-    <script src="../lib/hiekn-prompt.min.js"></script>
-    <script src="../lib/tgc2.min.js"></script>
-    <script src="../dist/hiekn-sdk.js"></script>
+    <script src="../../lib/jquery.hieknjs.min.js"></script>
+    <script src="../../lib/hiekn-prompt.min.js"></script>
+    <script src="../../lib/tgc2.min.js"></script>
+    <script src="../../dist/hiekn-sdk.js"></script>
     <!--<script src="../src/js/sdk-utils.js"></script>-->
-    <!--<script src="../src/js/relation.js"></script>-->
+    <!--<script src="../src/js/graph.js"></script>-->
 </head>
 
 <body>
@@ -34,9 +35,8 @@
         var config = {};
         config.kgName = 'kg_ct';
         config.selector = '#chart';
-        config.statsConfig = '[{"key":"VC invest","type":13,"atts":[1301]}]';
         config.baseUrl = 'http://kg.hiekn.com:8888/kg_exhibit_ws/sdk/';
-        config.images = buildImgas([2, 7, 9, 11, 12, 13], '../images/kg_ct');
+        config.images = buildImgas([2, 7, 9, 10, 11, 12, 13, 16, 17, 18, 1601, 1602], '../images/kg_ct');
         config.nodeColors = {
             2: '#f45b5b',
             7: '#3e3eb5',
@@ -51,8 +51,8 @@
             1601: '#ee891d',
             1602: '#ee891d'
         };
-        var service = new HieknRelationService(config);
-        service.load({id: 1, nodes: [{'id': 110000000210}, {'id': 110000007603}]});
+        var service = new HieknGraphService(config);
+        service.load({'id': 110000000210});
 
         function buildImgas(arr, path) {
             var images = {};
