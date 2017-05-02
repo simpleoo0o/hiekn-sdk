@@ -1,5 +1,7 @@
 'use strict';
 
+var pkg = require('./package.json');
+var bowerFile = require('./bower.json');
 var gulp = require('gulp');
 var gulpLess = require('gulp-less');
 var uglify = require('gulp-uglify');
@@ -8,6 +10,7 @@ var concat = require('gulp-concat');
 var del = require('del');
 var mainBowerFiles = require('main-bower-files');
 var license = require('gulp-licenser');
+var jsonfile = require('jsonfile');
 
 var lib = 'lib/';
 var src = 'src/';
@@ -21,7 +24,7 @@ var LICENSE_TEMPLATE =
      * @author: \n\
      *    jiangrun002\n\
      * @version: \n\
-     *    v0.3.1\n\
+     *    v' + pkg.version + '\n\
      * @license:\n\
      *    Copyright 2017, jiangrun. All rights reserved.\n\
      */';
@@ -86,11 +89,20 @@ gulp.task('main-bower-file', function () {
         .pipe(gulp.dest(lib))
 });
 
-gulp.task('lib', ['main-bower-file'], function () {
-    return gulp.src([lib + 'FontAwesome.otf', lib + 'fontawesome-webfont.*']).pipe(gulp.dest('fonts/'));
+gulp.task('lib', ['main-bower-file']);
+
+gulp.task('build-bower-file', function () {
+    jsonfile.spaces = 2;
+    bowerFile.version = pkg.version;
+    bowerFile.name = pkg.name;
+    bowerFile.main = [
+        dst + jsDevFile,
+        dst + cssDevFile
+    ];
+    jsonfile.writeFile('./bower.json', bowerFile);
 });
 
-gulp.task('build', ['concat-uglify-js', 'minify-css'], function () {
+gulp.task('build', ['build-bower-file', 'concat-uglify-js', 'minify-css'], function () {
     gulp.src([dst + '**/*.js', dst + '**/*.css'])
         .pipe(license(LICENSE_TEMPLATE))
         .pipe(gulp.dest(dst));

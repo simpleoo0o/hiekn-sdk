@@ -41,6 +41,12 @@
                         enable: true,
                         filters: filters
                     },
+                    crumb: {
+                        enable: true
+                    },
+                    find: {
+                        enable: true
+                    },
                     netChart: {
                         settings: {
                             nodeMenu: {
@@ -68,6 +74,8 @@
             self.tgc2Filter = new Tgc2Filter(self.tgc2, self.options.filter);
             self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.options.prompt);
             self.tgc2Page = new Tgc2Page(self.tgc2, self.options.page);
+            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.options.crumb);
+            self.tgc2Find = new Tgc2Find(self.tgc2, self.options.find);
             self.sdkUtils.updateSettings({tgc2: self.tgc2, tgc2Filter: self.tgc2Filter, tgc2Page: self.tgc2Page});
             self.tgc2.init();
             self.isInit = true;

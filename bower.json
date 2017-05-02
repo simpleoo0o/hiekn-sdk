@@ -8,7 +8,7 @@
   "authors": [
     "jiangrun002"
   ],
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "private",
   "keywords": [
     "netchart"
@@ -24,6 +24,6 @@
   "dependencies": {
     "hiekn-prompt": "^0.1.4",
     "hieknjs": "^0.1.0",
-    "tgc2": "^0.2.0"
+    "tgc2": "^0.2.4"
   }
 }

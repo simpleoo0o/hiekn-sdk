@@ -1,6 +1,6 @@
 {
   "name": "hiekn-sdk",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
   "homepage": "",
   "repository": {
@@ -23,6 +23,7 @@
     "gulp-plumber": "^1.1.0",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
+    "jsonfile": "^3.0.0",
     "main-bower-files": "^2.13.1"
   },
   "scripts": {},

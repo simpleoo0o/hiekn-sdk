@@ -114,3 +114,7 @@
 .tgc2 .link-info table td:last-child {
   padding-right: 24px;
 }
+.tgc2 .tgc2-find-container,
+.tgc2 .tgc2-crumb {
+  min-height: 218px;
+}
