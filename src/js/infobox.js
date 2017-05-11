@@ -51,7 +51,7 @@
             return '<tr><td class="hiekn-infobox-info-label">' + extra.k + '</td><td class="hiekn-infobox-info-detail">' + detail + '</td></tr>';
         };
 
-        Service.prototype.load = function (id, callback) {
+        Service.prototype.load = function (id, callback, onFailed) {
             var self = this;
             var param = self.settings.data || {};
             param.id = id;
@@ -73,10 +73,13 @@
                         } else {
                             console.error('selector or callback must be config');
                         }
+                    }else{
+                        onFailed && onFailed();
                     }
                 },
                 error: function () {
                     toastr.error('网络接口错误！');
+                    onFailed && onFailed();
                 }
             });
         };
