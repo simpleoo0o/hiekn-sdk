@@ -47,6 +47,7 @@
   color: #666;
   border-bottom: 1px solid #eee;
   min-width: 300px;
+  position: relative;
 }
 .hiekn-infobox-head .hiekn-infobox-img {
   position: absolute;
