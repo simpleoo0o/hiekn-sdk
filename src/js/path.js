@@ -29,6 +29,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
+                imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
                 tgc2: null

@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.4.1
+     *    v0.4.2
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -56,6 +56,15 @@
   color: #666;
   border-bottom: 1px solid #eee;
   min-width: 300px;
+}
+.hiekn-infobox-head .hiekn-infobox-img {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+.hiekn-infobox-head .hiekn-infobox-img img {
+  width: 60px;
+  height: 60px;
 }
 .hiekn-infobox-body {
   padding: 12px 20px 20px;

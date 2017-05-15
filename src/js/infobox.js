@@ -12,6 +12,7 @@
                 baseUrl: null,
                 kgName: null,
                 enableLink: false,
+                imagePrefix: null,
                 href: null
             };
             self.settings = $.extend(true, {}, defaultSettings, options);
@@ -73,7 +74,7 @@
                         } else {
                             console.error('selector or callback must be config');
                         }
-                    }else{
+                    } else {
                         onFailed && onFailed();
                     }
                 },
@@ -91,6 +92,13 @@
                 $infoxbox.append('<div class="hiekn-infobox-head"></div><div class="hiekn-infobox-body"></div>');
                 var entity = self.buildEntity(data.self, false);
                 $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-title">' + entity + '</div>');
+                if(data.self.img) {
+                    var imgUlrl = data.self.img;
+                    if(data.self.img.indexOf('http') != 0){
+                        imgUlrl = self.settings.imagePrefix + data.self.img;
+                    }
+                    $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-img"><img src="' + imgUlrl + '" alt=""></div>');
+                }
                 if (data.self.extra) {
                     var html = '';
                     for (var i in data.self.extra) {
