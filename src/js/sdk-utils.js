@@ -256,7 +256,16 @@
                         node.shadowBlur = 0;
                     }
                 }
-                if (options.images && options.images[node.data.classId]) {
+                if (node.data.img) {
+                    if (node.data.img.indexOf('http') != 0 && options.imagePrefix) {
+                        node.image = options.imagePrefix + node.data.img;
+                    }else{
+                        node.image = node.data.img;
+                    }
+                    if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
+                        node.image = '';
+                    }
+                } else if (options.images && options.images[node.data.classId]) {
                     if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
                         node.image = options.images[node.data.classId].emphases;
                     } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
@@ -367,7 +376,7 @@
             return data;
         };
 
-        Service.prototype.linkContentsFunction = function(linkData) {
+        Service.prototype.linkContentsFunction = function (linkData) {
             var self = this;
             if (linkData.rInfo) {
                 var items = '';
@@ -414,7 +423,7 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
-                            if(data){
+                            if (data) {
                                 data = self.dealGraphData(data, schema);
                             }
                             callback(data);
@@ -447,7 +456,7 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
-                            if(data){
+                            if (data) {
                                 data = self.dealGraphData(data, schema);
                             }
                             callback(data);
@@ -483,7 +492,7 @@
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
-                            if(data){
+                            if (data) {
                                 data = self.dealGraphData(data, schema);
                             }
                             callback(data);
