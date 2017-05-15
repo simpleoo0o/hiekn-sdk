@@ -7,6 +7,7 @@
         var Service = function (options) {
             var self = this;
             var defaultSettings = {
+                beforeDrawPrompt: null,
                 container: null,
                 data: null,
                 baseUrl: null,

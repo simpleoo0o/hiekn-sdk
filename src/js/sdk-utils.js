@@ -165,7 +165,7 @@
             }
             return function (data, pre) {
                 var line = '<span class="prompt-tip-title">' + data.name.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
-                line = '<span class="prompt-tip-type prompt-tip-' + data.classId + '">' + (typeObj[data.classId] || '') + '</span>' + line;
+                line = '<span class="prompt-tip-type prompt-tip-' + data.classId + '">' + (data.className || typeObj[data.classId] || '') + '</span>' + line;
                 return line;
             }
         };
@@ -183,6 +183,7 @@
                     success: function (data) {
                         if ($self.prompt == param.kw) {
                             var d = data.rsData;
+                            options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
                             $self.startDrawPromptItems(d, pre);
                         }
                     }
@@ -259,7 +260,7 @@
                 if (node.data.img) {
                     if (node.data.img.indexOf('http') != 0 && options.imagePrefix) {
                         node.image = options.imagePrefix + node.data.img;
-                    }else{
+                    } else {
                         node.image = node.data.img;
                     }
                     if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
