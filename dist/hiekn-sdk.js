@@ -1,3 +1,12 @@
+/**
+     * @author: 
+     *    jiangrun002
+     * @version: 
+     *    v0.4.0
+     * @license:
+     *    Copyright 2017, jiangrun. All rights reserved.
+     */
+
 (function (window, $) {
     'use strict';
 
