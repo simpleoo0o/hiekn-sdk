@@ -257,28 +257,6 @@
                         node.shadowBlur = 0;
                     }
                 }
-                if (node.data.img) {
-                    if (node.data.img.indexOf('http') != 0 && options.imagePrefix) {
-                        node.image = options.imagePrefix + node.data.img;
-                    } else {
-                        node.image = node.data.img;
-                    }
-                    if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
-                        node.image = '';
-                    }
-                } else if (options.images && options.images[node.data.classId]) {
-                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
-                        node.image = options.images[node.data.classId].emphases;
-                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                        node.image = '';
-                    } else {
-                        if (node.hovered) {
-                            node.image = options.images[node.data.classId].emphases;
-                        } else {
-                            node.image = options.images[node.data.classId].normal;
-                        }
-                    }
-                }
                 if (options.nodeColors && options.nodeColors[node.data.classId]) {
                     node.lineWidth = 2;
                     if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
@@ -289,6 +267,30 @@
                         node.lineColor = options.nodeColors[node.data.classId];
                         if (node.hovered) {
                             node.fillColor = node.lineColor;
+                        }
+                    }
+                }
+                if (node.data.img) {
+                    if (node.data.img.indexOf('http') != 0 && options.imagePrefix) {
+                        node.image = options.imagePrefix + node.data.img;
+                    } else {
+                        node.image = node.data.img;
+                    }
+                    if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
+                        node.image = '';
+                    }
+                    node.lineColor = node.fillColor;
+                    node.fillColor = '#fff';
+                } else if (options.images && options.images[node.data.classId]) {
+                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                        node.image = options.images[node.data.classId].emphases;
+                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                        node.image = '';
+                    } else {
+                        if (node.hovered) {
+                            node.image = options.images[node.data.classId].emphases;
+                        } else {
+                            node.image = options.images[node.data.classId].normal;
                         }
                     }
                 }
