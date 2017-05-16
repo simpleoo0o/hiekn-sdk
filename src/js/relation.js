@@ -44,7 +44,7 @@
                 filters = [{
                     key: 'distance',
                     label: '设定分析步长',
-                    selected: 3,
+                    selected: options.selectedDistance || 3,
                     options: [3, 4, 5, 6]
                 }].concat(filters);
                 var defaultOptions = {

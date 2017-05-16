@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.4.4
+     *    v0.4.5
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -52,7 +52,7 @@
                 filters = [{
                     key: 'distance',
                     label: '设定显示层数',
-                    selected: 1,
+                    selected: options.selectedDistance || 1,
                     options: [1, 2, 3]
                 }].concat(filters);
                 var defaultOptions = {
@@ -390,7 +390,7 @@
                 filters = [{
                     key: 'distance',
                     label: '设定分析步长',
-                    selected: 3,
+                    selected: options.selectedDistance || 3,
                     options: [3, 4, 5, 6]
                 }].concat(filters);
                 var defaultOptions = {
@@ -558,7 +558,7 @@
                 filters = [{
                     key: 'distance',
                     label: '设定分析步长',
-                    selected: 3,
+                    selected: options.selectedDistance || 3,
                     options: [3, 4, 5, 6]
                 }].concat(filters);
                 var defaultOptions = {

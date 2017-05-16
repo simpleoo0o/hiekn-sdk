@@ -43,7 +43,7 @@
                 filters = [{
                     key: 'distance',
                     label: '设定显示层数',
-                    selected: 1,
+                    selected: options.selectedDistance || 1,
                     options: [1, 2, 3]
                 }].concat(filters);
                 var defaultOptions = {
