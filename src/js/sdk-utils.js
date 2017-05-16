@@ -240,6 +240,18 @@
             }
         };
 
+        Service.prototype.legend = function (schema) {
+            var self = this;
+            var typeObj = {};
+            for (var i in schema.types) {
+                var type = schema.types[i];
+                typeObj[type.k] = type.v;
+            }
+            return function (key, value) {
+                return '<div class="tgc2-legend-item tgc2-legend-item-' + key + '"><i style="background: ' + value + '"></i><span>' + typeObj[key] + '</span></div>';
+            }
+        };
+
         Service.prototype.qiniuImg = function (img) {
             return img + '?_=' + parseInt(new Date().getTime() / 3600000);
         };

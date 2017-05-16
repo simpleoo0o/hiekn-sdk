@@ -82,6 +82,11 @@
                     find: {
                         enable: true
                     },
+                    legend:{
+                        enable: true,
+                        data: options.nodeColors || [],
+                        onDraw: self.sdkUtils.legend(schema)
+                    },
                     loader: self.sdkUtils.path(self.loaderSettings, schema),
                     schema: schema,
                     path: {
@@ -107,6 +112,7 @@
             self.tgc2Connects = new Tgc2Connects(self.tgc2, self.tgc2Settings.connects);
             self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
             self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.tgc2Legend = new Tgc2Legend(self.tgc2, self.tgc2Settings.legend);
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;

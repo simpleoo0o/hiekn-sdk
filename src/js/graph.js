@@ -78,6 +78,11 @@
                     find: {
                         enable: true
                     },
+                    legend:{
+                        enable: true,
+                        data: options.nodeColors || [],
+                        onDraw: self.sdkUtils.legend(schema)
+                    },
                     netChart: {
                         settings: {
                             nodeMenu: {
@@ -107,6 +112,7 @@
             self.tgc2Page = new Tgc2Page(self.tgc2, self.tgc2Settings.page);
             self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
             self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.tgc2Legend = new Tgc2Legend(self.tgc2, self.tgc2Settings.legend);
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;

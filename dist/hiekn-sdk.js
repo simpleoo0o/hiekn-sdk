@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.4.8
+     *    v0.4.9
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -87,6 +87,11 @@
                     find: {
                         enable: true
                     },
+                    legend:{
+                        enable: true,
+                        data: options.nodeColors || [],
+                        onDraw: self.sdkUtils.legend(schema)
+                    },
                     netChart: {
                         settings: {
                             nodeMenu: {
@@ -116,6 +121,7 @@
             self.tgc2Page = new Tgc2Page(self.tgc2, self.tgc2Settings.page);
             self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
             self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.tgc2Legend = new Tgc2Legend(self.tgc2, self.tgc2Settings.legend);
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;
@@ -429,6 +435,11 @@
                     find: {
                         enable: true
                     },
+                    legend:{
+                        enable: true,
+                        data: options.nodeColors || [],
+                        onDraw: self.sdkUtils.legend(schema)
+                    },
                     loader: self.sdkUtils.path(self.loaderSettings, schema),
                     schema: schema,
                     path: {
@@ -454,6 +465,7 @@
             self.tgc2Connects = new Tgc2Connects(self.tgc2, self.tgc2Settings.connects);
             self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
             self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.tgc2Legend = new Tgc2Legend(self.tgc2, self.tgc2Settings.legend);
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;
@@ -598,6 +610,11 @@
                     find: {
                         enable: true
                     },
+                    legend:{
+                        enable: true,
+                        data: options.nodeColors || [],
+                        onDraw: self.sdkUtils.legend(schema)
+                    },
                     loader: self.sdkUtils.relation(self.loaderSettings, schema),
                     schema: schema,
                     relation: {
@@ -623,6 +640,7 @@
             self.tgc2Connects = new Tgc2Connects(self.tgc2, self.tgc2Settings.connects);
             self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
             self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.tgc2Legend = new Tgc2Legend(self.tgc2, self.tgc2Settings.legend);
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;
@@ -884,6 +902,18 @@
                     });
                 }
                 return null;
+            }
+        };
+
+        Service.prototype.legend = function (schema) {
+            var self = this;
+            var typeObj = {};
+            for (var i in schema.types) {
+                var type = schema.types[i];
+                typeObj[type.k] = type.v;
+            }
+            return function (key, value) {
+                return '<div class="tgc2-legend-item tgc2-legend-item-' + key + '"><i style="background: ' + value + '"></i><span>' + typeObj[key] + '</span></div>';
             }
         };
 
