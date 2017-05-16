@@ -284,7 +284,6 @@
                     if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
                         node.image = '';
                     }
-                    node.lineColor = node.fillColor;
                     node.fillColor = '#fff';
                 } else if (options.images && options.images[node.data.classId]) {
                     if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
