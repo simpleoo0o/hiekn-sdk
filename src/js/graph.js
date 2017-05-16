@@ -33,6 +33,7 @@
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
+                minRadius: options.minRadius || 10,
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;

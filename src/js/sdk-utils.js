@@ -327,7 +327,7 @@
                 }
                 var radius = options.tgc2.netChart.getNodeDimensions(node).radius;
                 if(options.enableAutoUpdateStyle) {
-                    if (radius < 15) {
+                    if (radius < options.minRadius) {
                         node.image = '';
                         node.fillColor = node.lineColor;
                     }

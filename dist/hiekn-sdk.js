@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.4.10
+     *    v0.4.11
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -42,6 +42,7 @@
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
+                minRadius: options.minRadius || 10,
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
@@ -388,6 +389,7 @@
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
+                minRadius: options.minRadius || 10,
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
@@ -564,6 +566,7 @@
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
+                minRadius: options.minRadius || 10,
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
@@ -995,7 +998,7 @@
                 }
                 var radius = options.tgc2.netChart.getNodeDimensions(node).radius;
                 if(options.enableAutoUpdateStyle) {
-                    if (radius < 15) {
+                    if (radius < options.minRadius) {
                         node.image = '';
                         node.fillColor = node.lineColor;
                     }
