@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.4.5
+     *    v0.4.6
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1049,7 +1049,7 @@
 
         Service.prototype.graph = function (options, schema) {
             var self = this;
-            return function ($self, callback) {
+            return function ($self, callback, failed) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
                 param.id = options.tgc2.startInfo.id;
@@ -1074,7 +1074,12 @@
                                 data = self.dealGraphData(data, schema);
                             }
                             callback(data);
+                        } else {
+                            failed();
                         }
+                    },
+                    error: function () {
+                        failed();
                     },
                     that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
@@ -1083,7 +1088,7 @@
 
         Service.prototype.relation = function (options, schema) {
             var self = this;
-            return function (instance, callback) {
+            return function (instance, callback, failed) {
                 var ids = _.map(options.tgc2.startInfo.nodes, 'id');
                 var param = options.data || {};
                 param.ids = ids;
@@ -1107,10 +1112,13 @@
                                 data = self.dealGraphData(data, schema);
                             }
                             callback(data);
+                        } else {
+                            failed();
                         }
                     },
                     error: function () {
                         toastr.error('网络接口错误！');
+                        failed();
                     },
                     that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
@@ -1119,7 +1127,7 @@
 
         Service.prototype.path = function (options, schema) {
             var self = this;
-            return function (instance, callback) {
+            return function (instance, callback, failed) {
                 var param = options.data || {};
                 param.start = options.tgc2.startInfo.start.id;
                 param.end = options.tgc2.startInfo.end.id;
@@ -1143,10 +1151,13 @@
                                 data = self.dealGraphData(data, schema);
                             }
                             callback(data);
+                        } else {
+                            failed();
                         }
                     },
                     error: function () {
                         toastr.error('网络接口错误！');
+                        failed();
                     },
                     that: $(options.selector).find('.tgc2-netchart-container')[0]
                 });
