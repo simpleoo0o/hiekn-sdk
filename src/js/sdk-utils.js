@@ -218,6 +218,7 @@
             self.infoboxService = new HieknInfoboxService({
                 baseUrl: options.baseUrl,
                 kgName: options.kgName,
+                imagePrefix: options.imagePrefix,
                 data: data
             });
             self.infoboxService.initEvent($(options.selector));

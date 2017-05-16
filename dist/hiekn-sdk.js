@@ -26,7 +26,8 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
-                selector: options.selector
+                selector: options.selector,
+                imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
@@ -363,7 +364,8 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
-                selector: options.selector
+                selector: options.selector,
+                imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
@@ -531,7 +533,8 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
-                selector: options.selector
+                selector: options.selector,
+                imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
@@ -862,6 +865,7 @@
             self.infoboxService = new HieknInfoboxService({
                 baseUrl: options.baseUrl,
                 kgName: options.kgName,
+                imagePrefix: options.imagePrefix,
                 data: data
             });
             self.infoboxService.initEvent($(options.selector));

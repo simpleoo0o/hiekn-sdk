@@ -17,7 +17,8 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
-                selector: options.selector
+                selector: options.selector,
+                imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
