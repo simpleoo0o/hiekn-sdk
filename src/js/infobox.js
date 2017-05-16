@@ -95,7 +95,7 @@
                 if(data.self.img) {
                     var imgUlrl = data.self.img;
                     if(data.self.img.indexOf('http') != 0){
-                        imgUlrl = self.settings.imagePrefix + data.self.img;
+                        imgUlrl = self.settings.imagePrefix + data.self.img + '?_=' + Math.round(new Date() / 3600000);
                     }
                     $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-img"><img src="' + imgUlrl + '" alt=""></div>');
                 }

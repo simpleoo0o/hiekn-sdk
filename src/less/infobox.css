@@ -55,6 +55,7 @@
   top: 20px;
 }
 .hiekn-infobox-head .hiekn-infobox-img img {
+  padding: 0!important;
   width: 60px;
   height: 60px;
 }

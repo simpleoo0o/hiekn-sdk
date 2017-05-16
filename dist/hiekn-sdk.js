@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.4.6
+     *    v0.4.7
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -235,7 +235,7 @@
                 if(data.self.img) {
                     var imgUlrl = data.self.img;
                     if(data.self.img.indexOf('http') != 0){
-                        imgUlrl = self.settings.imagePrefix + data.self.img;
+                        imgUlrl = self.settings.imagePrefix + data.self.img + '?_=' + Math.round(new Date() / 3600000);
                     }
                     $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-img"><img src="' + imgUlrl + '" alt=""></div>');
                 }
@@ -887,6 +887,10 @@
             }
         };
 
+        Service.prototype.qiniuImg = function (img) {
+            return img + '?_=' + parseInt(new Date().getTime() / 3600000);
+        };
+
         Service.prototype.nodeStyleFunction = function (options) {
             var self = this;
             return function (node) {
@@ -920,7 +924,7 @@
                 }
                 if (node.data.img) {
                     if (node.data.img.indexOf('http') != 0 && options.imagePrefix) {
-                        node.image = options.imagePrefix + node.data.img;
+                        node.image = self.qiniuImg(options.imagePrefix + node.data.img);
                     } else {
                         node.image = node.data.img;
                     }
