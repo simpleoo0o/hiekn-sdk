@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.4.9
+     *    v0.4.10
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -38,6 +38,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
@@ -383,6 +384,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
@@ -558,6 +560,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
@@ -923,6 +926,21 @@
 
         Service.prototype.nodeStyleFunction = function (options) {
             var self = this;
+            if(options.enableAutoUpdateStyle){
+                setInterval(function () {
+                    if(self.centerNode){
+                        var radius = options.tgc2.netChart.getNodeDimensions(self.centerNode).radius;
+                        if (self.nodeRadius != radius) {
+                            var nodes = options.tgc2.netChart.nodes();
+                            var ids = [];
+                            for(var i in nodes){
+                                ids.push(nodes[i].id);
+                            }
+                            options.tgc2.netChart.updateStyle(ids);
+                        }
+                    }
+                }, 30);
+            }
             return function (node) {
                 options.tgc2.nodeStyleFunction(node);
                 node.imageCropping = 'fit';
@@ -973,6 +991,17 @@
                         } else {
                             node.image = options.images[node.data.classId].normal;
                         }
+                    }
+                }
+                var radius = options.tgc2.netChart.getNodeDimensions(node).radius;
+                if(options.enableAutoUpdateStyle) {
+                    if (radius < 15) {
+                        node.image = '';
+                        node.fillColor = node.lineColor;
+                    }
+                    if (options.tgc2.inStart(node.id)) {
+                        self.nodeRadius = radius;
+                        !self.centerNode && (self.centerNode = node);
                     }
                 }
             }
