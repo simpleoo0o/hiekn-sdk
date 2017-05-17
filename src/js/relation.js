@@ -86,6 +86,9 @@
                     },
                     legend:{
                         enable: true,
+                        style:{
+                            left:'390px'
+                        },
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema)
                     },

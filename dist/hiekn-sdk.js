@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.0
+     *    v0.5.2
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -441,6 +441,9 @@
                     },
                     legend:{
                         enable: true,
+                        style:{
+                           left:'390px'
+                        },
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema)
                     },
@@ -618,6 +621,9 @@
                     },
                     legend:{
                         enable: true,
+                        style:{
+                            left:'390px'
+                        },
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema)
                     },
