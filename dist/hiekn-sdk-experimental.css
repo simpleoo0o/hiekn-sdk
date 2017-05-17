@@ -1,12 +1,3 @@
-/**
-     * @author: 
-     *    jiangrun002
-     * @version: 
-     *    v0.4.11
-     * @license:
-     *    Copyright 2017, jiangrun. All rights reserved.
-     */
-
 .hiekn-infobox {
   font-size: 12px;
 }
@@ -30,7 +21,7 @@
 }
 .hiekn-infobox-title {
   font-size: 20px;
-  color: #333;
+  color: #333333;
   margin-bottom: 12px;
 }
 .hiekn-infobox-pars label,
@@ -53,8 +44,8 @@
 .hiekn-infobox-head {
   padding: 20px 100px 12px 20px;
   font-size: 14px;
-  color: #666;
-  border-bottom: 1px solid #eee;
+  color: #666666;
+  border-bottom: 1px solid #eeeeee;
   min-width: 300px;
   position: relative;
 }
@@ -74,10 +65,10 @@
 .hiekn-infobox-body table tr td {
   vertical-align: top;
   padding: 2px 0;
-  color: #666;
+  color: #666666;
 }
 .hiekn-infobox-body table tr td:first-child {
-  color: #333;
+  color: #333333;
   font-weight: bold;
   width: 90px;
 }
@@ -118,7 +109,7 @@
   border: 0 !important;
   border-bottom: 2px solid transparent !important;
   background: transparent !important;
-  color: #666;
+  color: #666666;
 }
 .hiekn-infobox-tab .hiekn-infobox-body .nav-tabs li.active a {
   border-bottom: 2px solid #00b38a !important;
@@ -132,7 +123,7 @@
 .hiekn-infobox-tab .hiekn-infobox-body .tab-pane li {
   margin: 0 8px;
   padding: 4px 0;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #dddddd;
 }
 .hiekn-infobox-tab .hiekn-infobox-body .tab-pane li:first-child {
   border: 0;
@@ -168,7 +159,6 @@
 .tgc2 .DVSL-Menu .hiekn-infobox-body .tab-pane li {
   padding: 4px 0;
 }
-
 ul.hiekn-search-prompt li {
   height: 30px;
   line-height: 30px;
@@ -177,7 +167,7 @@ ul.hiekn-search-prompt li .prompt-tip-type {
   margin-right: 16px;
   min-width: 60px;
   display: inline-block;
-  color: #999;
+  color: #999999;
   word-break: keep-all;
   white-space: nowrap;
   overflow: hidden;
@@ -186,7 +176,7 @@ ul.hiekn-search-prompt li .prompt-tip-type {
 ul.hiekn-search-prompt li .prompt-tip-title {
   display: inline-block;
   width: calc(100% - 80px);
-  color: #333;
+  color: #333333;
   word-break: keep-all;
   white-space: nowrap;
   overflow: hidden;
@@ -195,15 +185,14 @@ ul.hiekn-search-prompt li .prompt-tip-title {
 ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   font-weight: bold;
 }
-
 .tgc2 .DVSL-Menu {
-  background: #fff;
+  background: #ffffff;
   border-radius: 4px;
 }
 .tgc2 .DVSL-info-left,
 .tgc2 .DVSL-info-center,
 .tgc2 .DVSL-info-right {
-  background: #fff;
+  background: #ffffff;
   border-radius: 4px;
 }
 .tgc2 .DVSL-info-left .link-info > li,

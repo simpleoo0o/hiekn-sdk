@@ -21,12 +21,12 @@
     "gulp-less": "^3.1.0",
     "gulp-licenser": "^1.0.2",
     "gulp-plumber": "^1.1.0",
+    "gulp-replace": "^0.5.4",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
     "jsonfile": "^3.0.0",
     "main-bower-files": "^2.13.1"
   },
   "scripts": {},
-  "dependencies": {
-  }
+  "dependencies": {}
 }

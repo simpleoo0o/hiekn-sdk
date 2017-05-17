@@ -9,16 +9,18 @@ var cleanCss = require('gulp-clean-css');
 var concat = require('gulp-concat');
 var del = require('del');
 var mainBowerFiles = require('main-bower-files');
+var replace = require('gulp-replace');
 var license = require('gulp-licenser');
 var jsonfile = require('jsonfile');
 
 var lib = 'lib/';
 var src = 'src/';
 var dst = 'dist/';
-var jsFile = 'hiekn-sdk.min.js';
-var jsDevFile = 'hiekn-sdk.js';
-var cssFile = 'hiekn-sdk.min.css';
-var cssDevFile = 'hiekn-sdk.css';
+var jsFile = pkg.name + '.min.js';
+var jsDevFile = pkg.name + '.js';
+var cssFile = pkg.name + '.min.css';
+var cssDevFile = pkg.name + '.css';
+var lessDevFile = pkg.name + '-experimental.less';
 var LICENSE_TEMPLATE =
     '/**\n\
      * @author: \n\
@@ -47,6 +49,10 @@ gulp.task('concat-uglify-js', ['concat-js'], function () {
 
 gulp.task('clean-css', function (cb) {
     return del(src + '**/*.css', cb);
+});
+
+gulp.task('concat-less', function () {
+    return gulp.src(['' + src + 'define.less', src + '**/*.less']).pipe(concat(lessDevFile)).pipe(replace(/@import .*;/g, '')).pipe(gulp.dest(dst));
 });
 
 gulp.task('compile-less', ['clean-css'], function () {
@@ -102,7 +108,7 @@ gulp.task('build-bower-file', function () {
     jsonfile.writeFile('./bower.json', bowerFile);
 });
 
-gulp.task('build', ['build-bower-file', 'concat-uglify-js', 'minify-css'], function () {
+gulp.task('build', ['build-bower-file', 'concat-uglify-js', 'minify-css', 'concat-less'], function () {
     gulp.src([dst + '**/*.js', dst + '**/*.css'])
         .pipe(license(LICENSE_TEMPLATE))
         .pipe(gulp.dest(dst));
