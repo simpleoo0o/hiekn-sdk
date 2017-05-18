@@ -1,3 +1,4 @@
+/* define end */
 .control-bar {
   position: fixed;
   z-index: 3;
@@ -34,7 +35,7 @@
 }
 .nav .search {
   height: 56px;
-  border-top: 1px solid #dedede;
+  border-top: 1px solid #dddddd;
 }
 .nav .search #prompt {
   width: 100%;
@@ -49,7 +50,7 @@
   left: 0;
 }
 .nav .tree {
-  border-top: 1px solid #dedede;
+  border-top: 1px solid #dddddd;
   height: 100%;
   overflow: auto;
   color: #999999;
