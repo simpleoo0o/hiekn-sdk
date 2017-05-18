@@ -29,7 +29,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
-                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
@@ -66,7 +66,7 @@
                     find: {
                         enable: true
                     },
-                    legend:{
+                    legend: {
                         enable: true,
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema)
@@ -114,6 +114,13 @@
             self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
+            try{
+                self.tgc2TimeChart.$settingModal.find('.input-daterange').datepicker({
+                    format: 'yyyy-mm-dd'
+                });
+                self.tgc2TimeChart.$settingModal.find('.input-daterange').find('input').prop('type', 'text');
+            }catch (e){
+            }
         };
 
         Service.prototype.load = function (startInfo) {

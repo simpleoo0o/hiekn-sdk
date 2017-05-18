@@ -89,6 +89,12 @@ gulp.task('main-bower-file', function () {
                     'dist/tgc2.min.css',
                     'dist/tgc2.min.js'
                 ]
+            },
+            'bootstrap-datepicker': {
+                'main': [
+                    "dist/css/bootstrap-datepicker3.css",
+                    "dist/js/bootstrap-datepicker.min.js"
+                ]
             }
         }
     }))
