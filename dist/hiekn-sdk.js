@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.2
+     *    v0.5.3
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -440,7 +440,7 @@
                         enable: true
                     },
                     legend:{
-                        enable: true,
+                        enable: false,
                         style:{
                            left:'390px'
                         },
@@ -620,7 +620,7 @@
                         enable: true
                     },
                     legend:{
-                        enable: true,
+                        enable: false,
                         style:{
                             left:'390px'
                         },
@@ -935,14 +935,14 @@
 
         Service.prototype.nodeStyleFunction = function (options) {
             var self = this;
-            if(options.enableAutoUpdateStyle){
+            if (options.enableAutoUpdateStyle) {
                 setInterval(function () {
-                    if(self.centerNode){
+                    if (self.centerNode) {
                         var radius = options.tgc2.netChart.getNodeDimensions(self.centerNode).radius;
                         if (self.nodeRadius != radius) {
                             var nodes = options.tgc2.netChart.nodes();
                             var ids = [];
-                            for(var i in nodes){
+                            for (var i in nodes) {
                                 ids.push(nodes[i].id);
                             }
                             options.tgc2.netChart.updateStyle(ids);
@@ -1003,7 +1003,7 @@
                     }
                 }
                 var radius = options.tgc2.netChart.getNodeDimensions(node).radius;
-                if(options.enableAutoUpdateStyle) {
+                if (options.enableAutoUpdateStyle) {
                     if (radius < options.minRadius) {
                         node.image = '';
                         node.fillColor = node.lineColor;
@@ -1161,6 +1161,44 @@
             }
         };
 
+        Service.prototype.timing = function (options, schema) {
+            var self = this;
+            return function ($self, callback, failed) {
+                var param = options.data || {};
+                param.kgName = options.kgName;
+                param.id = options.tgc2.startInfo.id;
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
+                    $.extend(true, param, filters);
+                }
+                if (options.tgc2TimeChart) {
+                    var settings = options.tgc2TimeChart.getSettings();
+                    delete settings.type;
+                    $.extend(true, param, settings);
+                }
+                hieknjs.kgLoader({
+                    url: options.baseUrl + 'graph/timing',
+                    type: 1,
+                    params: param,
+                    success: function (response) {
+                        if (response && response.rsData && response.rsData.length) {
+                            var data = response.rsData[0];
+                            if (data) {
+                                data = self.dealGraphData(data, schema);
+                            }
+                            callback(data);
+                        } else {
+                            failed();
+                        }
+                    },
+                    error: function () {
+                        failed();
+                    },
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
+                });
+            }
+        };
+
         Service.prototype.relation = function (options, schema) {
             var self = this;
             return function (instance, callback, failed) {
@@ -1242,3 +1280,136 @@
         return Service;
     }
 })();
+
+(function (window, $) {
+    'use strict';
+
+    window.HieknTimingGraphService = gentService();
+
+    function gentService() {
+        var Service = function (options) {
+            var self = this;
+            self.isInit = false;
+            self.baseSettings = {
+                baseUrl: options.baseUrl,
+                data: options.data,
+                kgName: options.kgName
+            };
+            self.filterSettings = {
+                selectedAtts: options.selectedAtts,
+                selectedTypes: options.selectedTypes
+            };
+            self.infoboxSettings = {
+                selector: options.selector,
+                imagePrefix: options.imagePrefix
+            };
+            $.extend(true, self.infoboxSettings, self.baseSettings);
+            self.loaderSettings = {
+                selector: options.selector,
+                tgc2: null,
+                tgc2Filter: null,
+                tgc2TimeChart: null
+            };
+            $.extend(true, self.loaderSettings, self.baseSettings);
+            self.nodeSettings = {
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
+                imagePrefix: options.imagePrefix,
+                images: options.images,
+                nodeColors: options.nodeColors,
+                minRadius: options.minRadius || 10,
+                tgc2: null
+            };
+            self.promptSettings = self.baseSettings;
+            self.schemaSettings = self.baseSettings;
+            self.tgc2Settings = {};
+
+            self.sdkUtils = new window.HieknSDKService();
+            self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
+                var defaultOptions = {
+                    selector: options.selector,
+                    prompt: {
+                        enable: true,
+                        style: {
+                            left: '20px',
+                            top: '40px'
+                        },
+                        settings: {
+                            drawPromptItem: self.sdkUtils.drawPromptItem(schema),
+                            onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
+                        }
+                    },
+                    filter: {
+                        enable: true,
+                        filters: filters
+                    },
+                    crumb: {
+                        enable: true
+                    },
+                    find: {
+                        enable: true
+                    },
+                    legend:{
+                        enable: true,
+                        data: options.nodeColors || [],
+                        onDraw: self.sdkUtils.legend(schema)
+                    },
+                    timeChart: {
+                        enable: true,
+                        style: {
+                            left: '200px',
+                            right: '20px'
+                        }
+                    },
+                    netChart: {
+                        settings: {
+                            nodeMenu: {
+                                contentsFunction: self.sdkUtils.infobox()
+                            },
+                            style: {
+                                nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
+                            },
+                            info: {
+                                linkContentsFunction: self.sdkUtils.linkContentsFunction
+                            }
+                        }
+                    },
+                    loader: self.sdkUtils.timing(self.loaderSettings, schema)
+                };
+                self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
+                self.sdkUtils.gentInfobox(self.infoboxSettings);
+                self.init();
+            });
+        };
+
+        Service.prototype.init = function () {
+            var self = this;
+            self.tgc2 = new Tgc2Graph(self.tgc2Settings);
+            self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
+            self.tgc2TimeChart = new Tgc2TimeChart(self.tgc2, self.tgc2Settings.timeChart);
+            self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.tgc2Settings.prompt);
+            self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
+            self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);
+            self.tgc2Legend = new Tgc2Legend(self.tgc2, self.tgc2Settings.legend);
+            self.loaderSettings.tgc2 = self.tgc2;
+            self.loaderSettings.tgc2Filter = self.tgc2Filter;
+            self.loaderSettings.tgc2TimeChart = self.tgc2TimeChart;
+            self.nodeSettings.tgc2 = self.tgc2;
+            self.tgc2.init();
+            self.isInit = true;
+        };
+
+        Service.prototype.load = function (startInfo) {
+            var self = this;
+            setTimeout(function () {
+                if (self.isInit) {
+                    self.tgc2.load(startInfo);
+                } else {
+                    self.load(startInfo);
+                }
+            }, 30);
+        };
+
+        return Service;
+    }
+})(window, jQuery);

@@ -85,7 +85,7 @@
                         enable: true
                     },
                     legend:{
-                        enable: true,
+                        enable: false,
                         style:{
                             left:'390px'
                         },

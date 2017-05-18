@@ -258,14 +258,14 @@
 
         Service.prototype.nodeStyleFunction = function (options) {
             var self = this;
-            if(options.enableAutoUpdateStyle){
+            if (options.enableAutoUpdateStyle) {
                 setInterval(function () {
-                    if(self.centerNode){
+                    if (self.centerNode) {
                         var radius = options.tgc2.netChart.getNodeDimensions(self.centerNode).radius;
                         if (self.nodeRadius != radius) {
                             var nodes = options.tgc2.netChart.nodes();
                             var ids = [];
-                            for(var i in nodes){
+                            for (var i in nodes) {
                                 ids.push(nodes[i].id);
                             }
                             options.tgc2.netChart.updateStyle(ids);
@@ -326,7 +326,7 @@
                     }
                 }
                 var radius = options.tgc2.netChart.getNodeDimensions(node).radius;
-                if(options.enableAutoUpdateStyle) {
+                if (options.enableAutoUpdateStyle) {
                     if (radius < options.minRadius) {
                         node.image = '';
                         node.fillColor = node.lineColor;
@@ -463,6 +463,44 @@
                 }
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'graph',
+                    type: 1,
+                    params: param,
+                    success: function (response) {
+                        if (response && response.rsData && response.rsData.length) {
+                            var data = response.rsData[0];
+                            if (data) {
+                                data = self.dealGraphData(data, schema);
+                            }
+                            callback(data);
+                        } else {
+                            failed();
+                        }
+                    },
+                    error: function () {
+                        failed();
+                    },
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
+                });
+            }
+        };
+
+        Service.prototype.timing = function (options, schema) {
+            var self = this;
+            return function ($self, callback, failed) {
+                var param = options.data || {};
+                param.kgName = options.kgName;
+                param.id = options.tgc2.startInfo.id;
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
+                    $.extend(true, param, filters);
+                }
+                if (options.tgc2TimeChart) {
+                    var settings = options.tgc2TimeChart.getSettings();
+                    delete settings.type;
+                    $.extend(true, param, settings);
+                }
+                hieknjs.kgLoader({
+                    url: options.baseUrl + 'graph/timing',
                     type: 1,
                     params: param,
                     success: function (response) {
