@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.3
+     *    v0.5.4
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
