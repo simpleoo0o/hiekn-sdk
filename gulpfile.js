@@ -95,6 +95,12 @@ gulp.task('main-bower-file', function () {
                     "dist/css/bootstrap-datepicker3.css",
                     "dist/js/bootstrap-datepicker.min.js"
                 ]
+            },
+            'ztree': {
+                'main': [
+                    "css/zTreeStyle/*",
+                    "js/jquery.ztree.all-3.5.min.js"
+                ]
             }
         }
     }))

@@ -1,3 +1,243 @@
+
+
+@-webkit-keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+.ztree.hiekn-concept-tree {
+  padding: 0;
+  position: relative;
+  * {
+    font-family: @default-font;
+  }
+  li {
+    a {
+      height: 30px;
+      line-height: 30px;
+      position: absolute;
+      width: 100%;
+      left: 0;
+      z-index: 1;
+      .line-hidden();
+      span.node_name {
+        white-space: nowrap;
+        color: @color-ac-02;
+        input {
+          height: 30px;
+          width: 90%;
+          border-radius: 4px;
+          border: 1px solid @color-ac-04;
+          color: @color-primary;
+          padding-left: 8px;
+        }
+      }
+      span.button-container {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        margin-top: -13px;
+        padding: 4px 6px;
+        span {
+          height: 18px;
+          width: 18px;
+          background: @color-primary;
+          border-radius: 3px;
+          float: right;
+          margin: 0 0 0 4px;
+          &:hover {
+            background: @color-primary-00;
+          }
+          &.tree-button-active {
+            background: @color-primary-00;
+          }
+          svg {
+            vertical-align: 4px;
+            fill: @color-light;
+          }
+        }
+      }
+    }
+    ul {
+      padding-left: 10px;
+    }
+    span.button {
+      height: 30px;
+      background: none;
+      display: inline-block;
+      font: normal normal normal 12px/30px FontAwesome;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-align: center;
+      color: @color-ac-02;
+      position: relative;
+      z-index: 2;
+      margin-left: 8px;
+      &.ico_open, &.ico_close, &.ico_docu, &.ico_loading {
+        width: 18px !important;
+        height: 30px !important;
+        margin-left: -18px;
+      }
+      &.ico_open:before {
+        content: "\f0d7";
+      }
+      &.ico_close:before {
+        content: "\f0da";
+      }
+      &.ico_loading {
+        font-size: 16px;
+        -webkit-animation: fa-spin 2s infinite linear;
+        animation: fa-spin 2s infinite linear;
+        &:before{
+          content: "\f110";
+        }
+      }
+    }
+  }
+  & > li {
+    & > span.switch {
+      width: 1px;
+      visibility: hidden;
+      height: 50px;
+    }
+    & > a > span:first-child {
+      opacity: 0;
+    }
+    span.switch:hover + a:not(.curSelectedNode), a:hover {
+      background: @color-primary-04;
+      span.button-container {
+        background: transparent;
+      }
+    }
+    a {
+      padding-right: 30px;
+      text-decoration: none;
+      &.curSelectedNode, &.tmpTargetNode_inner {
+        background: @color-primary;
+        opacity: 1;
+        border: 0;
+        span:before {
+          color: @color-light;
+        }
+        span.node_name {
+          color: @color-light;
+        }
+        span.button-container {
+          span {
+            background: @color-light;
+            svg {
+              fill: @color-primary;
+            }
+          }
+        }
+      }
+    }
+    & > a {
+      padding-left: 10px;
+      border-bottom: 1px solid @color-ac-05;
+      height: 50px;
+      line-height: 50px;
+      span {
+        font-size: 16px;
+        color: @color-ac-01;
+      }
+      span.button-container {
+        margin-top: -12px;
+        span {
+          height: 20px;
+          width: 20px;
+          svg {
+            width: 14px;
+            height: 14px;
+            vertical-align: 2px;
+          }
+        }
+      }
+    }
+    & > ul > li {
+      & > a {
+        padding-left: 30px;
+      }
+      & > ul > li {
+        & > a {
+          padding-left: 40px;
+        }
+        & > ul > li {
+          & > a {
+            padding-left: 50px;
+          }
+          & > ul > li {
+            & > a {
+              padding-left: 60px;
+            }
+            & > ul > li {
+              & > a {
+                padding-left: 70px;
+              }
+              & > ul > li {
+                & > a {
+                  padding-left: 80px;
+                }
+                & > ul > li {
+                  & > a {
+                    padding-left: 90px;
+                  }
+                  & > ul > li {
+                    & > a {
+                      padding-left: 100px;
+                    }
+                    & > ul > li {
+                      & > a {
+                        padding-left: 110px;
+                      }
+                      & > ul > li {
+                        & > a {
+                          padding-left: 120px;
+                        }
+                        & > ul > li {
+                          & > a {
+                            padding-left: 130px;
+                          }
+                          & > ul > li {
+                            & > a {
+                              padding-left: 140px;
+                            }
+                            & > ul > li {
+                              & > a {
+                                padding-left: 150px;
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 @color-primary-00: #00a17c;
 @color-primary-01: #00b38a;
 @color-primary-02: #4ccaad;
