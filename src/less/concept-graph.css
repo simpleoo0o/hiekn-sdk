@@ -1,0 +1,53 @@
+/* define end */
+.tgc2.tgc2-concept-graph {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', Roboto, Helvetica Neue, sans-serif;
+}
+.tgc2.tgc2-concept-graph .prompt {
+  border: 0;
+  background: #f5f5f5;
+  width: 150px;
+}
+.tgc2.tgc2-concept-graph .prompt input {
+  background: transparent;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-bottom {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  bottom: 20px;
+  padding: 0 16px;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-bottom .info-bottom span[name] {
+  color: #faa01b;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-top {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  padding: 8px 16px;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-top li {
+  line-height: 30px;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-top li i {
+  margin-right: 8px;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-top .current i {
+  color: #faa01b;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-top .concept i {
+  color: #00b38a;
+}
+.tgc2.tgc2-concept-graph .tgc2-info-top .instance i {
+  color: #00b38a;
+}
+.tgc2.tgc2-concept-graph .tgc2-page-container button svg {
+  fill: #00b38a;
+}
+.tgc2.tgc2-concept-graph .tgc2-page-container button:hover svg {
+  fill: #fff;
+}
+.tgc2.tgc2-concept-graph .tgc2-right-panels {
+  width: 0;
+}
