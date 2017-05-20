@@ -1,12 +1,209 @@
-/**
-     * @author: 
-     *    jiangrun002
-     * @version: 
-     *    v0.5.6
-     * @license:
-     *    Copyright 2017, jiangrun. All rights reserved.
-     */
+(function (window, $) {
+    'use strict';
 
+    window.HieknConceptGraphService = gentService();
+
+    function gentService() {
+        var Service = function (options) {
+            var self = this;
+            self.sdkUtils = new window.HieknSDKService();
+            self.defaultPromptSettings = {
+                baseUrl: options.baseUrl,
+                data: options.data,
+                kgName: options.kgName
+            };
+            self.promptSettings = $.extend(true, {}, self.defaultPromptSettings, options.promptSettings || {});
+            self.defaultOptions = {
+                lightColor: '#fff',
+                primaryColor: '#00b38a',
+                primaryLightColor: 'rgba(0,179,138,0.3)',
+                emphasesColor: '#faa01b',
+                emphasesLightColor: 'rgba(250, 160, 27,0.3)',
+                kgName: null,
+                baseUrl: null,
+                data: {},
+                instanceEnable: false,
+                tgc2Settings: {
+                    selector: null,
+                    netChart: {
+                        settings: {
+                            toolbar: {
+                                enabled: false
+                            },
+                            info: {
+                                enabled: false
+                            },
+                            nodeMenu: {},
+                            style: {
+                                selection: {
+                                    enabled: false,
+                                    fillColor: ''
+                                },
+                                nodeStyleFunction: function (node) {
+                                    self.nodeStyleFunction(node);
+                                },
+                                nodeHovered: {
+                                    shadowBlur: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0)'
+                                },
+                                linkStyleFunction: function (link) {
+                                    if (link.hovered) {
+                                        link.label = link.data.attName;
+                                    }
+                                    link.toDecoration = 'arrow';
+                                    link.fillColor = '#ddd';
+                                },
+                                linkLabel: {
+                                    textStyle: {
+                                        fillColor: '#999'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    prompt: {
+                        style: {
+                            top: '10px',
+                            right: '10px',
+                            left: 'auto',
+                            bottom: 'auto'
+                        },
+                        enable: true,
+                        settings: {
+                            onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
+                        }
+                    },
+                    page: {
+                        style: {
+                            right: '10px',
+                            bottom: '20px'
+                        },
+                        enable: true,
+                        pageSize: 20
+                    },
+                    loader: function (instance, callback, onFailed) {
+                        self.loader(instance, callback, onFailed);
+                    }
+                }
+            };
+            self.options = $.extend(true, {}, self.defaultOptions, options);
+            self.options.tgc2Settings.selector = self.options.tgc2Settings.selector || self.options.selector;
+            self.tgc2 = null;
+            self.tgc2Prompt = null;
+            self.tgc2Page = null;
+            self.init();
+        };
+
+        Service.prototype.init = function () {
+            var self = this;
+            self.tgc2 = new Tgc2Graph(self.options.tgc2Settings);
+            self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.options.tgc2Settings.prompt);
+            self.tgc2Page = new Tgc2Page(self.tgc2, self.options.tgc2Settings.page);
+            self.tgc2.init();
+            $(self.options.tgc2Settings.selector).addClass('tgc2 tgc2-concept-graph');
+            console.log(self.options);
+            if(self.options.instanceEnable){
+                $(self.options.tgc2Settings.selector).append('<div class="tgc2-info-top">' +
+                    '<ul class="info-top">' +
+                    '<li class="current"><i class="fa fa-circle" style="color:' + self.options.emphasesColor + '"></i><span>当前节点</span></li>' +
+                    '<li class="concept"><i class="fa fa-circle" style="color:' + self.options.primaryColor + '"></i><span>概念</span></li>' +
+                    '<li class="instance"><i class="fa fa-circle-o" style="color:' + self.options.primaryColor + '"></i><span>实例</span></li>' +
+                    '</ul>' +
+                    '</div>');
+            }
+            $(self.options.tgc2Settings.selector).append('<div class="tgc2-info-bottom">' +
+                '<div class="info-bottom"><span>中心节点：</span><span name="name" style="color:' + self.options.emphasesColor + '"></span></div>' +
+                '</div>');
+        };
+
+        Service.prototype.load = function (node) {
+            var self = this;
+            self.kgName = self.options.kgName;
+            self.tgc2.load(node);
+            setTimeout(function () {
+                self.tgc2.resize();
+            }, 300);
+        };
+
+        Service.prototype.loader = function (instance, callback, onFailed) {
+            var self = this;
+            var node = self.tgc2.startInfo;
+            var page = self.tgc2Page.page;
+            var param = self.options.data || {};
+            param.type = node.kgType || 0;
+            param.pageNo = page.pageNo;
+            param.pageSize = page.pageSize;
+            param.kgName = self.options.kgName;
+            param.entityId = node.id;
+            hieknjs.kgLoader({
+                url: self.options.baseUrl + 'graph/knowlegde?' + $.param(param),
+                type: 0,
+                that: $(self.options.tgc2Settings.selector)[0],
+                success: function (data) {
+                    if (data && data.rsData && data.rsData.length) {
+                        data = data.rsData[0];
+                        if (data.entityList && data.entityList.length) {
+                            for (var i in data.entityList) {
+                                var d = data.entityList[i];
+                                if (d.id == node.id) {
+                                    $(self.options.tgc2Settings.selector).find('.tgc2-info-bottom').find('[name="name"]').text(d.name);
+                                }
+                            }
+                        }
+                        data.nodes = data.entityList;
+                        data.links = data.relationList;
+                        delete data.entityList;
+                        delete data.relationList;
+                        callback(data);
+                        instance.netChart.resetLayout();
+                    } else {
+                        onFailed && onFailed();
+                        instance.netChart.replaceData({nodes: [], links: []});
+                    }
+                },
+                error: function () {
+                    onFailed && onFailed();
+                    toastr.error('网络接口错误！');
+                }
+            });
+        };
+
+        Service.prototype.nodeStyleFunction = function (node) {
+            var self = this;
+            var centerNode = self.tgc2.startInfo;
+            node.label = node.data.name;
+            node.labelStyle.textStyle.font = '18px Microsoft Yahei';
+            node.aura = node.data.auras;
+            node.radius = 15;
+            node.imageCropping = 'fit';
+            var isCenter = (node.id == centerNode.id);
+            if (node.data.kgType == 0) {
+                node.lineWidth = 10;
+                node.lineColor = self.options.primaryLightColor;
+                node.fillColor = self.options.primaryColor;
+                node.image = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjhENzQwNUZFMTVFQjExRTc4QTJDOTY3REE4RkM4MjFCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjhENzQwNUZGMTVFQjExRTc4QTJDOTY3REE4RkM4MjFCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6OEQ3NDA1RkMxNUVCMTFFNzhBMkM5NjdEQThGQzgyMUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OEQ3NDA1RkQxNUVCMTFFNzhBMkM5NjdEQThGQzgyMUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7rBsIlAAAFUklEQVR42uydX05TURDGp5V3ygq8JJJINIGugLICy4PySF0BdQGGsgLqCixviibCCrisgJLoEybUFUjfNfVM7iESUyi1vXNmzvm+ZCJg0p5753fmzPlfGY1GBKWrCgAAAHgLAAACABAAgAAABAAgAAABAAgAxKDM2Zqzdf8zW83/Pk59Z9fOBt749wv/MwAwIHbuC2cNb9mcPpcByL2deEgAgCLtOGt6k9Cxt0MAELa27zpr+59DiCNB19k7q1HBIgDs7D1nrYCOHwdCz9m+NRCsAcA1vqPI8eNA6PiIAADmKM7a39+TvWsT9x5e+38BwIza87XKotrao4FmADjMf/HdOcviruOW1txAKwDWQr7ZJkEjAOz0U8WJ3iwJ4qY2CLQBEKvz1UKgCYDYna8SAi0ApOL82xDUScEkkwYAat7565SW+j4SXKcOAGf7LUpTPd87SBYAHig5oLT1hooJpeQAyJydJ9Tuq8wHQgLAo3xNgli8tmArJQCaHgDor7Y8CEkAcEXzW64Vi7gJWJb+0mqAB23B+XfmRK0UIgBqv6IoIA1Ag4pBH+hu8eBQHmsT0IJ/db0jyQhQ8+G/Bh9PHBdYJqEhYskI0ITzH1xRGjE2ARIPdeTsubMFjm4l2IL//COByhJdE1B29v/Z2UtBoD86e2W9NyAFAE/1npf8HVwzvwkC8MzZ1xI/f5kE5gekmgCJfv+lcFt9KVBposkBJB5mRRiAFQCg62H2hAF4CwCm69qULU4APzhbdfaoxPe16r9nO4J3JpYE5s42FPW1K/f8n5Zl0mcSXWcpALTtPrEAAI8ELgGAdAGYVE4AAAAAAAAw0gs4I0jlO6viPactAKBXUa0HyOHPqdWPCYAB/Jk2AH34U2elkVwQwm3aIrqBD9KQhOYCJJNA5AEPl9gWsWqMDxWBxCqLZBOQUbEuEE3AZC1RhMvCOanBiOBkid5HID0Q1IV/J6onGgoDbA7lSPAYTcBY/SDhjbPV2Ak3JvEIGSICcP+2HzgK8A6f32P+zmsJfwWs/eskfGxciAhwc6lCSD2d8u8S6lCAMwNDHhIVMhf4ROO3dUms9h2nCwp0UGZIACS2i90n3tvHd/x8d/aEin0F24HKUqdA8yWhD4rskPyGDm3aD9kkajgqlslfS9T5Imv/tQOQeQgWE3P+0DeDg9QBuMkH8oQgGPqaH3ydhKYLI1I6PTTIqaDaAWC1qDg+Pmbx8fA9LYXReGkUQ9CNsDngsN8mZUPhmq+NiyknUNPmWwEgJgjUOl87AERxHC1bJ8Wroi3cHcxt5o5R5x+S8uNxLQAQes5gFokc9RY7AEQ6VhFNK/HVPf8jK5tDBwZrv4kyY3dw4gIAAAACAFAZugYA81NuEIA+AEjsZVoss5VxAGtjAcFW+cYMgKURwTqhCSglpPJiiqHiMg59Gc00WZYiwO1IwAtGNpSVi1f4tq3lKxYBuFFGxXRxpiA3ycnoSWiWAYAAAAQAIAAApdENvC0+ZII3lfKpY6PA9tPZARm9F9liBOAXfUr6Rtq4+7dJRiaBLAPAYwC7SsumfhFoDACUfQn1LBK56St1ALQXuAIAym9rtR4oYWIlsPVeQBdlwziAxkTQXAJoGQBWg4pDJUJ3BwdUbF/LMQ4AAQAIAEAAAAIAYcXZ+MYc++Q8wnfsM30AoFw5lbde0OSET0oASIwPmOzvpwKA1MNUYnlhMW0OlRwQaiACpB0BxO71QwSYTicC33GGJFCvyr6QSsUR7wBgMgQd306vzdHxPA7Qjqn2xwoABAAgAAABAAgAQAAAAgAQAIAAAAQAoH/1R4ABAHF3K+2bw1JCAAAAAElFTkSuQmCC';
+                if (isCenter) {
+                    node.fillColor = self.options.emphasesColor;
+                    node.lineColor = self.options.emphasesLightColor;
+                }
+            } else {
+                node.lineWidth = 2;
+                node.lineColor = self.options.primaryColor;
+                node.fillColor = self.options.lightColor;
+                node.image = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjA3RUVGNzVBMTVFQzExRTdBM0FERjI5RjczQUM4N0QyIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjA3RUVGNzVCMTVFQzExRTdBM0FERjI5RjczQUM4N0QyIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDdFRUY3NTgxNUVDMTFFN0EzQURGMjlGNzNBQzg3RDIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDdFRUY3NTkxNUVDMTFFN0EzQURGMjlGNzNBQzg3RDIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5z4BZ4AAADHUlEQVR42uzbTU4UQRyG8QYMbLyBK1mKiR8L3RsXfnABWeugO7mIrkwEcc0FJGFhOIExaohLogtvIDGQCP47NAkboGeYwuqu35O8mYR0MdNTz1Qq1XknDg4OKpTLBAEI4FsgAAgAAoAAIAAIAAKAACAACAACgAAgAAgAAoAAIAAIAAKAACAACAACnMTKysq1eHkaeRi52vx5O7IRWY18L3kCBoNBPwWIiZ+Ol1eRF5HJEy7bj7yLLEX+DPkW9f9/HnkSuR653DM3fke2ImuRtyHKXmcEaCZ/PXK/5ZDNZoVoe5NXIh8iNwtZKL5E5kOCX+P+x5OJPvDrISa/5l6zWrT95Zc0+VVzr+vxw5rJXoD4kHPxsjjC0Ho5n2tx3WJhk3/EjXrL0IUVoN7wTY0wbqoZexYLBe8ZF7ogwIPEY28XLMCtLggwm3jsdMECzHRBgPOwV+FCSSHA9jnG/iTJmWcD2QuwcY6xH1tc87lgAba6IMD7yN8RxtVjVltct1awAGvZCzAYDGpLl0cYutzS8Pq6rwVO/rcRv9f/sglcarmcH7HZjGnDbuRxdXg8Wgq18I/ix7XbCQGaBxf1JL2pDh/4nMR+Y/X8kJu7+kz8buRl5FNkp4eTvtPcW32Pd1I8B6i5iMfB9fHus+rwkGe2megfzQqxmmJj0yV6+zh4CEEqAvTrHAAdggAEAAFAABAABAABQAAQAAQAAUAA9JtLqd9AOzhvtIPzRTv4FLSDM98DaAePF+3gY2gHZ74CaAenQzu40g7OXgDt4HRoByN/AbSD054NZC+AdnA6tIMr7eC8BdAOToZ2cIN2cO4CaAePBe3gEtAO1g7u3TkAOgQBCAACgAAgAAgAAoAAIAAIAAKAAOg32sGFox2cL9rBp6AdnPkeQDt4vGgHH0M7OPMVQDs4HdrBlXZw9gJoB6dDOxj5C6AdnPZsIHsBtIPToR1caQfnLYB2cDK0gxu0g3MXQDt4LGgHl0Dx7WBUBAABQAAQAAQAAUAAEAAEAAFAABAABAABQAAQAAQAAUAAEAAEAAFAABAABAABMCT/BBgA8SDQyY7AsYEAAAAASUVORK5CYII=';
+                if (isCenter) {
+                    node.fillColor = self.options.lightColor;
+                    node.lineColor = self.options.emphasesColor;
+                }
+            }
+            if (node.hovered) {
+                node.radius = node.radius * 1.25;
+            }
+        };
+
+        return Service;
+    }
+})(window, jQuery);
 (function (window, $) {
     'use strict';
 
@@ -240,6 +437,612 @@
         return Service;
     }
 })(window, jQuery);
+(function () {
+
+    window.HieknSDKService = gentService();
+
+    function gentService() {
+        var Service = function () {
+            this.colorList = {
+                'aliceblue': '#f0f8ff',
+                'antiquewhite': '#faebd7',
+                'aqua': '#00ffff',
+                'aquamarine': '#7fffd4',
+                'azure': '#f0ffff',
+                'beige': '#f5f5dc',
+                'bisque': '#ffe4c4',
+                'black': '#000000',
+                'blanchedalmond': '#ffebcd',
+                'blue': '#0000ff',
+                'blueviolet': '#8a2be2',
+                'brown': '#a52a2a',
+                'burlywood': '#deb887',
+                'cadetblue': '#5f9ea0',
+                'chartreuse': '#7fff00',
+                'chocolate': '#d2691e',
+                'coral': '#ff7f50',
+                'cornflowerblue': '#6495ed',
+                'cornsilk': '#fff8dc',
+                'crimson': '#dc143c',
+                'cyan': '#00ffff',
+                'darkblue': '#00008b',
+                'darkcyan': '#008b8b',
+                'darkgoldenrod': '#b8860b',
+                'darkgray': '#a9a9a9',
+                'darkgrey': '#a9a9a9',
+                'darkgreen': '#006400',
+                'darkkhaki': '#bdb76b',
+                'darkmagenta': '#8b008b',
+                'darkolivegreen': '#556b2f',
+                'darkorange': '#ff8c00',
+                'darkorchid': '#9932cc',
+                'darkred': '#8b0000',
+                'darksalmon': '#e9967a',
+                'darkseagreen': '#8fbc8f',
+                'darkslateblue': '#483d8b',
+                'darkslategray': '#2f4f4f',
+                'darkslategrey': '#2f4f4f',
+                'darkturquoise': '#00ced1',
+                'darkviolet': '#9400d3',
+                'deeppink': '#ff1493',
+                'deepskyblue': '#00bfff',
+                'dimgray': '#696969',
+                'dimgrey': '#696969',
+                'dodgerblue': '#1e90ff',
+                'firebrick': '#b22222',
+                'floralwhite': '#fffaf0',
+                'forestgreen': '#228b22',
+                'fuchsia': '#ff00ff',
+                'gainsboro': '#dcdcdc',
+                'ghostwhite': '#f8f8ff',
+                'gold': '#ffd700',
+                'goldenrod': '#daa520',
+                'gray': '#808080',
+                'grey': '#808080',
+                'green': '#008000',
+                'greenyellow': '#adff2f',
+                'honeydew': '#f0fff0',
+                'hotpink': '#ff69b4',
+                'indianred': '#cd5c5c',
+                'indigo': '#4b0082',
+                'ivory': '#fffff0',
+                'khaki': '#f0e68c',
+                'lavender': '#e6e6fa',
+                'lavenderblush': '#fff0f5',
+                'lawngreen': '#7cfc00',
+                'lemonchiffon': '#fffacd',
+                'lightblue': '#add8e6',
+                'lightcoral': '#f08080',
+                'lightcyan': '#e0ffff',
+                'lightgoldenrodyellow': '#fafad2',
+                'lightgray': '#d3d3d3',
+                'lightgrey': '#d3d3d3',
+                'lightgreen': '#90ee90',
+                'lightpink': '#ffb6c1',
+                'lightsalmon': '#ffa07a',
+                'lightseagreen': '#20b2aa',
+                'lightskyblue': '#87cefa',
+                'lightslategray': '#778899',
+                'lightslategrey': '#778899',
+                'lightsteelblue': '#b0c4de',
+                'lightyellow': '#ffffe0',
+                'lime': '#00ff00',
+                'limegreen': '#32cd32',
+                'linen': '#faf0e6',
+                'magenta': '#ff00ff',
+                'maroon': '#800000',
+                'mediumaquamarine': '#66cdaa',
+                'mediumblue': '#0000cd',
+                'mediumorchid': '#ba55d3',
+                'mediumpurple': '#9370d8',
+                'mediumseagreen': '#3cb371',
+                'mediumslateblue': '#7b68ee',
+                'mediumspringgreen': '#00fa9a',
+                'mediumturquoise': '#48d1cc',
+                'mediumvioletred': '#c71585',
+                'midnightblue': '#191970',
+                'mintcream': '#f5fffa',
+                'mistyrose': '#ffe4e1',
+                'moccasin': '#ffe4b5',
+                'navajowhite': '#ffdead',
+                'navy': '#000080',
+                'oldlace': '#fdf5e6',
+                'olive': '#808000',
+                'olivedrab': '#6b8e23',
+                'orange': '#ffa500',
+                'orangered': '#ff4500',
+                'orchid': '#da70d6',
+                'palegoldenrod': '#eee8aa',
+                'palegreen': '#98fb98',
+                'paleturquoise': '#afeeee',
+                'palevioletred': '#d87093',
+                'papayawhip': '#ffefd5',
+                'peachpuff': '#ffdab9',
+                'peru': '#cd853f',
+                'pink': '#ffc0cb',
+                'plum': '#dda0dd',
+                'powderblue': '#b0e0e6',
+                'purple': '#800080',
+                'rebeccapurple': '#663399',
+                'red': '#ff0000',
+                'rosybrown': '#bc8f8f',
+                'royalblue': '#4169e1',
+                'saddlebrown': '#8b4513',
+                'salmon': '#fa8072',
+                'sandybrown': '#f4a460',
+                'seagreen': '#2e8b57',
+                'seashell': '#fff5ee',
+                'sienna': '#a0522d',
+                'silver': '#c0c0c0',
+                'skyblue': '#87ceeb',
+                'slateblue': '#6a5acd',
+                'slategray': '#708090',
+                'slategrey': '#708090',
+                'snow': '#fffafa',
+                'springgreen': '#00ff7f',
+                'steelblue': '#4682b4',
+                'tan': '#d2b48c',
+                'teal': '#008080',
+                'thistle': '#d8bfd8',
+                'tomato': '#ff6347',
+                'turquoise': '#40e0d0',
+                'violet': '#ee82ee',
+                'wheat': '#f5deb3',
+                'white': '#ffffff',
+                'whitesmoke': '#f5f5f5',
+                'yellow': '#ffff00',
+                'yellowgreen': '#9acd32'
+            };
+        };
+
+        Service.prototype.drawPromptItem = function (schema) {
+            var self = this;
+            var typeObj = {};
+            for (var i in schema.types) {
+                var type = schema.types[i];
+                typeObj[type.k] = type.v;
+            }
+            return function (data, pre) {
+                var line = '<span class="prompt-tip-title">' + data.name.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
+                line = '<span class="prompt-tip-type prompt-tip-' + data.classId + '">' + (data.className || typeObj[data.classId] || '') + '</span>' + line;
+                return line;
+            }
+        };
+
+        Service.prototype.onPrompt = function (options) {
+            var self = this;
+            return function (pre, $self) {
+                var param = options.data || {};
+                param.kgName = options.kgName;
+                param.kw = pre;
+                hieknjs.kgLoader({
+                    url: options.url ? options.url : (options.baseUrl + 'prompt'),
+                    params: param,
+                    type: 1,
+                    success: function (data) {
+                        if ($self.prompt == param.kw) {
+                            var d = data.rsData;
+                            options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
+                            $self.startDrawPromptItems(d, pre);
+                        }
+                    }
+                });
+            }
+        };
+
+        Service.prototype.schema = function (options, callback) {
+            var self = this;
+            var param = options.data || {};
+            param.kgName = options.kgName;
+            hieknjs.kgLoader({
+                url: options.baseUrl + 'schema',
+                type: 1,
+                params: param,
+                success: function (response) {
+                    if (response && response.rsData && response.rsData.length) {
+                        var data = response.rsData[0];
+                        callback(data);
+                    }
+                },
+                error: function () {
+                    toastr.error('网络接口错误！');
+                }
+            });
+        };
+
+        Service.prototype.gentInfobox = function (options) {
+            var self = this;
+            var data = options.data || {};
+            data.isRelationAtts = true;
+            self.infoboxService = new HieknInfoboxService({
+                baseUrl: options.baseUrl,
+                kgName: options.kgName,
+                imagePrefix: options.imagePrefix,
+                data: data
+            });
+            self.infoboxService.initEvent($(options.selector));
+        };
+
+        Service.prototype.infobox = function () {
+            var self = this;
+            return function (data, node, callback) {
+                if (node.detail) {
+                    callback(node.detail);
+                } else {
+                    self.infoboxService.load(data.id, function (data) {
+                        data = self.infoboxService.buildInfobox(data)[0].outerHTML;
+                        node.detail = data;
+                        callback(data);
+                    });
+                }
+                return null;
+            }
+        };
+
+        Service.prototype.legend = function (schema) {
+            var self = this;
+            var typeObj = {};
+            for (var i in schema.types) {
+                var type = schema.types[i];
+                typeObj[type.k] = type.v;
+            }
+            return function (key, value) {
+                return '<div class="tgc2-legend-item tgc2-legend-item-' + key + '"><i style="background: ' + value + '"></i><span>' + typeObj[key] + '</span></div>';
+            }
+        };
+
+        Service.prototype.qiniuImg = function (img) {
+            return img + '?_=' + parseInt(new Date().getTime() / 3600000);
+        };
+
+        Service.prototype.nodeStyleFunction = function (options) {
+            var self = this;
+            if (options.enableAutoUpdateStyle) {
+                setInterval(function () {
+                    if (self.centerNode) {
+                        var radius = options.tgc2.netChart.getNodeDimensions(self.centerNode).radius;
+                        if (self.nodeRadius != radius) {
+                            var nodes = options.tgc2.netChart.nodes();
+                            var ids = [];
+                            for (var i in nodes) {
+                                ids.push(nodes[i].id);
+                            }
+                            options.tgc2.netChart.updateStyle(ids);
+                        }
+                    }
+                }, 30);
+            }
+            return function (node) {
+                options.tgc2.nodeStyleFunction(node);
+                node.imageCropping = 'fit';
+                if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                    node.fillColor = options.tgc2.settings.netChart.reduceColor;
+                    node.lineColor = node.fillColor;
+                    node.label = '';
+                } else {
+                    node.fillColor = node.data.color || '#fff';
+                    node.lineColor = '#00b38a';
+                    if (node.hovered) {
+                        node.fillColor = node.lineColor;
+                        node.shadowBlur = 0;
+                    }
+                }
+                if (options.nodeColors && options.nodeColors[node.data.classId]) {
+                    node.lineWidth = 2;
+                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                        node.fillColor = options.tgc2.settings.netChart.emphasesColor;
+                        node.lineColor = node.fillColor;
+                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                    } else {
+                        node.lineColor = options.nodeColors[node.data.classId];
+                        if (node.hovered) {
+                            node.fillColor = node.lineColor;
+                        }
+                    }
+                }
+                if (node.data.img) {
+                    if (node.data.img.indexOf('http') != 0 && options.imagePrefix) {
+                        node.image = self.qiniuImg(options.imagePrefix + node.data.img);
+                    } else {
+                        node.image = node.data.img;
+                    }
+                    if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
+                        node.image = '';
+                    }
+                    node.fillColor = '#fff';
+                } else if (options.images && options.images[node.data.classId]) {
+                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                        node.image = options.images[node.data.classId].emphases;
+                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                        node.image = '';
+                    } else {
+                        if (node.hovered) {
+                            node.image = options.images[node.data.classId].emphases;
+                        } else {
+                            node.image = options.images[node.data.classId].normal;
+                        }
+                    }
+                }
+                var radius = options.tgc2.netChart.getNodeDimensions(node).radius;
+                if (options.enableAutoUpdateStyle) {
+                    if (radius < options.minRadius) {
+                        node.image = '';
+                        node.fillColor = node.lineColor;
+                    }
+                    if (options.tgc2.inStart(node.id)) {
+                        self.nodeRadius = radius;
+                        !self.centerNode && (self.centerNode = node);
+                    }
+                }
+            }
+        };
+
+        Service.prototype.colorFade = function (color, amount) {
+            try {
+                var rgba = [];
+                if (this.colorList[color]) {
+                    color = this.colorList[color];
+                }
+                if (color.indexOf('rgb') == 0 || color.indexOf('hsl') == 0) {
+                    rgba = color.substring(color.indexOf('(') + 1, color.indexOf(')')).split(',');
+                } else if (color.indexOf('#') == 0) {
+                    color = color.substring(1);
+                    rgba = color.match(/.{2}/g).map(function (c) {
+                        return parseInt(c, 16);
+                    });
+                }
+                rgba[3] = parseInt((rgba[3] || 1) * amount * 100) / 100;
+                if (color.indexOf('hsl') == 0) {
+                    return 'hsla(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
+                } else {
+                    return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
+                }
+            } catch (e) {
+                return color;
+            }
+        };
+
+        Service.prototype.buildFilter = function (schema, options) {
+            var allowAtts = [];
+            var allowAttsSelected = [];
+            var allowTypes = [];
+            var allowTypesSelected = [];
+            for (var i in schema.atts) {
+                var att = schema.atts[i];
+                if (att.type == 1) {
+                    allowAtts.push({value: att.k, label: att.v});
+                    allowAttsSelected.push(att.k);
+                }
+            }
+            for (var j in schema.types) {
+                var type = schema.types[j];
+                allowTypes.push({value: type.k, label: type.v});
+                allowTypesSelected.push(type.k);
+            }
+            allowAttsSelected = options.selectedAtts || allowAttsSelected;
+            allowTypesSelected = options.selectedTypes || allowTypesSelected;
+            return [
+                {
+                    key: 'allowTypes',
+                    label: '设定分析主体',
+                    selected: allowTypesSelected,
+                    options: allowTypes
+                },
+                {
+                    key: 'allowAtts',
+                    label: '设定分析关系',
+                    selected: allowAttsSelected,
+                    options: allowAtts
+                }
+            ]
+        };
+
+        Service.prototype.dealGraphData = function (data, schema) {
+            data.nodes = data.entityList;
+            data.links = data.relationList;
+            delete data.entityList;
+            delete data.relationList;
+            var schemas = {};
+            var arr = _.concat(schema.types, schema.atts);
+            for (var j in arr) {
+                var kv = arr[j];
+                schemas[kv.k] = kv.v;
+            }
+            for (var i in data.nodes) {
+                var node = data.nodes[i];
+                node.typeName = schemas[node.classId];
+            }
+            for (var k in data.links) {
+                var link = data.links[k];
+                link.typeName = schemas[link.attId];
+            }
+            return data;
+        };
+
+        Service.prototype.linkContentsFunction = function (linkData) {
+            var self = this;
+            if (linkData.rInfo) {
+                var items = '';
+                for (var i in linkData.rInfo) {
+                    var d = linkData.rInfo[i];
+                    items += '<tr>';
+                    var kvs = d.kvs;
+                    var thead = '<tr>';
+                    var tbody = '<tr>';
+                    for (var j in kvs) {
+                        if (kvs.hasOwnProperty(j)) {
+                            thead += '<th><div class="link-info-key">' + kvs[j].k + '</div></th>';
+                            tbody += '<td><div class="link-info-value">' + kvs[j].v + '</div></td>';
+                        }
+                    }
+                    items += '<li><table><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></li>';
+                }
+                return '<ul class="link-info">' + items + '</ul>';
+            } else {
+                return linkData.typeName;
+            }
+        };
+
+        Service.prototype.graph = function (options, schema) {
+            var self = this;
+            return function ($self, callback, failed) {
+                var param = options.data || {};
+                param.kgName = options.kgName;
+                param.id = options.tgc2.startInfo.id;
+                param.isRelationMerge = true;
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
+                    $.extend(true, param, filters);
+                }
+                if (options.tgc2Page) {
+                    var page = options.tgc2Page.page;
+                    param.pageNo = page.pageNo;
+                    param.pageSize = page.pageSize;
+                }
+                hieknjs.kgLoader({
+                    url: options.baseUrl + 'graph',
+                    type: 1,
+                    params: param,
+                    success: function (response) {
+                        if (response && response.rsData && response.rsData.length) {
+                            var data = response.rsData[0];
+                            if (data) {
+                                data = self.dealGraphData(data, schema);
+                            }
+                            callback(data);
+                        } else {
+                            failed();
+                        }
+                    },
+                    error: function () {
+                        failed();
+                    },
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
+                });
+            }
+        };
+
+        Service.prototype.timing = function (options, schema) {
+            var self = this;
+            return function ($self, callback, failed) {
+                var param = options.data || {};
+                param.kgName = options.kgName;
+                param.id = options.tgc2.startInfo.id;
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
+                    $.extend(true, param, filters);
+                }
+                if (options.tgc2TimeChart) {
+                    var settings = options.tgc2TimeChart.getSettings();
+                    delete settings.type;
+                    $.extend(true, param, settings);
+                }
+                hieknjs.kgLoader({
+                    url: options.baseUrl + 'graph/timing',
+                    type: 1,
+                    params: param,
+                    success: function (response) {
+                        if (response && response.rsData && response.rsData.length) {
+                            var data = response.rsData[0];
+                            if (data) {
+                                data = self.dealGraphData(data, schema);
+                            }
+                            callback(data);
+                        } else {
+                            failed();
+                        }
+                    },
+                    error: function () {
+                        failed();
+                    },
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
+                });
+            }
+        };
+
+        Service.prototype.relation = function (options, schema) {
+            var self = this;
+            return function (instance, callback, failed) {
+                var ids = _.map(options.tgc2.startInfo.nodes, 'id');
+                var param = options.data || {};
+                param.ids = ids;
+                param.isShortest = true;
+                param.connectsCompute = true;
+                param.statsCompute = true;
+                param.kgName = options.kgName;
+                param.statsConfig = options.statsConfig;
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
+                    $.extend(true, param, filters);
+                }
+                hieknjs.kgLoader({
+                    url: options.baseUrl + 'relation',
+                    type: 1,
+                    params: param,
+                    success: function (response) {
+                        if (response && response.rsData && response.rsData.length) {
+                            var data = response.rsData[0];
+                            if (data) {
+                                data = self.dealGraphData(data, schema);
+                            }
+                            callback(data);
+                        } else {
+                            failed();
+                        }
+                    },
+                    error: function () {
+                        toastr.error('网络接口错误！');
+                        failed();
+                    },
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
+                });
+            }
+        };
+
+        Service.prototype.path = function (options, schema) {
+            var self = this;
+            return function (instance, callback, failed) {
+                var param = options.data || {};
+                param.start = options.tgc2.startInfo.start.id;
+                param.end = options.tgc2.startInfo.end.id;
+                param.isShortest = true;
+                param.connectsCompute = true;
+                param.statsCompute = true;
+                param.kgName = options.kgName;
+                param.statsConfig = options.statsConfig;
+                if (options.tgc2Filter) {
+                    var filters = options.tgc2Filter.getFilterOptions();
+                    $.extend(true, param, filters);
+                }
+                hieknjs.kgLoader({
+                    url: options.baseUrl + 'path',
+                    type: 1,
+                    params: param,
+                    success: function (response) {
+                        if (response && response.rsData && response.rsData.length) {
+                            var data = response.rsData[0];
+                            if (data) {
+                                data = self.dealGraphData(data, schema);
+                            }
+                            callback(data);
+                        } else {
+                            failed();
+                        }
+                    },
+                    error: function () {
+                        toastr.error('网络接口错误！');
+                        failed();
+                    },
+                    that: $(options.selector).find('.tgc2-netchart-container')[0]
+                });
+            }
+        };
+
+        return Service;
+    }
+})();
+
 (function (window, $) {
     'use strict';
 
@@ -740,6 +1543,7 @@
                 beforeDrawPrompt: null,
                 container: null,
                 data: null,
+                url: null,
                 baseUrl: null,
                 kgName: null,
                 ready: $.noop,
@@ -908,612 +1712,6 @@
         return Service;
     }
 })(window, jQuery);
-(function () {
-
-    window.HieknSDKService = gentService();
-
-    function gentService() {
-        var Service = function () {
-            this.colorList = {
-                'aliceblue': '#f0f8ff',
-                'antiquewhite': '#faebd7',
-                'aqua': '#00ffff',
-                'aquamarine': '#7fffd4',
-                'azure': '#f0ffff',
-                'beige': '#f5f5dc',
-                'bisque': '#ffe4c4',
-                'black': '#000000',
-                'blanchedalmond': '#ffebcd',
-                'blue': '#0000ff',
-                'blueviolet': '#8a2be2',
-                'brown': '#a52a2a',
-                'burlywood': '#deb887',
-                'cadetblue': '#5f9ea0',
-                'chartreuse': '#7fff00',
-                'chocolate': '#d2691e',
-                'coral': '#ff7f50',
-                'cornflowerblue': '#6495ed',
-                'cornsilk': '#fff8dc',
-                'crimson': '#dc143c',
-                'cyan': '#00ffff',
-                'darkblue': '#00008b',
-                'darkcyan': '#008b8b',
-                'darkgoldenrod': '#b8860b',
-                'darkgray': '#a9a9a9',
-                'darkgrey': '#a9a9a9',
-                'darkgreen': '#006400',
-                'darkkhaki': '#bdb76b',
-                'darkmagenta': '#8b008b',
-                'darkolivegreen': '#556b2f',
-                'darkorange': '#ff8c00',
-                'darkorchid': '#9932cc',
-                'darkred': '#8b0000',
-                'darksalmon': '#e9967a',
-                'darkseagreen': '#8fbc8f',
-                'darkslateblue': '#483d8b',
-                'darkslategray': '#2f4f4f',
-                'darkslategrey': '#2f4f4f',
-                'darkturquoise': '#00ced1',
-                'darkviolet': '#9400d3',
-                'deeppink': '#ff1493',
-                'deepskyblue': '#00bfff',
-                'dimgray': '#696969',
-                'dimgrey': '#696969',
-                'dodgerblue': '#1e90ff',
-                'firebrick': '#b22222',
-                'floralwhite': '#fffaf0',
-                'forestgreen': '#228b22',
-                'fuchsia': '#ff00ff',
-                'gainsboro': '#dcdcdc',
-                'ghostwhite': '#f8f8ff',
-                'gold': '#ffd700',
-                'goldenrod': '#daa520',
-                'gray': '#808080',
-                'grey': '#808080',
-                'green': '#008000',
-                'greenyellow': '#adff2f',
-                'honeydew': '#f0fff0',
-                'hotpink': '#ff69b4',
-                'indianred': '#cd5c5c',
-                'indigo': '#4b0082',
-                'ivory': '#fffff0',
-                'khaki': '#f0e68c',
-                'lavender': '#e6e6fa',
-                'lavenderblush': '#fff0f5',
-                'lawngreen': '#7cfc00',
-                'lemonchiffon': '#fffacd',
-                'lightblue': '#add8e6',
-                'lightcoral': '#f08080',
-                'lightcyan': '#e0ffff',
-                'lightgoldenrodyellow': '#fafad2',
-                'lightgray': '#d3d3d3',
-                'lightgrey': '#d3d3d3',
-                'lightgreen': '#90ee90',
-                'lightpink': '#ffb6c1',
-                'lightsalmon': '#ffa07a',
-                'lightseagreen': '#20b2aa',
-                'lightskyblue': '#87cefa',
-                'lightslategray': '#778899',
-                'lightslategrey': '#778899',
-                'lightsteelblue': '#b0c4de',
-                'lightyellow': '#ffffe0',
-                'lime': '#00ff00',
-                'limegreen': '#32cd32',
-                'linen': '#faf0e6',
-                'magenta': '#ff00ff',
-                'maroon': '#800000',
-                'mediumaquamarine': '#66cdaa',
-                'mediumblue': '#0000cd',
-                'mediumorchid': '#ba55d3',
-                'mediumpurple': '#9370d8',
-                'mediumseagreen': '#3cb371',
-                'mediumslateblue': '#7b68ee',
-                'mediumspringgreen': '#00fa9a',
-                'mediumturquoise': '#48d1cc',
-                'mediumvioletred': '#c71585',
-                'midnightblue': '#191970',
-                'mintcream': '#f5fffa',
-                'mistyrose': '#ffe4e1',
-                'moccasin': '#ffe4b5',
-                'navajowhite': '#ffdead',
-                'navy': '#000080',
-                'oldlace': '#fdf5e6',
-                'olive': '#808000',
-                'olivedrab': '#6b8e23',
-                'orange': '#ffa500',
-                'orangered': '#ff4500',
-                'orchid': '#da70d6',
-                'palegoldenrod': '#eee8aa',
-                'palegreen': '#98fb98',
-                'paleturquoise': '#afeeee',
-                'palevioletred': '#d87093',
-                'papayawhip': '#ffefd5',
-                'peachpuff': '#ffdab9',
-                'peru': '#cd853f',
-                'pink': '#ffc0cb',
-                'plum': '#dda0dd',
-                'powderblue': '#b0e0e6',
-                'purple': '#800080',
-                'rebeccapurple': '#663399',
-                'red': '#ff0000',
-                'rosybrown': '#bc8f8f',
-                'royalblue': '#4169e1',
-                'saddlebrown': '#8b4513',
-                'salmon': '#fa8072',
-                'sandybrown': '#f4a460',
-                'seagreen': '#2e8b57',
-                'seashell': '#fff5ee',
-                'sienna': '#a0522d',
-                'silver': '#c0c0c0',
-                'skyblue': '#87ceeb',
-                'slateblue': '#6a5acd',
-                'slategray': '#708090',
-                'slategrey': '#708090',
-                'snow': '#fffafa',
-                'springgreen': '#00ff7f',
-                'steelblue': '#4682b4',
-                'tan': '#d2b48c',
-                'teal': '#008080',
-                'thistle': '#d8bfd8',
-                'tomato': '#ff6347',
-                'turquoise': '#40e0d0',
-                'violet': '#ee82ee',
-                'wheat': '#f5deb3',
-                'white': '#ffffff',
-                'whitesmoke': '#f5f5f5',
-                'yellow': '#ffff00',
-                'yellowgreen': '#9acd32'
-            };
-        };
-
-        Service.prototype.drawPromptItem = function (schema) {
-            var self = this;
-            var typeObj = {};
-            for (var i in schema.types) {
-                var type = schema.types[i];
-                typeObj[type.k] = type.v;
-            }
-            return function (data, pre) {
-                var line = '<span class="prompt-tip-title">' + data.name.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
-                line = '<span class="prompt-tip-type prompt-tip-' + data.classId + '">' + (data.className || typeObj[data.classId] || '') + '</span>' + line;
-                return line;
-            }
-        };
-
-        Service.prototype.onPrompt = function (options) {
-            var self = this;
-            return function (pre, $self) {
-                var param = options.data || {};
-                param.kgName = options.kgName;
-                param.kw = pre;
-                hieknjs.kgLoader({
-                    url: options.baseUrl + 'prompt',
-                    params: param,
-                    type: 1,
-                    success: function (data) {
-                        if ($self.prompt == param.kw) {
-                            var d = data.rsData;
-                            options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
-                            $self.startDrawPromptItems(d, pre);
-                        }
-                    }
-                });
-            }
-        };
-
-        Service.prototype.schema = function (options, callback) {
-            var self = this;
-            var param = options.data || {};
-            param.kgName = options.kgName;
-            hieknjs.kgLoader({
-                url: options.baseUrl + 'schema',
-                type: 1,
-                params: param,
-                success: function (response) {
-                    if (response && response.rsData && response.rsData.length) {
-                        var data = response.rsData[0];
-                        callback(data);
-                    }
-                },
-                error: function () {
-                    toastr.error('网络接口错误！');
-                }
-            });
-        };
-
-        Service.prototype.gentInfobox = function (options) {
-            var self = this;
-            var data = options.data || {};
-            data.isRelationAtts = true;
-            self.infoboxService = new HieknInfoboxService({
-                baseUrl: options.baseUrl,
-                kgName: options.kgName,
-                imagePrefix: options.imagePrefix,
-                data: data
-            });
-            self.infoboxService.initEvent($(options.selector));
-        };
-
-        Service.prototype.infobox = function () {
-            var self = this;
-            return function (data, node, callback) {
-                if (node.detail) {
-                    callback(node.detail);
-                } else {
-                    self.infoboxService.load(data.id, function (data) {
-                        data = self.infoboxService.buildInfobox(data)[0].outerHTML;
-                        node.detail = data;
-                        callback(data);
-                    });
-                }
-                return null;
-            }
-        };
-
-        Service.prototype.legend = function (schema) {
-            var self = this;
-            var typeObj = {};
-            for (var i in schema.types) {
-                var type = schema.types[i];
-                typeObj[type.k] = type.v;
-            }
-            return function (key, value) {
-                return '<div class="tgc2-legend-item tgc2-legend-item-' + key + '"><i style="background: ' + value + '"></i><span>' + typeObj[key] + '</span></div>';
-            }
-        };
-
-        Service.prototype.qiniuImg = function (img) {
-            return img + '?_=' + parseInt(new Date().getTime() / 3600000);
-        };
-
-        Service.prototype.nodeStyleFunction = function (options) {
-            var self = this;
-            if (options.enableAutoUpdateStyle) {
-                setInterval(function () {
-                    if (self.centerNode) {
-                        var radius = options.tgc2.netChart.getNodeDimensions(self.centerNode).radius;
-                        if (self.nodeRadius != radius) {
-                            var nodes = options.tgc2.netChart.nodes();
-                            var ids = [];
-                            for (var i in nodes) {
-                                ids.push(nodes[i].id);
-                            }
-                            options.tgc2.netChart.updateStyle(ids);
-                        }
-                    }
-                }, 30);
-            }
-            return function (node) {
-                options.tgc2.nodeStyleFunction(node);
-                node.imageCropping = 'fit';
-                if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
-                } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                    node.fillColor = options.tgc2.settings.netChart.reduceColor;
-                    node.lineColor = node.fillColor;
-                    node.label = '';
-                } else {
-                    node.fillColor = node.data.color || '#fff';
-                    node.lineColor = '#00b38a';
-                    if (node.hovered) {
-                        node.fillColor = node.lineColor;
-                        node.shadowBlur = 0;
-                    }
-                }
-                if (options.nodeColors && options.nodeColors[node.data.classId]) {
-                    node.lineWidth = 2;
-                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
-                        node.fillColor = options.tgc2.settings.netChart.emphasesColor;
-                        node.lineColor = node.fillColor;
-                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                    } else {
-                        node.lineColor = options.nodeColors[node.data.classId];
-                        if (node.hovered) {
-                            node.fillColor = node.lineColor;
-                        }
-                    }
-                }
-                if (node.data.img) {
-                    if (node.data.img.indexOf('http') != 0 && options.imagePrefix) {
-                        node.image = self.qiniuImg(options.imagePrefix + node.data.img);
-                    } else {
-                        node.image = node.data.img;
-                    }
-                    if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
-                        node.image = '';
-                    }
-                    node.fillColor = '#fff';
-                } else if (options.images && options.images[node.data.classId]) {
-                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
-                        node.image = options.images[node.data.classId].emphases;
-                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                        node.image = '';
-                    } else {
-                        if (node.hovered) {
-                            node.image = options.images[node.data.classId].emphases;
-                        } else {
-                            node.image = options.images[node.data.classId].normal;
-                        }
-                    }
-                }
-                var radius = options.tgc2.netChart.getNodeDimensions(node).radius;
-                if (options.enableAutoUpdateStyle) {
-                    if (radius < options.minRadius) {
-                        node.image = '';
-                        node.fillColor = node.lineColor;
-                    }
-                    if (options.tgc2.inStart(node.id)) {
-                        self.nodeRadius = radius;
-                        !self.centerNode && (self.centerNode = node);
-                    }
-                }
-            }
-        };
-
-        Service.prototype.colorFade = function (color, amount) {
-            try {
-                var rgba = [];
-                if (this.colorList[color]) {
-                    color = this.colorList[color];
-                }
-                if (color.indexOf('rgb') == 0 || color.indexOf('hsl') == 0) {
-                    rgba = color.substring(color.indexOf('(') + 1, color.indexOf(')')).split(',');
-                } else if (color.indexOf('#') == 0) {
-                    color = color.substring(1);
-                    rgba = color.match(/.{2}/g).map(function (c) {
-                        return parseInt(c, 16);
-                    });
-                }
-                rgba[3] = parseInt((rgba[3] || 1) * amount * 100) / 100;
-                if (color.indexOf('hsl') == 0) {
-                    return 'hsla(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
-                } else {
-                    return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
-                }
-            } catch (e) {
-                return color;
-            }
-        };
-
-        Service.prototype.buildFilter = function (schema, options) {
-            var allowAtts = [];
-            var allowAttsSelected = [];
-            var allowTypes = [];
-            var allowTypesSelected = [];
-            for (var i in schema.atts) {
-                var att = schema.atts[i];
-                if (att.type == 1) {
-                    allowAtts.push({value: att.k, label: att.v});
-                    allowAttsSelected.push(att.k);
-                }
-            }
-            for (var j in schema.types) {
-                var type = schema.types[j];
-                allowTypes.push({value: type.k, label: type.v});
-                allowTypesSelected.push(type.k);
-            }
-            allowAttsSelected = options.selectedAtts || allowAttsSelected;
-            allowTypesSelected = options.selectedTypes || allowTypesSelected;
-            return [
-                {
-                    key: 'allowTypes',
-                    label: '设定分析主体',
-                    selected: allowTypesSelected,
-                    options: allowTypes
-                },
-                {
-                    key: 'allowAtts',
-                    label: '设定分析关系',
-                    selected: allowAttsSelected,
-                    options: allowAtts
-                }
-            ]
-        };
-
-        Service.prototype.dealGraphData = function (data, schema) {
-            data.nodes = data.entityList;
-            data.links = data.relationList;
-            delete data.entityList;
-            delete data.relationList;
-            var schemas = {};
-            var arr = _.concat(schema.types, schema.atts);
-            for (var j in arr) {
-                var kv = arr[j];
-                schemas[kv.k] = kv.v;
-            }
-            for (var i in data.nodes) {
-                var node = data.nodes[i];
-                node.typeName = schemas[node.classId];
-            }
-            for (var k in data.links) {
-                var link = data.links[k];
-                link.typeName = schemas[link.attId];
-            }
-            return data;
-        };
-
-        Service.prototype.linkContentsFunction = function (linkData) {
-            var self = this;
-            if (linkData.rInfo) {
-                var items = '';
-                for (var i in linkData.rInfo) {
-                    var d = linkData.rInfo[i];
-                    items += '<tr>';
-                    var kvs = d.kvs;
-                    var thead = '<tr>';
-                    var tbody = '<tr>';
-                    for (var j in kvs) {
-                        if (kvs.hasOwnProperty(j)) {
-                            thead += '<th><div class="link-info-key">' + kvs[j].k + '</div></th>';
-                            tbody += '<td><div class="link-info-value">' + kvs[j].v + '</div></td>';
-                        }
-                    }
-                    items += '<li><table><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></li>';
-                }
-                return '<ul class="link-info">' + items + '</ul>';
-            } else {
-                return linkData.typeName;
-            }
-        };
-
-        Service.prototype.graph = function (options, schema) {
-            var self = this;
-            return function ($self, callback, failed) {
-                var param = options.data || {};
-                param.kgName = options.kgName;
-                param.id = options.tgc2.startInfo.id;
-                param.isRelationMerge = true;
-                if (options.tgc2Filter) {
-                    var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
-                }
-                if (options.tgc2Page) {
-                    var page = options.tgc2Page.page;
-                    param.pageNo = page.pageNo;
-                    param.pageSize = page.pageSize;
-                }
-                hieknjs.kgLoader({
-                    url: options.baseUrl + 'graph',
-                    type: 1,
-                    params: param,
-                    success: function (response) {
-                        if (response && response.rsData && response.rsData.length) {
-                            var data = response.rsData[0];
-                            if (data) {
-                                data = self.dealGraphData(data, schema);
-                            }
-                            callback(data);
-                        } else {
-                            failed();
-                        }
-                    },
-                    error: function () {
-                        failed();
-                    },
-                    that: $(options.selector).find('.tgc2-netchart-container')[0]
-                });
-            }
-        };
-
-        Service.prototype.timing = function (options, schema) {
-            var self = this;
-            return function ($self, callback, failed) {
-                var param = options.data || {};
-                param.kgName = options.kgName;
-                param.id = options.tgc2.startInfo.id;
-                if (options.tgc2Filter) {
-                    var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
-                }
-                if (options.tgc2TimeChart) {
-                    var settings = options.tgc2TimeChart.getSettings();
-                    delete settings.type;
-                    $.extend(true, param, settings);
-                }
-                hieknjs.kgLoader({
-                    url: options.baseUrl + 'graph/timing',
-                    type: 1,
-                    params: param,
-                    success: function (response) {
-                        if (response && response.rsData && response.rsData.length) {
-                            var data = response.rsData[0];
-                            if (data) {
-                                data = self.dealGraphData(data, schema);
-                            }
-                            callback(data);
-                        } else {
-                            failed();
-                        }
-                    },
-                    error: function () {
-                        failed();
-                    },
-                    that: $(options.selector).find('.tgc2-netchart-container')[0]
-                });
-            }
-        };
-
-        Service.prototype.relation = function (options, schema) {
-            var self = this;
-            return function (instance, callback, failed) {
-                var ids = _.map(options.tgc2.startInfo.nodes, 'id');
-                var param = options.data || {};
-                param.ids = ids;
-                param.isShortest = true;
-                param.connectsCompute = true;
-                param.statsCompute = true;
-                param.kgName = options.kgName;
-                param.statsConfig = options.statsConfig;
-                if (options.tgc2Filter) {
-                    var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
-                }
-                hieknjs.kgLoader({
-                    url: options.baseUrl + 'relation',
-                    type: 1,
-                    params: param,
-                    success: function (response) {
-                        if (response && response.rsData && response.rsData.length) {
-                            var data = response.rsData[0];
-                            if (data) {
-                                data = self.dealGraphData(data, schema);
-                            }
-                            callback(data);
-                        } else {
-                            failed();
-                        }
-                    },
-                    error: function () {
-                        toastr.error('网络接口错误！');
-                        failed();
-                    },
-                    that: $(options.selector).find('.tgc2-netchart-container')[0]
-                });
-            }
-        };
-
-        Service.prototype.path = function (options, schema) {
-            var self = this;
-            return function (instance, callback, failed) {
-                var param = options.data || {};
-                param.start = options.tgc2.startInfo.start.id;
-                param.end = options.tgc2.startInfo.end.id;
-                param.isShortest = true;
-                param.connectsCompute = true;
-                param.statsCompute = true;
-                param.kgName = options.kgName;
-                param.statsConfig = options.statsConfig;
-                if (options.tgc2Filter) {
-                    var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
-                }
-                hieknjs.kgLoader({
-                    url: options.baseUrl + 'path',
-                    type: 1,
-                    params: param,
-                    success: function (response) {
-                        if (response && response.rsData && response.rsData.length) {
-                            var data = response.rsData[0];
-                            if (data) {
-                                data = self.dealGraphData(data, schema);
-                            }
-                            callback(data);
-                        } else {
-                            failed();
-                        }
-                    },
-                    error: function () {
-                        toastr.error('网络接口错误！');
-                        failed();
-                    },
-                    that: $(options.selector).find('.tgc2-netchart-container')[0]
-                });
-            }
-        };
-
-        return Service;
-    }
-})();
-
 (function (window, $) {
     'use strict';
 

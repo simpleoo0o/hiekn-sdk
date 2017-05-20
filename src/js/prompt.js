@@ -10,6 +10,7 @@
                 beforeDrawPrompt: null,
                 container: null,
                 data: null,
+                url: null,
                 baseUrl: null,
                 kgName: null,
                 ready: $.noop,

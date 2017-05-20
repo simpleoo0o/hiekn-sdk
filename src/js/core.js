@@ -177,7 +177,7 @@
                 param.kgName = options.kgName;
                 param.kw = pre;
                 hieknjs.kgLoader({
-                    url: options.baseUrl + 'prompt',
+                    url: options.url ? options.url : (options.baseUrl + 'prompt'),
                     params: param,
                     type: 1,
                     success: function (data) {
