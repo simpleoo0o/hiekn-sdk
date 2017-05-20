@@ -19,14 +19,17 @@
     transform: rotate(359deg);
   }
 }
-.ztree.hiekn-concept-tree {
+.hiekn-concept-tree {
+  border: 1px solid #dddddd;
+}
+.hiekn-concept-tree .ztree {
   padding: 0;
   position: relative;
 }
-.ztree.hiekn-concept-tree * {
+.hiekn-concept-tree .ztree * {
   font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', Roboto, Helvetica Neue, sans-serif;
 }
-.ztree.hiekn-concept-tree li a {
+.hiekn-concept-tree .ztree li a {
   height: 30px;
   line-height: 30px;
   position: absolute;
@@ -38,26 +41,26 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.ztree.hiekn-concept-tree li a span.node_name {
+.hiekn-concept-tree .ztree li a span.node_name {
   white-space: nowrap;
-  color: #666;
+  color: #666666;
 }
-.ztree.hiekn-concept-tree li a span.node_name input {
+.hiekn-concept-tree .ztree li a span.node_name input {
   height: 30px;
   width: 90%;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   color: #00b38a;
   padding-left: 8px;
 }
-.ztree.hiekn-concept-tree li a span.button-container {
+.hiekn-concept-tree .ztree li a span.button-container {
   position: absolute;
   right: 0;
   top: 50%;
   margin-top: -13px;
   padding: 4px 6px;
 }
-.ztree.hiekn-concept-tree li a span.button-container span {
+.hiekn-concept-tree .ztree li a span.button-container span {
   height: 18px;
   width: 18px;
   background: #00b38a;
@@ -65,20 +68,20 @@
   float: right;
   margin: 0 0 0 4px;
 }
-.ztree.hiekn-concept-tree li a span.button-container span:hover {
+.hiekn-concept-tree .ztree li a span.button-container span:hover {
   background: #00a17c;
 }
-.ztree.hiekn-concept-tree li a span.button-container span.tree-button-active {
+.hiekn-concept-tree .ztree li a span.button-container span.tree-button-active {
   background: #00a17c;
 }
-.ztree.hiekn-concept-tree li a span.button-container span svg {
+.hiekn-concept-tree .ztree li a span.button-container span svg {
   vertical-align: 4px;
-  fill: #fff;
+  fill: #ffffff;
 }
-.ztree.hiekn-concept-tree li ul {
+.hiekn-concept-tree .ztree li ul {
   padding-left: 10px;
 }
-.ztree.hiekn-concept-tree li span.button {
+.hiekn-concept-tree .ztree li span.button {
   height: 30px;
   background: none;
   display: inline-block;
@@ -87,135 +90,186 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #666;
+  color: #666666;
   position: relative;
   z-index: 2;
   margin-left: 8px;
 }
-.ztree.hiekn-concept-tree li span.button.ico_open,
-.ztree.hiekn-concept-tree li span.button.ico_close,
-.ztree.hiekn-concept-tree li span.button.ico_docu,
-.ztree.hiekn-concept-tree li span.button.ico_loading {
+.hiekn-concept-tree .ztree li span.button.ico_open,
+.hiekn-concept-tree .ztree li span.button.ico_close,
+.hiekn-concept-tree .ztree li span.button.ico_docu,
+.hiekn-concept-tree .ztree li span.button.ico_loading {
   width: 18px !important;
   height: 30px !important;
   margin-left: -18px;
 }
-.ztree.hiekn-concept-tree li span.button.ico_open:before {
+.hiekn-concept-tree .ztree li span.button.ico_open:before {
   content: "\f0d7";
 }
-.ztree.hiekn-concept-tree li span.button.ico_close:before {
+.hiekn-concept-tree .ztree li span.button.ico_close:before {
   content: "\f0da";
 }
-.ztree.hiekn-concept-tree li span.button.ico_loading {
+.hiekn-concept-tree .ztree li span.button.ico_loading {
   font-size: 16px;
   -webkit-animation: fa-spin 2s infinite linear;
   animation: fa-spin 2s infinite linear;
 }
-.ztree.hiekn-concept-tree li span.button.ico_loading:before {
+.hiekn-concept-tree .ztree li span.button.ico_loading:before {
   content: "\f110";
 }
-.ztree.hiekn-concept-tree > li > span.switch {
+.hiekn-concept-tree .ztree > li > span.switch {
   width: 1px;
   visibility: hidden;
   height: 50px;
 }
-.ztree.hiekn-concept-tree > li > a > span:first-child {
+.hiekn-concept-tree .ztree > li > a > span:first-child {
   opacity: 0;
 }
-.ztree.hiekn-concept-tree > li span.switch:hover + a:not(.curSelectedNode),
-.ztree.hiekn-concept-tree > li a:hover {
+.hiekn-concept-tree .ztree > li span.switch:hover + a:not(.curSelectedNode),
+.hiekn-concept-tree .ztree > li a:hover {
   background: #d9f4ee;
 }
-.ztree.hiekn-concept-tree > li span.switch:hover + a:not(.curSelectedNode) span.button-container,
-.ztree.hiekn-concept-tree > li a:hover span.button-container {
+.hiekn-concept-tree .ztree > li span.switch:hover + a:not(.curSelectedNode) span.button-container,
+.hiekn-concept-tree .ztree > li a:hover span.button-container {
   background: transparent;
 }
-.ztree.hiekn-concept-tree > li a {
+.hiekn-concept-tree .ztree > li a {
   padding-right: 30px;
   text-decoration: none;
 }
-.ztree.hiekn-concept-tree > li a.curSelectedNode,
-.ztree.hiekn-concept-tree > li a.tmpTargetNode_inner {
+.hiekn-concept-tree .ztree > li a.curSelectedNode,
+.hiekn-concept-tree .ztree > li a.tmpTargetNode_inner {
   background: #00b38a;
   opacity: 1;
   border: 0;
 }
-.ztree.hiekn-concept-tree > li a.curSelectedNode span:before,
-.ztree.hiekn-concept-tree > li a.tmpTargetNode_inner span:before {
-  color: #fff;
+.hiekn-concept-tree .ztree > li a.curSelectedNode span:before,
+.hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span:before {
+  color: #ffffff;
 }
-.ztree.hiekn-concept-tree > li a.curSelectedNode span.node_name,
-.ztree.hiekn-concept-tree > li a.tmpTargetNode_inner span.node_name {
-  color: #fff;
+.hiekn-concept-tree .ztree > li a.curSelectedNode span.node_name,
+.hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span.node_name {
+  color: #ffffff;
 }
-.ztree.hiekn-concept-tree > li a.curSelectedNode span.button-container span,
-.ztree.hiekn-concept-tree > li a.tmpTargetNode_inner span.button-container span {
-  background: #fff;
+.hiekn-concept-tree .ztree > li a.curSelectedNode span.button-container span,
+.hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span.button-container span {
+  background: #ffffff;
 }
-.ztree.hiekn-concept-tree > li a.curSelectedNode span.button-container span svg,
-.ztree.hiekn-concept-tree > li a.tmpTargetNode_inner span.button-container span svg {
+.hiekn-concept-tree .ztree > li a.curSelectedNode span.button-container span svg,
+.hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span.button-container span svg {
   fill: #00b38a;
 }
-.ztree.hiekn-concept-tree > li > a {
+.hiekn-concept-tree .ztree > li > a {
   padding-left: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eeeeee;
   height: 50px;
   line-height: 50px;
 }
-.ztree.hiekn-concept-tree > li > a span {
+.hiekn-concept-tree .ztree > li > a span {
   font-size: 16px;
-  color: #333;
+  color: #333333;
 }
-.ztree.hiekn-concept-tree > li > a span.button-container {
+.hiekn-concept-tree .ztree > li > a span.button-container {
   margin-top: -12px;
 }
-.ztree.hiekn-concept-tree > li > a span.button-container span {
+.hiekn-concept-tree .ztree > li > a span.button-container span {
   height: 20px;
   width: 20px;
 }
-.ztree.hiekn-concept-tree > li > a span.button-container span svg {
+.hiekn-concept-tree .ztree > li > a span.button-container span svg {
   width: 14px;
   height: 14px;
   vertical-align: 2px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > a {
   padding-left: 30px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > a {
   padding-left: 40px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > a {
   padding-left: 50px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 60px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 70px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 80px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 90px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 100px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 110px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 120px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 130px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 140px;
 }
-.ztree.hiekn-concept-tree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+.hiekn-concept-tree .ztree > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > ul > li > a {
   padding-left: 150px;
+}
+.hiekn-instance-container {
+  width: 200px;
+  position: absolute;
+  right: -201px;
+  top: -1px;
+  bottom: -1px;
+  background: #ffffff;
+  border: solid #dddddd;
+  border-width: 1px 1px 1px 0;
+  z-index: 1;
+  overflow: hidden;
+}
+.hiekn-instance-container .hiekn-instance-prompt {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  width: 184px;
+}
+.hiekn-instance-container .hiekn-instance-list {
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  overflow: auto;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #dddddd;
+  font-size: 12px;
+  line-height: 22px;
+  color: #999999;
+}
+.hiekn-instance-container .hiekn-instance-list li {
+  height: 30px;
+  line-height: 30px;
+  cursor: pointer;
+  padding: 0 16px;
+  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hiekn-instance-container .hiekn-instance-list li:hover,
+.hiekn-instance-container .hiekn-instance-list li.active {
+  color: #00b38a;
+}
+.hiekn-instance-container .hiekn-instance-list .instance-loader-container {
+  text-align: center;
+  padding: 16px 0;
+  font-size: 24px;
+  line-height: 36px;
+  color: #333333;
 }
 .hiekn-concept-tree-graph-modal .modal-body {
   padding: 0;

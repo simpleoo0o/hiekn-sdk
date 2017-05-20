@@ -34,15 +34,27 @@
 </head>
 
 <body>
-<div id="ct" style="position: fixed;top:0;bottom:0;left:0;width: 300px;"></div>
+<div id="ct" style="position: fixed;top:20px;bottom:20px;left:100px;width: 300px;"></div>
 <script>
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
         config.container = '#ct';
         config.readAll = true;
-        config.nodeHoverTools = {infobox: {enable: true}, graph: {enable: true,instanceEnable: true,infobox: false}};
+        config.nodeHoverTools = {infobox: {enable: true}, graph: {enable: true, instanceEnable: true, infobox: false}};
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.instance = {
+            enable: true,
+            url: 'http://kg.hiekn.com:8888/plantdata_console/console/edit/instance/get/instances/conceptId',
+            onClick: function (node) {
+                console.log(node);
+            },
+            searchSettings: {
+                url: 'http://kg.hiekn.com:8888/plantdata_console/console/edit/general/get/prompt/fuzzy?type=110',
+                type: 0,
+                paramName: 'text'
+            }
+        };
         new HieknConceptTreeService(config);
     });
 </script>

@@ -175,13 +175,13 @@
             return function (pre, $self) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param.kw = pre;
+                param[options.paramName || 'kw'] = pre;
                 hieknjs.kgLoader({
                     url: options.url ? options.url : (options.baseUrl + 'prompt'),
                     params: param,
-                    type: 1,
+                    type: options.type ? (options.type == 'POST' ? 1 : 0) :1,
                     success: function (data) {
-                        if ($self.prompt == param.kw) {
+                        if ($self.prompt == param[options.paramName || 'kw']) {
                             var d = data.rsData;
                             options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
                             $self.startDrawPromptItems(d, pre);

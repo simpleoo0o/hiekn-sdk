@@ -41,6 +41,11 @@
                         infobox: false
                     }
                 },
+                instance: {
+                    enable: false,
+                    url: '',
+                    onClick: $.noop
+                },
                 namespace: 'hiekn-concept-tree',
                 pIdKey: 'parentId',
                 readAll: false
@@ -50,20 +55,55 @@
             self.zTree = null;
             self.infoboxService = null;
             self.tgc2ConceptGraph = null;
+            self.instanceSearch = null;
             self.init();
         };
 
         Service.prototype.init = function () {
             var self = this;
             self.$container = $(self.options.container);
-            self.$container.addClass('ztree hiekn-concept-tree');
+            self.$container.addClass('hiekn-concept-tree').append('<ul class="ztree"></ul>');
             self.zTreeSettings = self.updateZTreeSettings();
-            self.zTree = $.fn.zTree.init(self.$container, self.zTreeSettings);
+            self.zTree = $.fn.zTree.init(self.$container.find('.ztree'), self.zTreeSettings);
             if (self.options.nodeHoverTools.graph.enable) {
                 self.initGraph();
             }
             if (self.options.nodeHoverTools.infobox.enable) {
                 self.initInfobox();
+            }
+            if (self.options.instance.enable) {
+                var id = self.options.namespace + '-prompt-' + new Date().getTime();
+                self.$instanceContainer = $('<div class="hiekn-instance-container"><div class="hiekn-instance-prompt" id="' + id + '"></div><div class="hiekn-instance-list"></div></div>');
+                self.$container.append(self.$instanceContainer);
+                self.instanceSearchSettings = {
+                    container: '#' + id,
+                    promptEnable: false,
+                    onSearch: function (kw) {
+                        var searchSettings = {
+                            paramName: 'kw',
+                            url: self.options.baseUrl + 'prompt',
+                            type: 1
+                        };
+                        $.extend(true, searchSettings, self.options.instance.searchSettings || {});
+                        var param = self.options.data || {};
+                        param.kgName = self.options.kgName;
+                        param[searchSettings.paramName || 'kw'] = kw;
+                        hieknjs.kgLoader({
+                            url: searchSettings.url,
+                            params: param,
+                            type: searchSettings.type,
+                            success: function (data) {
+                                if (data) {
+                                    var $container = self.select('.instance-loader-container');
+                                    $container.attr({'data-more': '0', 'data-page': '1'});
+                                    self.drawInstanceList(data.rsData, false);
+                                }
+                            }
+                        });
+                    }
+                };
+                self.instanceSearch = new hieknPrompt(self.instanceSearchSettings);
+                self.bindInstanceEvent();
             }
         };
 
@@ -85,6 +125,19 @@
                 self.lastSelectedNode = treeNode;
             }
             return true;
+        };
+
+        Service.prototype.bindInstanceEvent = function () {
+            var self = this;
+            self.select('.hiekn-instance-list').on('scroll', function (event) {
+                if ($(event.target).height() + $(event.target).scrollTop() > $(event.target)[0].scrollHeight - 50) {
+                    self.loadInstanceService();
+                }
+            });
+            self.select('.hiekn-instance-list').on('click', 'li[data-id]', function () {
+                var node = $(this).data('data');
+                self.options.instance.onClick(node);
+            });
         };
 
         Service.prototype.dataFilter = function (treeId, parentNode, childNodes) {
@@ -123,6 +176,25 @@
             }
         };
 
+        Service.prototype.drawInstanceList = function (instances, append) {
+            var self = this;
+            var $container = self.$instanceContainer.find('.hiekn-instance-list ul');
+            var html = $('<ul></ul>');
+            if (instances.length) {
+                for (var i in instances) {
+                    var $li = $('<li data-id="' + instances[i].id + '" title="' + instances[i].name + '">' + instances[i].name + '</li>').data('data', instances[i]);
+                    html.append($li);
+                }
+            } else if (!append) {
+                html.append('<li>没有找到相关实例</li>');
+            }
+            if (append) {
+                $container.append(html.children());
+            } else {
+                $container.html(html.children());
+            }
+        };
+
         Service.prototype.getLastSelectedNodeId = function () {
             var self = this;
             return self.lastSelectedNode ? self.lastSelectedNode[self.options.idKey] : null;
@@ -143,7 +215,7 @@
 
         Service.prototype.initGraph = function () {
             var self = this;
-            var selector = self.options.namespace + '-tgc2';
+            var selector = self.options.namespace + '-tgc2-' + new Date().getTime();
             self.$graphContainer = $('<div class="modal fade hiekn-concept-tree-graph-modal" id="' + selector + '-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">' +
                 '<div class="modal-dialog modal-lg">' +
                 '<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><i class="fa fa-times-circle"></i></button>' +
@@ -155,7 +227,7 @@
                 data: self.options.data,
                 kgName: self.options.kgName,
                 instanceEnable: self.options.nodeHoverTools.graph.instanceEnable,
-                tgc2Settings:{netChart: {settings: {nodeMenu: {}}}}
+                tgc2Settings: {netChart: {settings: {nodeMenu: {}}}}
             };
             if (self.options.nodeHoverTools.graph.infobox) {
                 self.sdkUtils = new HieknSDKService();
@@ -166,7 +238,6 @@
                     kgName: self.options.kgName
                 });
                 settings.tgc2Settings.netChart.settings.nodeMenu.contentsFunction = self.sdkUtils.infobox();
-                console.log(settings);
             }
             self.tgc2ConceptGraph = new HieknConceptGraphService(settings);
         };
@@ -179,11 +250,59 @@
             });
         };
 
+        Service.prototype.reloadInstnace = function () {
+            var self = this;
+            self.select('.hiekn-instance-list').html('<ul></ul><div class="instance-loader-container" data-more="1" data-page="1"></div>');
+            self.loadInstanceService();
+        };
+
+        Service.prototype.loadInstanceService = function () {
+            var self = this;
+            var $container = self.select('.instance-loader-container');
+            if ($container.attr('data-more') != '0') {
+                var param = self.options.data || {};
+                param.conceptId = self.getLastSelectedNodeId() || self.options.initId;
+                param.readAll = 0;
+                param.pageNo = $container.attr('data-page');
+                param.pageSize = 15;
+                param.kgName = self.options.kgName;
+                if ($container.data('inLoading') != 1) {
+                    $container.data('inLoading', 1);
+                    hieknjs.kgLoader({
+                        url: self.options.instance.url + '?' + $.param(param),
+                        success: function (data, textStatus, jqXHR, params) {
+                            if (data) {
+                                var d = data.rsData;
+                                if (d.length <= params.pageSize) {
+                                    $container.attr({'data-more': 0});
+                                }
+                                if (d.length > params.pageSize) {
+                                    d.pop();
+                                }
+                                self.drawInstanceList(d, params.pageNo != 1);
+                                $container.attr({'data-page': parseInt(params.pageNo, 10) + 1});
+                            }
+                        },
+                        complete: function () {
+                            $container.data('inLoading', 0);
+                            var $ic = self.select('.hiekn-instance-list');
+                            if ($ic.children('ul').height() < $ic.height()) {
+                                self.loadInstanceService();
+                            }
+                        },
+                        that: $container[0]
+                    });
+                }
+            } else {
+                console.log('no more instance');
+            }
+        };
+
         Service.prototype.onAsyncSuccess = function (event, treeId, treeNode) {
             var self = this;
             var node = treeNode;
             if (node) {
-                self.options.onNodeClick(node);
+                self.onNodeClick(node);
             }
             if (node && node.children.length == 0) {
                 node.isParent = false;
@@ -194,7 +313,7 @@
                 if (!self.getLastSelectedNodeId()) {
                     node = self.zTree.getNodeByParam(self.options.idKey, self.options.initId);
                     self.zTree.selectNode(node);
-                    self.options.onNodeClick(node);
+                    self.onNodeClick(node);
                 }
             }
             var root = self.zTree.getNodeByParam(self.options.idKey, 0);
@@ -208,7 +327,7 @@
             self.clickTimeout && clearTimeout(self.clickTimeout);
             self.clickTimeout = setTimeout(function () {
                 self.lastSelectedNode = treeNode;
-                self.options.onNodeClick(treeNode);
+                self.onNodeClick(treeNode);
                 self.treeDbClick = false;
             }, 500);
         };
@@ -219,6 +338,14 @@
             self.zTree.selectNode(treeNode);
             $button.addClass('tree-button-active');
             self.lastSelectedNode = treeNode;
+        };
+
+        Service.prototype.onNodeClick = function (node) {
+            var self = this;
+            if (self.options.instance.enable) {
+                self.reloadInstnace();
+            }
+            self.options.onNodeClick(node);
         };
 
         Service.prototype.onNodeHover = function ($container, treeNode) {

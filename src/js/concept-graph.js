@@ -7,12 +7,12 @@
         var Service = function (options) {
             var self = this;
             self.sdkUtils = new window.HieknSDKService();
-            self.defaultPromptSettings = {
+            var defaultPromptSettings = {
                 baseUrl: options.baseUrl,
                 data: options.data,
                 kgName: options.kgName
             };
-            self.promptSettings = $.extend(true, {}, self.defaultPromptSettings, options.promptSettings || {});
+            self.promptSettings = $.extend(true, {}, defaultPromptSettings, options.promptSettings || {});
             self.defaultOptions = {
                 lightColor: '#fff',
                 primaryColor: '#00b38a',

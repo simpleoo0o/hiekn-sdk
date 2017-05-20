@@ -11,6 +11,8 @@
                 container: null,
                 data: null,
                 url: null,
+                type: 'POST',
+                paramName: 'kw',
                 baseUrl: null,
                 kgName: null,
                 ready: $.noop,
