@@ -79,6 +79,7 @@
                 self.instanceSearchSettings = {
                     container: '#' + id,
                     promptEnable: false,
+                    placeholder: '实例搜索',
                     onSearch: function (kw) {
                         var searchSettings = {
                             paramName: 'kw',
@@ -137,6 +138,7 @@
             });
             self.select('.hiekn-instance-list').on('click', 'li[data-id]', function () {
                 var node = $(this).data('data');
+                $(this).addClass('active').siblings('.active').removeClass('active');
                 self.options.instance.onClick(node);
             });
         };
@@ -201,6 +203,11 @@
             return self.lastSelectedNode ? self.lastSelectedNode[self.options.idKey] : null;
         };
 
+        Service.prototype.getLastSelectedInstance = function () {
+            var self = this;
+            return self.select('.hiekn-instance-list li[data-id].active').data('data');
+        };
+
         Service.prototype.getAsyncUrl = function () {
             var self = this;
             return typeof self.options.getAsyncUrl == 'string' ? self.options.getAsyncUrl : self.options.getAsyncUrl(self);
@@ -251,7 +258,7 @@
             });
         };
 
-        Service.prototype.reloadInstnace = function () {
+        Service.prototype.reloadInstance = function () {
             var self = this;
             self.select('.hiekn-instance-list').html('<ul></ul><div class="instance-loader-container" data-more="1" data-page="1"></div>');
             self.loadInstanceService();
@@ -344,7 +351,7 @@
         Service.prototype.onNodeClick = function (node) {
             var self = this;
             if (self.options.instance.enable) {
-                self.reloadInstnace();
+                self.reloadInstance();
             }
             self.options.onNodeClick(node);
         };
