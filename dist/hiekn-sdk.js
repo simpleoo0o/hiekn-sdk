@@ -267,7 +267,8 @@
         Service.prototype.init = function () {
             var self = this;
             self.$container = $(self.options.container);
-            self.$container.addClass('hiekn-concept-tree').append('<ul class="ztree"></ul>');
+            self.treeId = self.options.namespace + '-' + new Date().getTime();
+            self.$container.addClass('hiekn-concept-tree').append('<ul class="ztree" id="' + self.treeId + '"></ul>');
             self.zTreeSettings = self.updateZTreeSettings();
             self.zTree = $.fn.zTree.init(self.$container.find('.ztree'), self.zTreeSettings);
             if (self.options.nodeHoverTools.graph.enable) {

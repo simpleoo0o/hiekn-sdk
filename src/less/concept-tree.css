@@ -25,6 +25,8 @@
 .hiekn-concept-tree .ztree {
   padding: 0;
   position: relative;
+  height: 100%;
+  overflow: auto;
 }
 .hiekn-concept-tree .ztree * {
   font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', Roboto, Helvetica Neue, sans-serif;
