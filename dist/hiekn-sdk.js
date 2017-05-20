@@ -101,7 +101,6 @@
             self.tgc2Page = new Tgc2Page(self.tgc2, self.options.tgc2Settings.page);
             self.tgc2.init();
             $(self.options.tgc2Settings.selector).addClass('tgc2 tgc2-concept-graph');
-            console.log(self.options);
             if(self.options.instanceEnable){
                 $(self.options.tgc2Settings.selector).append('<div class="tgc2-info-top">' +
                     '<ul class="info-top">' +
@@ -237,13 +236,25 @@
                 initId: 0,
                 nameKey: 'name',
                 onNodeClick: $.noop,
-                onNodeHover: $.noop,
+                nodeHoverTools: {
+                    infobox: {
+                        enable: false
+                    },
+                    graph: {
+                        enable: false,
+                        instanceEnable: false,
+                        infobox: false
+                    }
+                },
+                namespace: 'hiekn-concept-tree',
                 pIdKey: 'parentId',
                 readAll: false
             };
             self.options = $.extend(true, {}, defaultSettings, options);
             self.zTreeSettings = null;
             self.zTree = null;
+            self.infoboxService = null;
+            self.tgc2ConceptGraph = null;
             self.init();
         };
 
@@ -253,6 +264,12 @@
             self.$container.addClass('ztree hiekn-concept-tree');
             self.zTreeSettings = self.updateZTreeSettings();
             self.zTree = $.fn.zTree.init(self.$container, self.zTreeSettings);
+            if (self.options.nodeHoverTools.graph.enable) {
+                self.initGraph();
+            }
+            if (self.options.nodeHoverTools.infobox.enable) {
+                self.initInfobox();
+            }
         };
 
         Service.prototype.addHoverDom = function (treeId, treeNode) {
@@ -263,9 +280,7 @@
             }
             var $container = $('<span class="button-container" id="button-container_' + treeNode.tId + '" ></span>');
             sObj.after($container);
-            if (self.options.onNodeHover) {
-                self.options.onNodeHover($container, treeNode);
-            }
+            self.onNodeHover($container, treeNode);
         };
 
         Service.prototype.beforeAsync = function (treeId, treeNode) {
@@ -323,6 +338,52 @@
             return typeof self.options.getAsyncUrl == 'string' ? self.options.getAsyncUrl : self.options.getAsyncUrl(self);
         };
 
+        Service.prototype.initInfobox = function () {
+            var self = this;
+            var config = {};
+            config.kgName = self.options.kgName;
+            config.baseUrl = self.options.baseUrl;
+            self.infoboxService = new HieknInfoboxService(config);
+        };
+
+        Service.prototype.initGraph = function () {
+            var self = this;
+            var selector = self.options.namespace + '-tgc2';
+            self.$graphContainer = $('<div class="modal fade hiekn-concept-tree-graph-modal" id="' + selector + '-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">' +
+                '<div class="modal-dialog modal-lg">' +
+                '<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><i class="fa fa-times-circle"></i></button>' +
+                '<h4 class="modal-title"><span name="title"></span></h4></div><div class="modal-body"><div class="' + selector + '"></div></div></div></div></div>');
+            $('body').append(self.$graphContainer);
+            var settings = {
+                selector: '.' + selector,
+                baseUrl: self.options.baseUrl,
+                data: self.options.data,
+                kgName: self.options.kgName,
+                instanceEnable: self.options.nodeHoverTools.graph.instanceEnable,
+                tgc2Settings:{netChart: {settings: {nodeMenu: {}}}}
+            };
+            if (self.options.nodeHoverTools.graph.infobox) {
+                self.sdkUtils = new HieknSDKService();
+                self.sdkUtils.gentInfobox({
+                    selector: '.' + selector,
+                    baseUrl: self.options.baseUrl,
+                    data: self.options.data,
+                    kgName: self.options.kgName
+                });
+                settings.tgc2Settings.netChart.settings.nodeMenu.contentsFunction = self.sdkUtils.infobox();
+                console.log(settings);
+            }
+            self.tgc2ConceptGraph = new HieknConceptGraphService(settings);
+        };
+
+        Service.prototype.loadGraph = function (id) {
+            var self = this;
+            self.tgc2ConceptGraph.load({
+                id: id,
+                kgType: 0
+            });
+        };
+
         Service.prototype.onAsyncSuccess = function (event, treeId, treeNode) {
             var self = this;
             var node = treeNode;
@@ -363,6 +424,85 @@
             self.zTree.selectNode(treeNode);
             $button.addClass('tree-button-active');
             self.lastSelectedNode = treeNode;
+        };
+
+        Service.prototype.onNodeHover = function ($container, treeNode) {
+            var self = this;
+            for (var key in self.options.nodeHoverTools) {
+                var value = self.options.nodeHoverTools[key];
+                if (key == 'graph' && value.enable) {
+                    var $graphBtn = $('<span class="button" title="图谱可视化" onfocus="this.blur();">' +
+                        '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="12" height="12">' +
+                        '<path d="M892.790083 1009.647551c-58.355904 31.366176-131.161266 9.611215-162.610663-48.591301-24.342972-' +
+                        '45.045432-16.764962-98.703426 14.947153-135.21462L698.862198 739.012706c-23.246413 7.764034-48.157246 11' +
+                        '.970777-74.066732 11.970777-114.073211 0-208.817925-81.626793-227.545924-188.916672l-96.293279-0.561334c' +
+                        '-16.764962 45.964127-60.950442 78.79075-112.82979 78.79075-66.291275 0-120.03249-53.600882-120.03249-119' +
+                        '.725715 0-66.119938 53.741215-119.725715 120.03249-119.725715 51.30496 0 95.064544 32.111902 112.242348 7' +
+                        '7.279717l97.913641 0.567861C419.241111 374.137368 512.680397 295.287873 624.795466 295.287873c18.375534 0' +
+                        ' 36.248477 2.12948 53.382222 6.132249l39.022512-93.152092c-36.248477-32.934321-49.896729-86.177842-30.1749' +
+                        '73-134.041367 25.204555-61.154415 95.338684-90.360108 156.651383-65.220824 61.319226 25.132756 90.596716 9' +
+                        '5.089021 65.398689 156.243437-19.504729 47.334826-65.92086 75.494544-114.326137 74.176062l-39.959157 95.3' +
+                        '82743c60.924334 41.018186 100.921022 110.062283 100.921022 188.324334 0 70.620402-32.565538 133.736223-83.6' +
+                        '86106 175.526243l46.409604 87.10796c48.521134-7.086843 98.455394 16.133461 123.065979 61.683114C972.95806 90' +
+                        '5.658773 951.145986 978.273217 892.790083 1009.647551L892.790083 1009.647551zM892.790083 1009.647551"></path>' +
+                        '</svg>' +
+                        '</span>');
+                    $container.append($graphBtn);
+                    $graphBtn.on('click', function (event) {
+                        self.$graphContainer.modal('show');
+                        self.loadGraph(treeNode[self.options.idKey]);
+                        event.stopPropagation();
+                    });
+                } else if (key == 'infobox' && value.enable) {
+                    var $infoboxBtn = $('<span class="button" title="知识卡片" onfocus="this.blur();">' +
+                        '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="12" height="12">' +
+                        '<path d="M638.596211 191.936191q30.628116 0 54.62014 13.272183t41.347956 32.66999 26.544367 41.85842' +
+                        '5 9.188435 39.81655l0 576.829511q0 29.607178-11.740778 53.088734t-30.628116 39.81655-42.368893 25.5' +
+                        '2343-46.963111 9.188435l-503.322034 0q-19.397807 0-42.368893-11.230309t-42.879362-29.607178-33.1804' +
+                        '59-42.368893-13.272183-48.494516l0-568.662014q0-21.439681 10.209372-44.410768t26.544367-42.368893 37' +
+                        '.774676-32.159521 44.921236-12.761715l515.57328 0zM578.360917 830.021934q26.544367 0 45.431705-18.3' +
+                        '76869t18.887338-44.921236-18.887338-45.431705-45.431705-18.887338l-382.851446 0q-26.544367 0-45.431' +
+                        '705 18.887338t-18.887338 45.431705 18.887338 44.921236 45.431705 18.376869l382.851446 0zM578.360917 5' +
+                        '74.787637q26.544367 0 45.431705-18.376869t18.887338-44.921236-18.887338-45.431705-45.431705-18.8873' +
+                        '38l-382.851446 0q-26.544367 0-45.431705 18.887338t-18.887338 45.431705 18.887338 44.921236 45.4317' +
+                        '05 18.376869l382.851446 0zM759.0668 0q43.900299 0 80.654038 26.033898t63.808574 64.319043 42.368893 82.' +
+                        '695912 15.314058 81.164506l0 542.117647q0 21.439681-12.761715 39.306082t-31.138584 30.628116-39.816' +
+                        '55 20.418744-39.81655 7.657029l-4.083749 0 0-609.499501q-8.167498-70.444666-43.900299-108.219342t-' +
+                        '94.947159-49.004985l-498.217348 0q1.020937-2.041874 1.020937-7.14656 0-20.418744 12.251246-41.85842' +
+                        '5t32.159521-38.795613 44.410768-28.586241 49.004985-11.230309l423.688933 0z"></path>' +
+                        '</svg>' +
+                        '</span>');
+                    $container.append($infoboxBtn);
+                    $infoboxBtn.tooltipster({
+                        side: ['bottom'],
+                        theme: 'tooltipster-shadow',
+                        distance: 16,
+                        interactive: true,
+                        trigger: 'click',
+                        content: 'Loading...',
+                        functionBefore: function (instance, helper) {
+                            var $origin = $(helper.origin);
+                            if ($origin.data('loaded') !== true) {
+                                var id = treeNode[self.options.idKey];
+                                self.infoboxService.load(id, function (data) {
+                                    var $container = self.infoboxService.buildInfobox(data);
+                                    instance.content($container);
+                                    self.infoboxService.initEvent($container);
+                                    $origin.data('loaded', true);
+                                }, function () {
+                                    instance.content('read data failed');
+                                });
+                            }
+                        }
+                    });
+                    $infoboxBtn.on('click', function (event) {
+                        event.stopPropagation();
+                    });
+                } else if (value instanceof Function) {
+                    value($container, treeNode);
+                }
+            }
+            return true;
         };
 
         Service.prototype.removeHoverDom = function (treeId, treeNode) {

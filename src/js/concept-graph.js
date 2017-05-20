@@ -101,7 +101,6 @@
             self.tgc2Page = new Tgc2Page(self.tgc2, self.options.tgc2Settings.page);
             self.tgc2.init();
             $(self.options.tgc2Settings.selector).addClass('tgc2 tgc2-concept-graph');
-            console.log(self.options);
             if(self.options.instanceEnable){
                 $(self.options.tgc2Settings.selector).append('<div class="tgc2-info-top">' +
                     '<ul class="info-top">' +

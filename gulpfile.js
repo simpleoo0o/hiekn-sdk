@@ -96,6 +96,13 @@ gulp.task('main-bower-file', function () {
                     "dist/js/bootstrap-datepicker.min.js"
                 ]
             },
+            'tooltipster': {
+                'main': [
+                    'dist/js/tooltipster.bundle.min.js',
+                    'dist/css/tooltipster.bundle.min.css',
+                    'dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css'
+                ]
+            },
             'ztree': {
                 'main': [
                     "css/zTreeStyle/*",

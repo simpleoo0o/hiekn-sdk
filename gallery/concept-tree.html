@@ -11,8 +11,11 @@
           type="text/css"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
           type="text/css"/>
+    <link rel="stylesheet" href="../lib/tooltipster.bundle.min.css">
+    <link rel="stylesheet" href="../lib/tooltipster-sideTip-shadow.min.css">
     <link rel="stylesheet" href="../assets/ztree/zTreeStyle/zTreeStyle.css">
     <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../lib/tgc2.min.css" type="text/css"/>
     <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
 
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
@@ -20,9 +23,11 @@
     <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="http://oorm1yhwz.bkt.clouddn.com/zoomcharts-1.17.2/zoomcharts.js"></script>
     <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
+    <script src="../lib/tooltipster.bundle.min.js"></script>
     <script src="../assets/ztree/jquery.ztree.all.min.js"></script>
     <script src="../lib/jquery.hieknjs.min.js"></script>
     <script src="../lib/hiekn-prompt.min.js"></script>
+    <script src="../lib/tgc2.min.js"></script>
     <script src="../dist/hiekn-sdk.js"></script>
     <!--<script src="../src/js/sdk-utils.js"></script>-->
     <!--<script src="../src/js/graph.js"></script>-->
@@ -36,6 +41,7 @@
         config.kgName = 'kg_ct';
         config.container = '#ct';
         config.readAll = true;
+        config.nodeHoverTools = {infobox: {enable: true}, graph: {enable: true,instanceEnable: true,infobox: false}};
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         new HieknConceptTreeService(config);
     });
