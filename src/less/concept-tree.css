@@ -20,7 +20,7 @@
   }
 }
 .hiekn-concept-tree {
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
 }
 .hiekn-concept-tree .ztree {
   padding: 0;
@@ -45,13 +45,13 @@
 }
 .hiekn-concept-tree .ztree li a span.node_name {
   white-space: nowrap;
-  color: #666666;
+  color: #666;
 }
 .hiekn-concept-tree .ztree li a span.node_name input {
   height: 30px;
   width: 90%;
   border-radius: 4px;
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
   color: #00b38a;
   padding-left: 8px;
 }
@@ -78,7 +78,7 @@
 }
 .hiekn-concept-tree .ztree li a span.button-container span svg {
   vertical-align: 4px;
-  fill: #ffffff;
+  fill: #fff;
 }
 .hiekn-concept-tree .ztree li ul {
   padding-left: 10px;
@@ -92,7 +92,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #666666;
+  color: #666;
   position: relative;
   z-index: 2;
   margin-left: 8px;
@@ -147,15 +147,15 @@
 }
 .hiekn-concept-tree .ztree > li a.curSelectedNode span:before,
 .hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span:before {
-  color: #ffffff;
+  color: #fff;
 }
 .hiekn-concept-tree .ztree > li a.curSelectedNode span.node_name,
 .hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span.node_name {
-  color: #ffffff;
+  color: #fff;
 }
 .hiekn-concept-tree .ztree > li a.curSelectedNode span.button-container span,
 .hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span.button-container span {
-  background: #ffffff;
+  background: #fff;
 }
 .hiekn-concept-tree .ztree > li a.curSelectedNode span.button-container span svg,
 .hiekn-concept-tree .ztree > li a.tmpTargetNode_inner span.button-container span svg {
@@ -163,13 +163,13 @@
 }
 .hiekn-concept-tree .ztree > li > a {
   padding-left: 10px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #eee;
   height: 50px;
   line-height: 50px;
 }
 .hiekn-concept-tree .ztree > li > a span {
   font-size: 16px;
-  color: #333333;
+  color: #333;
 }
 .hiekn-concept-tree .ztree > li > a span.button-container {
   margin-top: -12px;
@@ -228,8 +228,8 @@
   right: -201px;
   top: -1px;
   bottom: -1px;
-  background: #ffffff;
-  border: solid #dddddd;
+  background: #fff;
+  border: solid #ddd;
   border-width: 1px 1px 1px 0;
   z-index: 1;
   overflow: hidden;
@@ -247,10 +247,10 @@
   overflow: auto;
   left: 0;
   right: 0;
-  border-top: 1px solid #dddddd;
+  border-top: 1px solid #ddd;
   font-size: 12px;
   line-height: 22px;
-  color: #999999;
+  color: #999;
 }
 .hiekn-instance-container .hiekn-instance-list li {
   height: 30px;
@@ -271,7 +271,7 @@
   padding: 16px 0;
   font-size: 24px;
   line-height: 36px;
-  color: #333333;
+  color: #333;
 }
 .hiekn-concept-tree-graph-modal .modal-body {
   padding: 0;
