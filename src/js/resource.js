@@ -31,11 +31,11 @@
                         var from = '';
                         var to = '';
                         if (filterConfig.type == 'year') {
-                            from = moment(year + '-01-01').format(filterConfig.format || 'YYYYMMDD');
-                            to = moment((parseInt(year, 10) + 1) + '-01-01').format(filterConfig.format || 'YYYYMMDD');
+                            from = moment(year + '-01-01').format(filterConfig.format || 'YYYY-MM-DD');
+                            to = moment((parseInt(year, 10) + 1) + '-01-01').format(filterConfig.format || 'YYYY-MM-DD');
                         } else {
-                            from = moment(year + '-01').format(filterConfig.format || 'YYYYMM');
-                            to = moment((parseInt(year, 10) + 1) + '-01').format(filterConfig.format || 'YYYYMM');
+                            from = moment(year + '-01').format(filterConfig.format || 'YYYY-MM');
+                            to = moment((parseInt(year, 10) + 1) + '-01').format(filterConfig.format || 'YYYY-MM');
                         }
                         var obj = {};
                         obj[key] = {

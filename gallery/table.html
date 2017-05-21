@@ -34,24 +34,15 @@
         var config = {};
         config.container = '#table';
         config.config = {
-            name: '专利资源',
+            name: '标准资源',
             databases: ['u260'],
-            tables: ['u260_data_ab521704'],
-            fieldsTable: ['title', 'publishTime', 'application_num', 'holder', 'patent_classification', 'keyword'],
-            fieldsTableName: ['标题', '申请日期', '申请号', '申请人', '专利类型', '关键词', '来源'],
-            fields: ['title', 'publishTime', 'application_num',  'publication_num', 'holder', 'address', 'patent_classification', 'agency', 'agent', 'keyword', 'patent_abs'],
-            fieldsName: ['标题', '申请日期', '申请号', '公开号', '申请人', '地址', '专利类型', '代理机构', '代理人', '关键词', '摘要'],
-            fieldsRenderer: {
-                publishTime: 'date',
-                publication_date: 'date',
-                holder: 'array',
-                inventor: 'array',
-                patent_classification: 'array',
-                keyword: 'array'
-            },
+            tables: ['u260_data_def48ea5'],
+            fields: ['title', 'publishTime', 'keyword', 'from', 'url'],
+            fieldsName: ['标题', '发布时间', '关键词', '类型', '来源'],
+            fieldsRenderer: {publishTime: 'date', url: {type: 'link', array: true}},
             filter: [{
                 key: 'publishTime',
-                label: '申请日期',
+                label: '发布时间',
                 type: 'year',
                 format: 'YYYYMMDD',
                 options: [{

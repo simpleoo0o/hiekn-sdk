@@ -2024,11 +2024,11 @@
                         var from = '';
                         var to = '';
                         if (filterConfig.type == 'year') {
-                            from = moment(year + '-01-01').format(filterConfig.format || 'YYYYMMDD');
-                            to = moment((parseInt(year, 10) + 1) + '-01-01').format(filterConfig.format || 'YYYYMMDD');
+                            from = moment(year + '-01-01').format(filterConfig.format || 'YYYY-MM-DD');
+                            to = moment((parseInt(year, 10) + 1) + '-01-01').format(filterConfig.format || 'YYYY-MM-DD');
                         } else {
-                            from = moment(year + '-01').format(filterConfig.format || 'YYYYMM');
-                            to = moment((parseInt(year, 10) + 1) + '-01').format(filterConfig.format || 'YYYYMM');
+                            from = moment(year + '-01').format(filterConfig.format || 'YYYY-MM');
+                            to = moment((parseInt(year, 10) + 1) + '-01').format(filterConfig.format || 'YYYY-MM');
                         }
                         var obj = {};
                         obj[key] = {
@@ -2322,54 +2322,15 @@
                 }
                 var len = 0;
                 for (var j in fields) {
-                    var k = fields[j];
                     len++;
-                    var str = '';
-                    if (fieldsRenderer[k]) {
-                        if (fieldsRenderer[k] instanceof Object) {
-                            if (fieldsRenderer[k].type == 'link') {
-                                if (fieldsRenderer[k].name) {
-                                    str = self.rendererLink(d[k], fieldsRenderer[k].name, 'hiekn-table-btn-link');
-                                } else if (fieldsRenderer[k].fields) {
-                                    continue;
-                                }
-                            }
-                        } else {
-                            if (fieldsRenderer[k] == 'year') {
-                                str = self.rendererYear(d[k]);
-                            } else if (fieldsRenderer[k] == 'date') {
-                                str = self.rendererDate(d[k]);
-                            } else if (fieldsRenderer[k] == 'array') {
-                                str = self.rendererArray(d[k]);
-                            } else if (fieldsRenderer[k] == 'link') {
-                                str = self.rendererLink(d[k], undefined, 'hiekn-table-btn-link');
-                            }
-                        }
-                    } else {
-                        str = self.dealContent(d[k]);
-                    }
-                    if (fieldsLink[k]) {
-                        str = self.rendererLink(d[fieldsLink[k]], d[k]);
-                    }
-                    tr += '<td title="' + d[k] + '">' + str + '</td>';
+                    tr += '<td title="' + d[fields[j]] + '">' + self.rendererFields(d, fields[j], fieldsLink, fieldsRenderer) + '</td>';
                 }
                 tr += '</tr>';
                 trs += tr;
                 if (res.fieldsTable) {
                     var trDetail = '<tr class="hiekn-table-detail-line hide"><td colspan="' + (len + 1) + '">';
                     for (var i in fieldsDetail) {
-                        var k = fieldsDetail[i];
-                        var str = d[k];
-                        if (fieldsRenderer[k]) {
-                            if (fieldsRenderer[k] == 'year') {
-                                str = self.rendererYear(d[k]);
-                            } else if (fieldsRenderer[k] == 'array') {
-                                str = self.rendererArray(d[k]);
-                            } else if (fieldsRenderer[k] == 'date') {
-                                str = self.rendererDate(d[k]);
-                            }
-                        }
-                        trDetail += '<div><label>' + fieldsNameDetail[i] + ':</label>' + str + '</div>';
+                        trDetail += '<div><label>' + fieldsNameDetail[i] + ':</label>' + self.rendererFields(d, fieldsDetail[i], fieldsLink, fieldsRenderer) + '</div>';
                     }
                     trDetail += '</td></tr>';
                     trs += trDetail;
@@ -2380,21 +2341,22 @@
             self.select('.hiekn-table-content').html('<table class="hiekn-table-normal">' + ths + trs + '</table>');
         };
 
-        Service.prototype.getTableContainer = function () {
+        Service.prototype.getFilterKw = function () {
             var self = this;
-            return self.select('.hiekn-table-content');
+            var $item = self.select('.hiekn-table-search-kw-container');
+            return $item.find('input').val();
         };
 
         Service.prototype.getFilterOptions = function () {
             var self = this;
             var filterOptions = {};
-            self.select('.hiekn-table-filter-item').each(function(i, v) {
+            self.select('.hiekn-table-filter-item').each(function (i, v) {
                 var key = '';
                 var $items = $(v).find('span[option-value].active');
                 if ($items.length) {
                     var hasAll = false;
                     var value = [];
-                    $items.each(function(j, e) {
+                    $items.each(function (j, e) {
                         var ov = $(e).attr('option-value');
                         if (!ov) {
                             hasAll = true;
@@ -2411,24 +2373,32 @@
             return filterOptions;
         };
 
-        Service.prototype.getFilterKw = function () {
+        Service.prototype.getTableContainer = function () {
             var self = this;
-            var $item = self.select('.hiekn-table-search-kw-container');
-            return $item.find('input').val();
+            return self.select('.hiekn-table-content');
+        };
+
+        Service.prototype.getValues = function (value) {
+            var values = [];
+            if (value instanceof Array) {
+                values = value;
+            } else if (typeof value == 'string') {
+                if (value.indexOf('[') == 0) {
+                    try {
+                        values = JSON.parse(value);
+                    } catch (e) {
+                        values = [value];
+                    }
+                } else {
+                    values = value.split(',');
+                }
+            }
+            return values;
         };
 
         Service.prototype.loadData = function (pageNo) {
             var self = this;
             self.options.load(pageNo, self);
-        };
-
-        Service.prototype.rendererArray = function (v) {
-            try {
-                return JSON.parse(v).toString();
-            } catch (e) {
-
-            }
-            return v;
         };
 
         Service.prototype.rendererDateTime = function (v) {
@@ -2439,6 +2409,29 @@
             return moment(v).format('YYYYMMDD');
         };
 
+        Service.prototype.rendererFields = function (d, k, fieldsLink, fieldsRenderer) {
+            var self = this;
+            var str = '';
+            if (d[k]) {
+                var values = self.getValues(d[k]);
+                for (var idx in values) {
+                    if (!fieldsRenderer[k]) {
+                        str += self.rendererValue('string', values[idx]);
+                    } else if (!fieldsRenderer[k].fields) {
+                        str += self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k]);
+                    }
+                }
+            }
+            if (fieldsLink[k]) {
+                var name = d[k];
+                if (!d[k]) {
+                    name = '链接';
+                }
+                str = self.rendererLink(d[fieldsLink[k]], name);
+            }
+            return str;
+        };
+
         Service.prototype.rendererYear = function (v) {
             return moment(v).format('YYYY');
         };
@@ -2446,6 +2439,29 @@
         Service.prototype.rendererLink = function (v, name, cls) {
             name = name || '查看';
             return v ? '<a href="' + v + '" target="_blank" class="' + cls + '">' + name + '</a>' : '';
+        };
+
+        Service.prototype.rendererValue = function (type, value, fieldsRenderer) {
+            var self = this;
+            var str = '';
+            try {
+                if (type == 'year') {
+                    str = self.rendererYear(value);
+                } else if (type == 'date') {
+                    str = self.rendererDate(value);
+                } else if (type == 'dateTime') {
+                    str = self.rendererDateTime(value);
+                } else if (type == 'json') {
+                    str = JSON.parse(value);
+                } else if (type == 'link') {
+                    str = self.rendererLink(value, fieldsRenderer.name, 'hiekn-table-btn-link');
+                } else if (type == 'string') {
+                    str = self.dealContent(value);
+                }
+            } catch (e) {
+
+            }
+            return str;
         };
 
         Service.prototype.select = function (selector) {

@@ -745,6 +745,7 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   color: #fff;
   background: #66d1b9;
   border-radius: 4px;
+  margin-right: 8px;
 }
 .hiekn-table .hiekn-table-normal tbody td a.hiekn-table-btn-link:hover {
   background: #4ccaad;
