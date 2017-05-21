@@ -15,7 +15,7 @@
                 imagePrefix: null,
                 href: null
             };
-            self.settings = $.extend(true, {}, defaultSettings, options);
+            self.options = $.extend(true, {}, defaultSettings, options);
         };
 
         Service.prototype.href = function (id) {
@@ -27,7 +27,7 @@
             var self = this;
             $container.on('click', '.hiekn-infobox-link', function () {
                 var id = $(this).attr('data-id');
-                self.settings.href ? self.settings.href(id, self) : self.href(id);
+                self.options.href ? self.options.href(id, self) : self.href(id);
             });
             $container.on('click', '.hiekn-infobox-info-detail a', function () {
                 $(this).closest('.hiekn-infobox-info-detail').toggleClass('on');
@@ -38,7 +38,7 @@
             var self = this;
             var meaningTag = entity.meaningTag ? '(' + entity.meaningTag + ')' : '';
             var html = '<span class="hiekn-infobox-name">' + entity.name + '<span class="hiekn-infobox-meaningTag">' + meaningTag + '</span></span>';
-            if (buildLink && self.settings.enableLink) {
+            if (buildLink && self.options.enableLink) {
                 return '<a href="javascript:void(0)" class="hiekn-infobox-link" data-id="' + entity.id + '">' + html + '</a>';
             }
             return html;
@@ -54,11 +54,11 @@
 
         Service.prototype.load = function (id, callback, onFailed) {
             var self = this;
-            var param = self.settings.data || {};
+            var param = self.options.data || {};
             param.id = id;
-            param.kgName = self.settings.kgName;
+            param.kgName = self.options.kgName;
             hieknjs.kgLoader({
-                url: self.settings.baseUrl + 'infobox',
+                url: self.options.baseUrl + 'infobox',
                 type: 1,
                 params: param,
                 success: function (response) {
@@ -67,9 +67,9 @@
                         if (callback) {
                             self.callback = callback;
                             callback(data);
-                        } else if (self.settings.selector) {
+                        } else if (self.options.selector) {
                             var $container = self.buildInfobox(data);
-                            $(self.settings.selector).html($container);
+                            $(self.options.selector).html($container);
                             self.initEvent($container);
                         } else {
                             console.error('selector or callback must be config');
@@ -95,7 +95,7 @@
                 if(data.self.img) {
                     var imgUlrl = data.self.img;
                     if(data.self.img.indexOf('http') != 0){
-                        imgUlrl = self.settings.imagePrefix + data.self.img + '?_=' + Math.round(new Date() / 3600000);
+                        imgUlrl = self.options.imagePrefix + data.self.img + '?_=' + Math.round(new Date() / 3600000);
                     }
                     $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-img"><img src="' + imgUlrl + '" alt=""></div>');
                 }

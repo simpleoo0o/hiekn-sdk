@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
-    <title>Concept Tree Demo</title>
+    <title>Concept Graph Demo</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="initial-scale=1"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
@@ -31,12 +31,12 @@
 </head>
 
 <body>
-<div id="ct" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
+<div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
-        config.selector = '#ct';
+        config.selector = '#container';
         config.instanceEnable = true;
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         var service = new HieknConceptGraphService(config);

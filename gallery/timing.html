@@ -32,12 +32,12 @@
 </head>
 
 <body>
-<div id="chart" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
+<div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
     $(function () {
         var config = {};
         config.kgName = 'kg_cbnode_c';
-        config.selector = '#chart';
+        config.selector = '#container';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         var service = new HieknTimingGraphService(config);
         service.load({'id': 8796});

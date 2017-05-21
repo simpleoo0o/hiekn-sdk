@@ -27,12 +27,12 @@
 </head>
 
 <body>
-<div id="chart" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
+<div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
-        config.selector = '#chart';
+        config.selector = '#container';
         config.statsConfig = '[{"key":"VC invest","type":13,"atts":[1301]}]';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         config.images = buildImgas([2, 7, 9, 11, 12, 13], '../images/kg_ct');

@@ -29,12 +29,12 @@
 </head>
 
 <body>
-<div id="chart" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
+<div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
-        config.selector = '#chart';
+        config.selector = '#container';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         config.imagePrefix = 'http://opvdgx0ov.bkt.clouddn.com/';
         config.images = buildImgas([2, 7, 9, 10, 11, 12, 13, 16, 17, 18, 1601, 1602], '../images/kg_ct');
