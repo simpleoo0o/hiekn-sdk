@@ -1,0 +1,52 @@
+@import "define";
+
+.btn-primary, .btn-primary:focus, .btn-primary:active {
+  color: @color-light !important;
+  background-color: @color-primary !important;
+  border: 1px solid @color-primary !important;
+  outline: none !important;
+}
+
+.btn-primary:hover {
+  color: @color-light !important;
+  background-color: @color-primary-00 !important;
+  border: 1px solid @color-primary-00 !important;
+}
+
+.btn-primary[disabled], .btn-primary[disabled]:hover {
+  color: @color-light !important;
+  background-color: @color-primary-04 !important;
+  border: 1px solid @color-primary-04 !important;
+}
+
+.btn-primary-outline, .btn-primary-outline:focus, .btn-primary-outline:active {
+  background-color: @color-light !important;
+  color: @color-primary !important;
+  border: 1px solid @color-primary !important;
+  outline: none !important;
+}
+
+.btn-primary-outline:hover {
+  color: @color-light !important;
+  background-color: @color-primary-00 !important;
+  border: 1px solid @color-primary-00 !important;
+}
+
+.pagination {
+  margin: 30px 0;
+  & > .page_num, & > .page_text {
+    color: @color-primary;
+    cursor: pointer;
+    border-color: @color-ac-04;
+  }
+  & > .page_text {
+    font-family: "宋体";
+    vertical-align: 1px;
+    font-weight: bold;
+  }
+  & > .page_num:hover, & > .page_num.active, & > .page_text:hover {
+    background: @color-primary;
+    border-color: @color-primary;
+    color: @color-light;
+  }
+}

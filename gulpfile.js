@@ -103,6 +103,11 @@ gulp.task('main-bower-file', function () {
                     'dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css'
                 ]
             },
+            'moment': {
+                'main': [
+                    'min/moment.min.js'
+                ]
+            },
             'ztree': {
                 'main': [
                     "css/zTreeStyle/*",

@@ -38,7 +38,8 @@
                     graph: {
                         enable: false,
                         instanceEnable: false,
-                        infobox: false
+                        infobox: false,
+                        conceptGraphSettings:{}
                     }
                 },
                 instance: {
@@ -237,6 +238,7 @@
                 instanceEnable: self.options.nodeHoverTools.graph.instanceEnable,
                 tgc2Settings: {netChart: {settings: {nodeMenu: {}}}}
             };
+            $.extend(true, settings, self.options.nodeHoverTools.graph.conceptGraphSettings);
             if (self.options.nodeHoverTools.graph.infobox) {
                 self.sdkUtils = new HieknSDKService();
                 self.sdkUtils.gentInfobox({

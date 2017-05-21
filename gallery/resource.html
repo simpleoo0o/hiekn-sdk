@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <title>Resource Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="../lib/jquery.hieknjs.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
+
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
+    <script src="../lib/moment.min.js"></script>
+    <script src="../lib/jquery.hieknjs.min.js"></script>
+    <script src="../lib/hiekn-prompt.min.js"></script>
+    <script src="../dist/hiekn-sdk.js"></script>
+    <!--<script src="../src/js/sdk-utils.js"></script>-->
+    <!--<script src="../src/js/graph.js"></script>-->
+</head>
+
+<body>
+<div id="table"></div>
+<script>
+    $(function () {
+        var config = {};
+        config.container = '#table';
+        config.config = {
+            name: '专利资源',
+            databases: ['u260'],
+            tables: ['u260_data_ab521704'],
+            fieldsTable: ['title', 'publishTime', 'application_num', 'holder', 'patent_classification', 'keyword'],
+            fieldsTableName: ['标题', '申请日期', '申请号', '申请人', '专利类型', '关键词', '来源'],
+            fields: ['title', 'publishTime', 'application_num', 'publication_num', 'holder', 'address', 'patent_classification', 'agency', 'agent', 'keyword', 'patent_abs'],
+            fieldsName: ['标题', '申请日期', '申请号', '公开号', '申请人', '地址', '专利类型', '代理机构', '代理人', '关键词', '摘要'],
+            fieldsRenderer: {
+                publishTime: 'date',
+                publication_date: 'date',
+                holder: 'array',
+                inventor: 'array',
+                patent_classification: 'array',
+                keyword: 'array'
+            },
+            filter: [{
+                key: 'publishTime',
+                label: '申请日期',
+                type: 'year',
+                format: 'YYYYMMDD',
+                options: [{
+                    key: '全部',
+                    value: ''
+                }, '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999']
+            }]
+        };
+        config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.beforeLoad = function (self) {
+            self.query.bool.must.push({
+                'bool': {
+                    'should': [{'terms': {'annotation_tag.id': ['0']}}, {'terms': {'parent_annotation_tag.id': ['0']}}],
+                    'minimum_should_match': 1
+                }
+            });
+        };
+        var service = new HieknResourceService(config);
+        service.loadData(1);
+    });
+</script>
+</body>
+</html>
