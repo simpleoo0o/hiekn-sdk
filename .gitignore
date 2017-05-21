@@ -3,3 +3,5 @@ hiekn-sdk.iml
 bower_components
 node_modules
 .idea
+lib
+src/**/*.css
