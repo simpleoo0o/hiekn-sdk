@@ -11,7 +11,8 @@
                 beforeLoad: $.noop,
                 container: null,
                 config: {},
-                data: null
+                data: null,
+                onLoad: $.noop
             };
             self.options = $.extend(true, {}, defaultSettings, options);
             self.init();
@@ -131,6 +132,7 @@
                     } else {
                         instance.drawPage(0, params.pageNo, params.pageSize);
                     }
+                    self.options.onLoad(data, self);
                 },
                 that: $container[0]
             });

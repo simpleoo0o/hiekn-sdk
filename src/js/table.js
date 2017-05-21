@@ -189,14 +189,20 @@
                 var len = 0;
                 for (var j in fields) {
                     len++;
-                    tr += '<td title="' + d[fields[j]] + '">' + self.rendererFields(d, fields[j], fieldsLink, fieldsRenderer) + '</td>';
+                    var k = fields[j];
+                    if (!fieldsRenderer[k] || !fieldsRenderer[k].fields){
+                        tr += '<td title="' + d[k] + '">' + self.rendererFields(d, k, fieldsLink, fieldsRenderer) + '</td>';
+                    }
                 }
                 tr += '</tr>';
                 trs += tr;
                 if (res.fieldsTable) {
                     var trDetail = '<tr class="hiekn-table-detail-line hide"><td colspan="' + (len + 1) + '">';
                     for (var i in fieldsDetail) {
-                        trDetail += '<div><label>' + fieldsNameDetail[i] + ':</label>' + self.rendererFields(d, fieldsDetail[i], fieldsLink, fieldsRenderer) + '</div>';
+                        var k = fieldsDetail[i];
+                        if (!fieldsRenderer[k] || !fieldsRenderer[k].fields) {
+                            trDetail += '<div><label>' + fieldsNameDetail[i] + ':</label>' + self.rendererFields(d, k, fieldsLink, fieldsRenderer) + '</div>';
+                        }
                     }
                     trDetail += '</td></tr>';
                     trs += trDetail;
@@ -283,7 +289,7 @@
                 for (var idx in values) {
                     if (!fieldsRenderer[k]) {
                         str += self.rendererValue('string', values[idx]);
-                    } else if (!fieldsRenderer[k].fields) {
+                    } else {
                         str += self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k]);
                     }
                 }
