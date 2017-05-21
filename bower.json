@@ -11,7 +11,7 @@
   "version": "0.5.10",
   "license": "private",
   "keywords": [
-    "netchart"
+    "hiekn-sdk"
   ],
   "homepage": "https://github.com/jiangrun002/hiekn-sdk",
   "ignore": [
@@ -27,8 +27,8 @@
     "tgc2": "^0.3.1",
     "echarts": "^3.5.4",
     "bootstrap-datepicker": "^1.6.4",
-    "ztree": "^3.5.0",
     "tooltipster": "^4.2.5",
-    "moment": "^2.18.1"
+    "moment": "^2.18.1",
+    "ztree_v3": "^3.5.28"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "port": 8103,
+  "server":{
+    "baseDir": "gallery",
+    "routes": {
+      "/dist": "dist",
+      "/lib": "lib",
+      "/images": "images",
+      "/assets": "assets"
+    }
+  }
+}

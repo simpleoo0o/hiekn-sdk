@@ -69,7 +69,11 @@ gulp.task('minify-css', ['concat-css'], function () {
     return gulp.src(dst + '/' + cssDevFile).pipe(concat(cssFile)).pipe(cleanCss({compatibility: 'ie8'})).pipe(gulp.dest(dst));
 });
 
-gulp.task('main-bower-file', function () {
+gulp.task('clean-lib', function (cb) {
+    return del([lib + '**/*'], cb);
+});
+
+gulp.task('main-bower-file', ['clean-lib'], function () {
     return gulp.src(mainBowerFiles({
         'overrides': {
             'hieknjs': {
@@ -108,10 +112,13 @@ gulp.task('main-bower-file', function () {
                     'min/moment.min.js'
                 ]
             },
-            'ztree': {
+            'ztree_v3': {
                 'main': [
-                    "css/zTreeStyle/*",
-                    "js/jquery.ztree.all-3.5.min.js"
+                    'css/zTreeStyle/zTreeStyle.css',
+                    'css/zTreeStyle/img/zTreeStandard.png',
+                    'css/zTreeStyle/img/line_conn.gif',
+                    'css/zTreeStyle/img/loading.gif',
+                    'js/jquery.ztree.all.min.js'
                 ]
             }
         }
@@ -119,7 +126,13 @@ gulp.task('main-bower-file', function () {
         .pipe(gulp.dest(lib))
 });
 
-gulp.task('lib', ['main-bower-file']);
+gulp.task('update-lib', ['main-bower-file'], function () {
+    return gulp.src([lib + 'zTreeStandard.png', lib + 'line_conn.gif', lib + 'loading.gif']).pipe(gulp.dest(lib + 'zTreeStyle/'));
+});
+
+gulp.task('lib', ['update-lib'], function (cb) {
+    return del([lib + 'zTreeStandard.png', lib + 'line_conn.gif', lib + 'loading.gif'], cb);
+});
 
 gulp.task('build-bower-file', function () {
     jsonfile.spaces = 2;

@@ -8,7 +8,7 @@
     "url": ""
   },
   "author": {
-    "name": "wisman",
+    "name": "jiangrun002",
     "email": "451183365@qq.com"
   },
   "license": "private",
@@ -25,8 +25,13 @@
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
     "jsonfile": "^3.0.0",
+    "lite-server": "^2.3.0",
     "main-bower-files": "^2.13.1"
   },
-  "scripts": {},
+  "scripts": {
+    "postinstall": "bower install && gulp lib && gulp build",
+    "prestart": "npm install",
+    "start": "lite-server"
+  },
   "dependencies": {}
 }
