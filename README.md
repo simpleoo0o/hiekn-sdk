@@ -13,6 +13,9 @@ Add these tags to your document's `<head>`:
  
  [Docs][Docs]
 
+## Gallery
+run: `npm start`
+
 ## [License][license]
 
 private.
