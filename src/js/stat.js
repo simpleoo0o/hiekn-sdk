@@ -27,9 +27,9 @@
 
         Service.prototype.bindEvent = function () {
             var self = this;
-            window.onresize = function () {
+            $(window).on('resize', function () {
                 self.chart && self.chart.resize();
-            }
+            });
         };
 
         Service.prototype.drawChart = function () {

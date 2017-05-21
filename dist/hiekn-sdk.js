@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.9
+     *    v0.5.10
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -2210,8 +2210,8 @@
 
         Service.prototype.bindEvent = function () {
             var self = this;
-            self.select('.hiekn-resource-nav-more').on('click', function () {
-                self.select('.hiekn-resource-nav-more-container').toggleClass('hide');
+            self.$headContainer.find('.hiekn-resource-nav-more').on('click', function () {
+                self.$headContainer.find('.hiekn-resource-nav-more-container').toggleClass('hide');
             });
 
             self.$headContainer.on('shown.bs.tab', 'a[data-toggle="tab"]', function () {
@@ -2220,15 +2220,15 @@
                 self.$headContainer.find('.hiekn-resource-nav-hide-tabs a[href="' + href + '"]').parent().addClass('active').siblings().removeClass('active');
             });
 
-            self.$container.on('click', function (event) {
+            $('body').on('click', function (event) {
                 if (!$(event.target).closest('.hiekn-resource-nav-more-container,.hiekn-resource-nav-more').length) {
-                    self.select('.hiekn-resource-nav-more-container').addClass('hide');
+                    self.$headContainer.find('.hiekn-resource-nav-more-container').addClass('hide');
                 }
             });
 
-            window.onresize = function () {
+            $(window).on('resize', function () {
                 self.updateTabVisibility();
-            }
+            });
         };
 
         Service.prototype.loadData = function (pageNo) {
@@ -2303,9 +2303,9 @@
 
         Service.prototype.bindEvent = function () {
             var self = this;
-            window.onresize = function () {
+            $(window).on('resize', function () {
                 self.chart && self.chart.resize();
-            }
+            });
         };
 
         Service.prototype.drawChart = function () {
