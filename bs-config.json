@@ -1,5 +1,5 @@
 {
-  "port": 8103,
+  "port": 8097,
   "server":{
     "baseDir": "gallery",
     "routes": {
