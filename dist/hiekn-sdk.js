@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.10
+     *    v0.5.11
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -2120,7 +2120,7 @@
             param.fields = res.fields;
             param.query = JSON.stringify(self.query);
             param.pageNo = pageNo;
-            param.pageSize = 15;
+            param.pageSize = param.pageSize || 15;
             var $container = instance.getTableContainer();
             $container.empty();
             hieknjs.kgLoader({
@@ -2156,8 +2156,9 @@
                 beforeLoad: $.noop,
                 container: null,
                 configs: [],
+                data: null,
                 namespace: 'hiekn-resource',
-                data: null
+                onLoad: $.noop
             };
             self.options = $.extend(true, {}, defaultSettings, options);
             self.resourcesService = [];
@@ -2190,7 +2191,8 @@
                 config.container = $resourceContainer;
                 config.onLoad = function (data, instance) {
                     var id = instance.tableService.$container.attr('id');
-                    self.$headContainer.find('a[href="#'+id+'"] .res-count').text(data.rsCount || 0);
+                    self.$headContainer.find('a[href="#' + id + '"] .res-count').text(data.rsCount || 0);
+                    self.options.onLoad(data, instance);
                 };
                 delete config.configs;
                 self.resourcesService.push(new HieknResourceService(config));
@@ -2633,7 +2635,7 @@
                     '</div>' +
                     '</div>';
             }
-            filterHtml += '<div class="hiekn-table-filter-item">' +
+            filterHtml += '<div class="hiekn-table-filter-item hiekn-table-filter-item-kw">' +
                 '<div class="hiekn-table-filter-item-label">关键词：</div>' +
                 '<div class="hiekn-table-filter-item-content">' +
                 '<div class="hiekn-table-search-kw-container"><input type="text"><button class="btn btn-primary hiekn-table-btn-confirm">确定</button></div>' +
@@ -2671,15 +2673,17 @@
             var self = this;
             var res = self.options.config;
             data = hieknjs.dealNull(data);
+            self.data = data;
             var ths = '<thead><tr>';
             var trs = '<tbody>';
             var fields = res.fieldsTable || res.fields;
-            var fieldsDetail = res.fields;
-            var fieldsNameDetail = res.fieldsName ? res.fieldsName : fields;
             var fieldsName = res.fieldsTableName ? res.fieldsTableName : (res.fieldsName ? res.fieldsName : fields);
+            var drawDetail = res.drawDetail || res.fieldsDetail || res.fieldsTable;
+            var fieldsDetail = res.fieldsDetail || res.fields;
+            var fieldsNameDetail = res.fieldsDetailName ? res.fieldsDetailName : (res.fieldsName ? res.fieldsName : fields);
             var fieldsRenderer = res.fieldsRenderer || {};
             var fieldsLink = {};
-            if (res.fieldsTable) {
+            if (drawDetail) {
                 ths += '<th></th>';
             }
             for (var fidx in fields) {
@@ -2696,25 +2700,25 @@
             for (var l in data) {
                 var d = data[l];
                 var tr = '<tr>';
-                if (res.fieldsTable) {
+                if (drawDetail) {
                     tr += '<td class="hiekn-table-data-angle"><i class="fa fa-caret-right"></i></td>';
                 }
                 var len = 0;
                 for (var j in fields) {
                     len++;
                     var k = fields[j];
-                    if (!fieldsRenderer[k] || !fieldsRenderer[k].fields){
-                        tr += '<td title="' + d[k] + '">' + self.rendererFields(d, k, fieldsLink, fieldsRenderer) + '</td>';
+                    if (!fieldsRenderer[k] || !fieldsRenderer[k].fields) {
+                        tr += '<td title="' + d[k] + '">' + self.rendererFields(d, k, fieldsLink, fieldsRenderer, true) + '</td>';
                     }
                 }
                 tr += '</tr>';
                 trs += tr;
-                if (res.fieldsTable) {
+                if (drawDetail) {
                     var trDetail = '<tr class="hiekn-table-detail-line hide"><td colspan="' + (len + 1) + '">';
                     for (var i in fieldsDetail) {
                         var k = fieldsDetail[i];
                         if (!fieldsRenderer[k] || !fieldsRenderer[k].fields) {
-                            trDetail += '<div><label>' + fieldsNameDetail[i] + ':</label>' + self.rendererFields(d, k, fieldsLink, fieldsRenderer) + '</div>';
+                            trDetail += '<div class="hiekn-table-detail-' + k + '"><label>' + fieldsNameDetail[i] + ':</label>' + self.rendererFields(d, k, fieldsLink, fieldsRenderer, false) + '</div>';
                         }
                     }
                     trDetail += '</td></tr>';
@@ -2794,16 +2798,16 @@
             return moment(v).format('YYYYMMDD');
         };
 
-        Service.prototype.rendererFields = function (d, k, fieldsLink, fieldsRenderer) {
+        Service.prototype.rendererFields = function (d, k, fieldsLink, fieldsRenderer, short) {
             var self = this;
             var str = '';
             if (d[k]) {
                 var values = self.getValues(d[k]);
                 for (var idx in values) {
                     if (!fieldsRenderer[k]) {
-                        str += self.rendererValue('string', values[idx]);
+                        str += self.rendererValue('string', values[idx], undefined, short);
                     } else {
-                        str += self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k]);
+                        str += self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k], short);
                     }
                 }
             }
@@ -2823,10 +2827,11 @@
 
         Service.prototype.rendererLink = function (v, name, cls) {
             name = name || '查看';
+            cls = cls || '';
             return v ? '<a href="' + v + '" target="_blank" class="' + cls + '">' + name + '</a>' : '';
         };
 
-        Service.prototype.rendererValue = function (type, value, fieldsRenderer) {
+        Service.prototype.rendererValue = function (type, value, fieldsRenderer, short) {
             var self = this;
             var str = '';
             try {
@@ -2840,8 +2845,10 @@
                     str = JSON.parse(value);
                 } else if (type == 'link') {
                     str = self.rendererLink(value, fieldsRenderer.name, 'hiekn-table-btn-link');
-                } else if (type == 'string') {
+                } else if (type == 'string' && short) {
                     str = self.dealContent(value);
+                } else {
+                    str = value;
                 }
             } catch (e) {
 

@@ -11,8 +11,9 @@
                 beforeLoad: $.noop,
                 container: null,
                 configs: [],
+                data: null,
                 namespace: 'hiekn-resource',
-                data: null
+                onLoad: $.noop
             };
             self.options = $.extend(true, {}, defaultSettings, options);
             self.resourcesService = [];
@@ -45,7 +46,8 @@
                 config.container = $resourceContainer;
                 config.onLoad = function (data, instance) {
                     var id = instance.tableService.$container.attr('id');
-                    self.$headContainer.find('a[href="#'+id+'"] .res-count').text(data.rsCount || 0);
+                    self.$headContainer.find('a[href="#' + id + '"] .res-count').text(data.rsCount || 0);
+                    self.options.onLoad(data, instance);
                 };
                 delete config.configs;
                 self.resourcesService.push(new HieknResourceService(config));

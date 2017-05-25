@@ -118,7 +118,7 @@
             param.fields = res.fields;
             param.query = JSON.stringify(self.query);
             param.pageNo = pageNo;
-            param.pageSize = 15;
+            param.pageSize = param.pageSize || 15;
             var $container = instance.getTableContainer();
             $container.empty();
             hieknjs.kgLoader({

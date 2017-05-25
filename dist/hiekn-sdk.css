@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.10
+     *    v0.5.11
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -752,6 +752,9 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   background: #d9f4ee;
   color: #00b38a;
   border-color: #00b38a;
+}
+.hiekn-table .hiekn-table-filter .hiekn-table-filter-item.hiekn-table-filter-item-kw .hiekn-table-filter-item-content {
+  padding-right: 16px;
 }
 .hiekn-table .hiekn-table-filter .hiekn-table-filter-item:first-child .hiekn-table-filter-item-content {
   border-top: 0;
