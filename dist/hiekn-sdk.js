@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.12
+     *    v0.6.0
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -904,7 +904,7 @@
                 hieknjs.kgLoader({
                     url: options.url ? options.url : (options.baseUrl + 'prompt'),
                     params: param,
-                    type: options.type ? (options.type == 'POST' ? 1 : 0) :1,
+                    type: options.type ? (options.type == 'POST' ? 1 : 0) : 1,
                     success: function (data) {
                         if ($self.prompt == param[options.paramName || 'kw']) {
                             var d = data.rsData;
@@ -924,6 +924,21 @@
                 url: options.baseUrl + 'schema',
                 type: 1,
                 params: param,
+                beforeSend: function () {
+                    options.that && $(options.that).find('.ajax-loading').html('<div class="schema-init">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 14 32 18" width="32" height="4" preserveAspectRatio="none">' +
+                        '<path opacity="0.8" transform="translate(0 0)" d="M2 14 V18 H6 V14z">' +
+                        '<animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="2s" begin="0" repeatCount="indefinite"' +
+                        ' keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" /></path>' +
+                        '<path opacity="0.5" transform="translate(0 0)" d="M0 14 V18 H8 V14z">' +
+                        '<animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="2s" begin="0.1s" repeatCount="indefinite"' +
+                        ' keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" /></path>' +
+                        '<path opacity="0.25" transform="translate(0 0)" d="M0 14 V18 H8 V14z">' +
+                        '<animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="2s" begin="0.2s" repeatCount="indefinite"' +
+                        ' keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" /></path>' +
+                        '</svg>' +
+                        '</div>');
+                },
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
                         var data = response.rsData[0];
@@ -932,7 +947,8 @@
                 },
                 error: function () {
                     toastr.error('网络接口错误！');
-                }
+                },
+                that: options.that
             });
         };
 
@@ -1368,7 +1384,10 @@
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
-            self.schemaSettings = self.baseSettings;
+            self.schemaSettings = {
+                that: $(options.selector)[0]
+            };
+            $.extend(true, self.schemaSettings, self.baseSettings);
             self.tgc2Settings = {};
 
             self.sdkUtils = new window.HieknSDKService();
@@ -1715,7 +1734,10 @@
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
-            self.schemaSettings = self.baseSettings;
+            self.schemaSettings = {
+                that: $(options.selector)[0]
+            };
+            $.extend(true, self.schemaSettings, self.baseSettings);
             self.tgc2Settings = {};
 
             self.sdkUtils = new window.HieknSDKService();
@@ -1898,7 +1920,10 @@
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
-            self.schemaSettings = self.baseSettings;
+            self.schemaSettings = {
+                that: $(options.selector)[0]
+            };
+            $.extend(true, self.schemaSettings, self.baseSettings);
             self.tgc2Settings = {};
 
             self.sdkUtils = new window.HieknSDKService();
@@ -2842,7 +2867,7 @@
                 } else if (type == 'dateTime') {
                     str = self.rendererDateTime(value);
                 } else if (type == 'json') {
-                    str = JSON.parse(value);
+                    str = JSON.stringify(value);
                 } else if (type == 'link') {
                     str = self.rendererLink(value, fieldsRenderer.name, 'hiekn-table-btn-link');
                 } else if (type == 'string' && short) {
@@ -2903,9 +2928,11 @@
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
-            self.schemaSettings = self.baseSettings;
+            self.schemaSettings = {
+                that: $(options.selector)[0]
+            };
+            $.extend(true, self.schemaSettings, self.baseSettings);
             self.tgc2Settings = {};
-
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
@@ -2914,8 +2941,8 @@
                     prompt: {
                         enable: true,
                         style: {
-                            left: '20px',
-                            top: '40px'
+                            left: '340px',
+                            top: '20px'
                         },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
@@ -2940,11 +2967,17 @@
                     timeChart: {
                         enable: true,
                         style: {
-                            left: '200px',
+                            left: '520px',
                             right: '20px'
                         }
                     },
+                    event: {
+                        enable: true
+                    },
                     netChart: {
+                        style: {
+                            left: '320px'
+                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
@@ -2970,6 +3003,7 @@
             self.tgc2 = new Tgc2Graph(self.tgc2Settings);
             self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
             self.tgc2TimeChart = new Tgc2TimeChart(self.tgc2, self.tgc2Settings.timeChart);
+            self.tgc2Event = new Tgc2Event(self.tgc2, self.tgc2Settings.event);
             self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.tgc2Settings.prompt);
             self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
             self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);

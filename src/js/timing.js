@@ -37,9 +37,11 @@
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
-            self.schemaSettings = self.baseSettings;
+            self.schemaSettings = {
+                that: $(options.selector)[0]
+            };
+            $.extend(true, self.schemaSettings, self.baseSettings);
             self.tgc2Settings = {};
-
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
@@ -48,8 +50,8 @@
                     prompt: {
                         enable: true,
                         style: {
-                            left: '20px',
-                            top: '40px'
+                            left: '340px',
+                            top: '20px'
                         },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
@@ -74,11 +76,17 @@
                     timeChart: {
                         enable: true,
                         style: {
-                            left: '200px',
+                            left: '520px',
                             right: '20px'
                         }
                     },
+                    event: {
+                        enable: true
+                    },
                     netChart: {
+                        style: {
+                            left: '320px'
+                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
@@ -104,6 +112,7 @@
             self.tgc2 = new Tgc2Graph(self.tgc2Settings);
             self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
             self.tgc2TimeChart = new Tgc2TimeChart(self.tgc2, self.tgc2Settings.timeChart);
+            self.tgc2Event = new Tgc2Event(self.tgc2, self.tgc2Settings.event);
             self.tgc2Prompt = new Tgc2Prompt(self.tgc2, self.tgc2Settings.prompt);
             self.tgc2Crumb = new Tgc2Crumb(self.tgc2, self.tgc2Settings.crumb);
             self.tgc2Find = new Tgc2Find(self.tgc2, self.tgc2Settings.find);

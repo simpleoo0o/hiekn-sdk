@@ -327,7 +327,7 @@
                 } else if (type == 'dateTime') {
                     str = self.rendererDateTime(value);
                 } else if (type == 'json') {
-                    str = JSON.parse(value);
+                    str = JSON.stringify(value);
                 } else if (type == 'link') {
                     str = self.rendererLink(value, fieldsRenderer.name, 'hiekn-table-btn-link');
                 } else if (type == 'string' && short) {

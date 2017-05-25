@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.5.12
+     *    v0.6.0
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -394,6 +394,23 @@
   background: #00b38a;
   border-color: #00b38a;
   color: #fff;
+}
+.schema-init {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.schema-init svg {
+  fill: #00b38a;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 256px;
+  height: 32px;
+  margin-left: -128px;
+  margin-top: -16px;
 }
 
 /* define end */

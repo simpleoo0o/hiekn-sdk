@@ -38,7 +38,10 @@
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
-            self.schemaSettings = self.baseSettings;
+            self.schemaSettings = {
+                that: $(options.selector)[0]
+            };
+            $.extend(true, self.schemaSettings, self.baseSettings);
             self.tgc2Settings = {};
 
             self.sdkUtils = new window.HieknSDKService();
