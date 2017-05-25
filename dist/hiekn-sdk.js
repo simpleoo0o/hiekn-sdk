@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.0
+     *    v0.6.1
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1231,6 +1231,7 @@
                 var param = options.data || {};
                 param.kgName = options.kgName;
                 param.id = options.tgc2.startInfo.id;
+                param.isRelationMerge = true;
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param, filters);
