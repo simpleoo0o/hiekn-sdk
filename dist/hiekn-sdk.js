@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.1
+     *    v0.6.2
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -2734,7 +2734,7 @@
                     len++;
                     var k = fields[j];
                     if (!fieldsRenderer[k] || !fieldsRenderer[k].fields) {
-                        tr += '<td title="' + d[k] + '">' + self.rendererFields(d, k, fieldsLink, fieldsRenderer, true) + '</td>';
+                        tr += '<td>' + self.rendererFields(d, k, fieldsLink, fieldsRenderer, true) + '</td>';
                     }
                 }
                 tr += '</tr>';
@@ -2874,7 +2874,7 @@
                 } else if (type == 'string' && short) {
                     str = self.dealContent(value);
                 } else {
-                    str = value;
+                    str = hieknjs.safeHTML(value);
                 }
             } catch (e) {
 
