@@ -11,7 +11,7 @@
           type="text/css"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
           type="text/css"/>
-    <!--<link rel="stylesheet" href="../lib/bootstrap-datepicker3.css" type="text/css"/>-->
+    <link rel="stylesheet" href="../lib/bootstrap-datepicker3.css" type="text/css"/>
     <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
     <link rel="stylesheet" href="../lib/tgc2.min.css" type="text/css"/>
     <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
@@ -22,7 +22,7 @@
     <script src="http://oorm1yhwz.bkt.clouddn.com/zoomcharts-1.17.2/zoomcharts.js"></script>
     <script src="https://cdn.staticfile.org/echarts/3.5.0/echarts.min.js"></script>
     <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
-    <!--<script src="../lib/bootstrap-datepicker.min.js"></script>-->
+    <script src="../lib/bootstrap-datepicker.min.js"></script>
     <script src="../lib/jquery.hieknjs.min.js"></script>
     <script src="../lib/hiekn-prompt.min.js"></script>
     <script src="../lib/tgc2.min.js"></script>
@@ -37,10 +37,12 @@
     $(function () {
         var config = {};
         config.kgName = 'kg_cbnode_c';
+//        config.kgName = 'u261_graph_e3ed6492';
         config.selector = '#container';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         var service = new HieknTimingGraphService(config);
         service.load({'id': 8796});
+//        service.load({'id': 8});
     });
 </script>
 </body>

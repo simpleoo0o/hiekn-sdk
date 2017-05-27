@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.3
+     *    v0.6.4
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -2348,6 +2348,9 @@
                 case 'pie':
                     self.drawPieChart();
                     break;
+                case 'wordCloud':
+                    self.drawWordCloudChart();
+                    break;
             }
         };
 
@@ -2396,6 +2399,56 @@
                     data: legend
                 }
             };
+            var option = {};
+            if (stat.chartSettings) {
+                option = $.extend(true, {}, defaultOption, stat.chartSettings);
+            } else {
+                option = defaultOption;
+            }
+            option.series = [series];
+            self.chart.setOption(option);
+        };
+
+        Service.prototype.drawWordCloudChart = function () {
+            var self = this;
+            var d = self.stat;
+            var stat = self.options.config;
+            var data = [];
+            for (var is in d.series) {
+                if (d.series[is].name) {
+                    data.push(d.series[is]);
+                }
+            }
+            var defaultSeries = {
+                type: 'wordCloud',
+                sizeRange: [12, 50],
+                rotationRange: [-45, 90],
+                textPadding: 0,
+                autoSize: {
+                    enable: true,
+                    minSize: 6
+                },
+                textStyle: {
+                    normal: {
+                        color: function () {
+                            return self.options.chartColor[Math.floor(Math.random() * self.options.chartColor.length)];
+                        }
+                    },
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowColor: '#333'
+                    }
+                },
+                data: data
+            };
+            var series = {};
+            if (stat.chartSettings && stat.chartSettings.series) {
+                series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
+            } else {
+                series = defaultSeries;
+            }
+            self.chart = echarts.init(self.$container[0]);
+            var defaultOption = {};
             var option = {};
             if (stat.chartSettings) {
                 option = $.extend(true, {}, defaultOption, stat.chartSettings);
