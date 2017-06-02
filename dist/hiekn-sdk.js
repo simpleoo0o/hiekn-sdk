@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.5
+     *    v0.6.6
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1489,9 +1489,6 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
-                if(options.autoInit){
-                    self.load(options.startInfo);
-                }
             });
         };
 
@@ -3028,6 +3025,18 @@
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
+            self.initSettings = {
+                that: $(options.selector)[0],
+                isTiming: true,
+                success: function (data) {
+                    if (data.entityList && data.entityList.length) {
+                        self.load(data.entityList[0]);
+                    }
+                },
+                failed: $.noop
+            };
+            $.extend(true, self.initSettings, self.baseSettings);
+
             self.tgc2Settings = {};
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
@@ -3058,7 +3067,10 @@
                     legend: {
                         enable: true,
                         data: options.nodeColors || [],
-                        onDraw: self.sdkUtils.legend(schema)
+                        onDraw: self.sdkUtils.legend(schema),
+                        style: {
+                            left: '380px'
+                        }
                     },
                     timeChart: {
                         enable: true,
@@ -3110,12 +3122,12 @@
             self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
-            try{
+            try {
                 self.tgc2TimeChart.$settingModal.find('.input-daterange').datepicker({
                     format: 'yyyy-mm-dd'
                 });
                 self.tgc2TimeChart.$settingModal.find('.input-daterange').find('input').prop('type', 'text');
-            }catch (e){
+            } catch (e) {
             }
         };
 
@@ -3123,7 +3135,11 @@
             var self = this;
             setTimeout(function () {
                 if (self.isInit) {
-                    self.tgc2.load(startInfo);
+                    if (!startInfo) {
+                        self.sdkUtils.graphInit(self.initSettings);
+                    } else {
+                        self.tgc2.load(startInfo);
+                    }
                 } else {
                     self.load(startInfo);
                 }

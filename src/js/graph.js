@@ -117,9 +117,6 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
-                if(options.autoInit){
-                    self.load(options.startInfo);
-                }
             });
         };
 
