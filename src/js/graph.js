@@ -41,6 +41,17 @@
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
+            self.initSettings = {
+                that: $(options.selector)[0],
+                isTiming: false,
+                success: function (data) {
+                    if(data.entityList && data.entityList.length){
+                        self.load(data.entityList[0]);
+                    }
+                },
+                failed: $.noop
+            };
+            $.extend(true, self.initSettings, self.baseSettings);
             self.tgc2Settings = {};
 
             self.sdkUtils = new window.HieknSDKService();
@@ -106,6 +117,9 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
+                if(options.autoInit){
+                    self.load(options.startInfo);
+                }
             });
         };
 
@@ -130,7 +144,11 @@
             var self = this;
             setTimeout(function () {
                 if (self.isInit) {
-                    self.tgc2.load(startInfo);
+                    if(!startInfo){
+                        self.sdkUtils.graphInit(self.initSettings);
+                    }else{
+                        self.tgc2.load(startInfo);
+                    }
                 } else {
                     self.load(startInfo);
                 }

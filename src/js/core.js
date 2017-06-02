@@ -500,6 +500,30 @@
             }
         };
 
+        Service.prototype.graphInit = function (options) {
+            var self = this;
+            var param = options.data || {};
+            param.kgName = options.kgName;
+            param.isTiming = options.isTiming;
+            hieknjs.kgLoader({
+                url: options.baseUrl + 'graph/init',
+                type: 1,
+                params: param,
+                success: function (response) {
+                    if (response && response.rsData && response.rsData.length) {
+                        var data = response.rsData[0];
+                        options.success(data);
+                    } else {
+                        options.failed();
+                    }
+                },
+                error: function () {
+                    options.failed();
+                },
+                that: options.that
+            });
+        };
+
         Service.prototype.timing = function (options, schema) {
             var self = this;
             return function ($self, callback, failed) {

@@ -7,7 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="initial-scale=1"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          type="text/css"/>
     <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
     <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
 
@@ -24,8 +25,19 @@
 </head>
 
 <body>
-<div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
+<div id="container" style="position: fixed;top:50%;left:50%;margin-left: 100px;margin-top: 20px;"></div>
 <script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings);
+    };
+
+    function initData(config) {
+        $(config.container).empty();
+        new HieknPromptService(config);
+    }
+
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
@@ -35,7 +47,7 @@
             console.log(data);
             console.log($container);
         };
-        new HieknPromptService(config);
+        hieknjs.getSearchParm('init') !== '0' && initData(settings);
     });
 </script>
 </body>

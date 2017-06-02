@@ -32,13 +32,25 @@
 <body>
 <div id="container" style="width: 50%;height: 400px"></div>
 <script>
-    $(function () {
-        var config = {};
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('('+config+')');
+        initData(settings)
+    };
+
+    function initData(config) {
         config.container = '#container';
         config.beforeLoad = function (param) {
 //            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
             return param;
         };
+        $(config.container).empty();
+        var service = new HieknStatService(config);
+        service.load();
+    }
+
+    $(function () {
+        var config = {};
         config.config = {
             id: 4,
             type: 'wordCloud',
@@ -62,8 +74,7 @@
             }
         };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        var service = new HieknStatService(config);
-        service.load();
+        hieknjs.getSearchParm('init') !== '0' && initData(settings);
     });
 </script>
 </body>

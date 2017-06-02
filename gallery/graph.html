@@ -33,6 +33,7 @@
 <script>
     $(function () {
         var config = {};
+        config.autoInit = true;
         config.kgName = 'kg_ct';
         config.selector = '#container';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
@@ -53,7 +54,6 @@
             1602: '#ee891d'
         };
         var service = new HieknGraphService(config);
-        service.load({'id': 110000000210});
 
         function buildImgas(arr, path) {
             var images = {};

@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.4
+     *    v0.6.5
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1225,6 +1225,30 @@
             }
         };
 
+        Service.prototype.graphInit = function (options) {
+            var self = this;
+            var param = options.data || {};
+            param.kgName = options.kgName;
+            param.isTiming = options.isTiming;
+            hieknjs.kgLoader({
+                url: options.baseUrl + 'graph/init',
+                type: 1,
+                params: param,
+                success: function (response) {
+                    if (response && response.rsData && response.rsData.length) {
+                        var data = response.rsData[0];
+                        options.success(data);
+                    } else {
+                        options.failed();
+                    }
+                },
+                error: function () {
+                    options.failed();
+                },
+                that: options.that
+            });
+        };
+
         Service.prototype.timing = function (options, schema) {
             var self = this;
             return function ($self, callback, failed) {
@@ -1389,6 +1413,17 @@
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
+            self.initSettings = {
+                that: $(options.selector)[0],
+                isTiming: false,
+                success: function (data) {
+                    if(data.entityList && data.entityList.length){
+                        self.load(data.entityList[0]);
+                    }
+                },
+                failed: $.noop
+            };
+            $.extend(true, self.initSettings, self.baseSettings);
             self.tgc2Settings = {};
 
             self.sdkUtils = new window.HieknSDKService();
@@ -1454,6 +1489,9 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
+                if(options.autoInit){
+                    self.load(options.startInfo);
+                }
             });
         };
 
@@ -1478,7 +1516,11 @@
             var self = this;
             setTimeout(function () {
                 if (self.isInit) {
-                    self.tgc2.load(startInfo);
+                    if(!startInfo){
+                        self.sdkUtils.graphInit(self.initSettings);
+                    }else{
+                        self.tgc2.load(startInfo);
+                    }
                 } else {
                     self.load(startInfo);
                 }
