@@ -37,6 +37,13 @@
     };
 
     function initData(config) {
+        $(config.container).empty();
+        var service = new HieknResourceService(config);
+        service.loadData(1);
+    }
+
+    $(function () {
+        var config = {};
         config.container = '#container';
         config.beforeLoad = function (self) {
 //            self.query.bool.must.push({
@@ -46,38 +53,94 @@
 //                }
 //            });
         };
-        $(config.container).empty();
-        var service = new HieknResourceService(config);
-        service.loadData(1);
-    }
-
-    $(function () {
-        var config = {};
         config.config = {
-            name: '专利资源',
-            databases: ['u260'],
-            tables: ['u260_data_ab521704'],
-            fieldsTable: ['title', 'publishTime', 'application_num', 'holder', 'patent_classification', 'keyword'],
-            fieldsTableName: ['标题', '申请日期', '申请号', '申请人', '专利类型', '关键词', '来源'],
-            fields: ['title', 'publishTime', 'application_num', 'publication_num', 'holder', 'address', 'patent_classification', 'agency', 'agent', 'keyword', 'patent_abs'],
-            fieldsName: ['标题', '申请日期', '申请号', '公开号', '申请人', '地址', '专利类型', '代理机构', '代理人', '关键词', '摘要'],
+            id: 4,
+            name: '新闻资源',
+            databases: [
+                'u260'
+            ],
+            tables: [
+                'u260_data_7b5f45f8'
+            ],
+            drawDetail: true,
+            contentFields: ['content'],
+            fieldsTable: [
+                'title',
+                'author',
+                'publishTime',
+                'url'
+            ],
+            fieldsTableName: [
+                '标题',
+                '作者',
+                '发布时间',
+                '链接'
+            ],
+            fields: [
+                'title',
+                'abs',
+                'author',
+                'publishTime',
+                'url',
+                'annotation_tag',
+                'content'
+            ],
+            fieldsName: [
+                '标题',
+                '简介',
+                '作者',
+                '发布时间',
+                '链接',
+                'annotation_tag',
+                '内容'
+            ],
             fieldsRenderer: {
                 publishTime: 'date',
-                publication_date: 'date'
+                url: {
+                    type: 'link',
+                    fields: [
+                        'title'
+                    ]
+                },
+                annotation_tag:'json'
             },
-            filter: [{
-                key: 'publishTime',
-                label: '申请日期',
-                type: 'year',
-                format: 'YYYYMMDD',
-                options: [{
-                    key: '全部',
-                    value: ''
-                }, '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999']
-            }]
+            filter: [
+                {
+                    key: 'publishTime',
+                    label: '发布日期',
+                    type: 'year',
+                    format: 'YYYYMMDD',
+                    options: [
+                        {
+                            key: '全部',
+                            value: ''
+                        },
+                        '2017',
+                        '2016',
+                        '2015',
+                        '2014',
+                        '2013',
+                        '2012',
+                        '2011',
+                        '2010',
+                        '2009',
+                        '2008',
+                        '2007',
+                        '2006',
+                        '2005',
+                        '2004',
+                        '2003',
+                        '2002',
+                        '2001',
+                        '2000',
+                        '1999'
+                    ]
+                }
+            ],
+            img: 'images/res-2.svg'
         };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        hieknjs.getSearchParm('init') !== '0' && initData(settings);
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>
 </body>

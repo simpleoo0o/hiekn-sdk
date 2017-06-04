@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.6
+     *    v0.6.7
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -79,7 +79,7 @@
                         },
                         enable: true,
                         settings: {
-                            onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
+                            onPrompt: self.sdkUtils.onPromptKnowledge(self.promptSettings)
                         }
                     },
                     page: {
@@ -101,6 +101,9 @@
             self.tgc2Prompt = null;
             self.tgc2Page = null;
             self.init();
+            if(options.startInfo){
+                self.load(options.startInfo);
+            }
         };
 
         Service.prototype.init = function () {
@@ -207,6 +210,50 @@
             if (node.hovered) {
                 node.radius = node.radius * 1.25;
             }
+        };
+
+        return Service;
+    }
+})(window, jQuery);
+(function (window, $) {
+    'use strict';
+
+    window.HieknConceptPromptService = gentService();
+
+    function gentService() {
+        var Service = function (options) {
+            var self = this;
+            var defaultSettings = {
+                beforeDrawPrompt: null,
+                container: null,
+                data: null,
+                baseUrl: null,
+                kgName: null,
+                ready: $.noop,
+                onSearch: $.noop
+            };
+            self.options = $.extend(true, {}, defaultSettings, options);
+            self.init();
+        };
+
+        Service.prototype.init = function () {
+            var self = this;
+            var sdk = new HieknSDKService(self.options);
+            var typeObj = {
+                0: '概念',
+                1: '实例'
+            };
+            var promptSettings = {
+                drawPromptItem: function (data, pre) {
+                    var line = '<span class="prompt-tip-title">' + data.name.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
+                    line = '<span class="prompt-tip-type prompt-tip-' + data.kgType + '">' + (typeObj[data.kgType] || '') + '</span>' + line;
+                    return line;
+                },
+                onPrompt: sdk.onPromptKnowledge(self.options)
+            };
+            $.extend(true, promptSettings, self.options);
+            self.instance = new hieknPrompt(promptSettings);
+            self.options.ready(self.instance);
         };
 
         return Service;
@@ -895,18 +942,18 @@
             }
         };
 
-        Service.prototype.onPrompt = function (options) {
+        Service.prototype.onPromptStart = function (options) {
             var self = this;
             return function (pre, $self) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param[options.paramName || 'kw'] = pre;
+                param[options.paramName] = pre;
                 hieknjs.kgLoader({
-                    url: options.url ? options.url : (options.baseUrl + 'prompt'),
+                    url: options.url,
                     params: param,
-                    type: options.type ? (options.type == 'POST' ? 1 : 0) : 1,
+                    type: options.type,
                     success: function (data) {
-                        if ($self.prompt == param[options.paramName || 'kw']) {
+                        if ($self.prompt == param[options.paramName]) {
                             var d = data.rsData;
                             options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
                             $self.startDrawPromptItems(d, pre);
@@ -914,6 +961,22 @@
                     }
                 });
             }
+        };
+
+        Service.prototype.onPrompt = function (options) {
+            var self = this;
+            options.paramName = 'kw';
+            options.url = options.baseUrl + 'prompt';
+            options.type = 1;
+            return self.onPromptStart(options);
+        };
+
+        Service.prototype.onPromptKnowledge = function (options) {
+            var self = this;
+            options.paramName = 'text';
+            options.url = options.baseUrl + 'prompt/knowledge';
+            options.type = 0;
+            return self.onPromptStart(options);
         };
 
         Service.prototype.schema = function (options, callback) {
@@ -1489,6 +1552,9 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
+                if(options.startInfo){
+                    self.load(options.startInfo);
+                }
             });
         };
 
@@ -1766,7 +1832,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
-                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
@@ -1823,10 +1889,10 @@
                     find: {
                         enable: true
                     },
-                    legend:{
+                    legend: {
                         enable: false,
-                        style:{
-                           left:'390px'
+                        style: {
+                            left: '390px'
                         },
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema)
@@ -1845,6 +1911,9 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
+                if(options.startInfo){
+                    self.load(options.startInfo);
+                }
             });
         };
 
@@ -1891,9 +1960,6 @@
                 beforeDrawPrompt: null,
                 container: null,
                 data: null,
-                url: null,
-                type: 'POST',
-                paramName: 'kw',
                 baseUrl: null,
                 kgName: null,
                 ready: $.noop,
@@ -2031,6 +2097,9 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
+                if(options.startInfo){
+                    self.load(options.startInfo);
+                }
             });
         };
 
@@ -3103,6 +3172,9 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
+                if(options.startInfo){
+                    self.load(options.startInfo);
+                }
             });
         };
 

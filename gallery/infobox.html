@@ -25,6 +25,18 @@
 <body>
 <div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings, settings.node.id);
+    };
+
+    function initData(config, id) {
+        $(config.selector).empty();
+        var service = new HieknInfoboxService(config);
+        service.load(id);
+    }
+
     $(function () {
         var config = {};
         config.kgName = 'u260_graph_3f1a4d66';
@@ -32,8 +44,7 @@
         config.enableLink = true;
         config.imagePrefix = 'http://opvdgx0ov.bkt.clouddn.com/';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        var service = new HieknInfoboxService(config);
-        service.load(100042667081);
+        hieknjs.getSearchParm('init') !== '0' && initData(config, 100042667081);
     });
 </script>
 </body>

@@ -3,25 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
-    <title>Stat Demo</title>
+    <title>Prompt Demo</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="initial-scale=1"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
           type="text/css"/>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
-          type="text/css"/>
-    <link rel="stylesheet" href="../lib/jquery.hieknjs.min.css" type="text/css"/>
     <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
     <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
 
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="http://oorm1yhwz.bkt.clouddn.com/zoomcharts-1.17.2/zoomcharts.js"></script>
     <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
-    <script src="https://cdn.staticfile.org/echarts/3.5.0/echarts.min.js"></script>
-    <script src="../assets/echarts-wordcloud.min.js"></script>
-    <script src="../lib/moment.min.js"></script>
     <script src="../lib/jquery.hieknjs.min.js"></script>
     <script src="../lib/hiekn-prompt.min.js"></script>
     <script src="../dist/hiekn-sdk.js"></script>
@@ -30,51 +25,29 @@
 </head>
 
 <body>
-<div id="container" style="width: 50%;height: 400px"></div>
+<div id="container" style="position: fixed;top:50%;left:50%;margin-left: -100px;margin-top: -20px;"></div>
 <script>
     window.onmessage = function (event) {
         var config = event.data;
-        var settings = eval('('+config+')');
+        var settings = eval('(' + config + ')');
         initData(settings);
     };
 
     function initData(config) {
         $(config.container).empty();
-        var service = new HieknStatService(config);
-        service.load();
+        new HieknConceptPromptService(config);
     }
 
     $(function () {
         var config = {};
+        config.kgName = 'kg_ct';
         config.container = '#container';
-        config.beforeLoad = function (param) {
-            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
-            return param;
-        };
-        config.config = {
-            id: 4,
-            type: 'wordCloud',
-            querySettings: {
-                databases: ['u260'],
-                tables: ['u260_data_543b880d', 'u260_data_a120c72a', 'u260_data_e24b287d', 'u260_data_2d2bb77c'],
-                key1: 'annotation_tag.name',
-                returnType: 1,
-                pageSize: 50
-            },
-            changeXY: true,
-            chartSettings: {
-                title: {
-                    text:'知识点热点关键词',
-                    textStyle: {
-                        color: '#666',
-                        fontSize: 16
-                    },
-                    left: 'center'
-                }
-            }
-        };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        hieknjs.getSearchParm('init') !== '0' && initData(settings);
+        config.onSearch = function (data, $container) {
+            console.log(data);
+            console.log($container);
+        };
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>
 </body>

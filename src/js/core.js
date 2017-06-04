@@ -170,18 +170,18 @@
             }
         };
 
-        Service.prototype.onPrompt = function (options) {
+        Service.prototype.onPromptStart = function (options) {
             var self = this;
             return function (pre, $self) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param[options.paramName || 'kw'] = pre;
+                param[options.paramName] = pre;
                 hieknjs.kgLoader({
-                    url: options.url ? options.url : (options.baseUrl + 'prompt'),
+                    url: options.url,
                     params: param,
-                    type: options.type ? (options.type == 'POST' ? 1 : 0) : 1,
+                    type: options.type,
                     success: function (data) {
-                        if ($self.prompt == param[options.paramName || 'kw']) {
+                        if ($self.prompt == param[options.paramName]) {
                             var d = data.rsData;
                             options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
                             $self.startDrawPromptItems(d, pre);
@@ -189,6 +189,22 @@
                     }
                 });
             }
+        };
+
+        Service.prototype.onPrompt = function (options) {
+            var self = this;
+            options.paramName = 'kw';
+            options.url = options.baseUrl + 'prompt';
+            options.type = 1;
+            return self.onPromptStart(options);
+        };
+
+        Service.prototype.onPromptKnowledge = function (options) {
+            var self = this;
+            options.paramName = 'text';
+            options.url = options.baseUrl + 'prompt/knowledge';
+            options.type = 0;
+            return self.onPromptStart(options);
         };
 
         Service.prototype.schema = function (options, callback) {

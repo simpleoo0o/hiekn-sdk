@@ -34,8 +34,19 @@
 </head>
 
 <body>
-<div id="container" style="position: fixed;top:20px;bottom:20px;left:100px;width: 300px;"></div>
+<div id="container" style="position: fixed;top:0;bottom:0;left:0;width: 300px;"></div>
 <script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings);
+    };
+
+    function initData(config) {
+        $(config.container).empty();
+        new HieknConceptTreeService(config);
+    }
+
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
@@ -63,7 +74,7 @@
                 paramName: 'text'
             }
         };
-        new HieknConceptTreeService(config);
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>
 </body>

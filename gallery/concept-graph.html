@@ -32,14 +32,25 @@
 <body>
 <div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings);
+    };
+
+    function initData(config) {
+        $(config.container).empty();
+        new HieknConceptGraphService(config);
+    }
+
     $(function () {
         var config = {};
         config.kgName = 'kg_ct';
         config.selector = '#container';
         config.instanceEnable = true;
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        var service = new HieknConceptGraphService(config);
-        service.load({'id': 11, kgType: 0});
+        config.startInfo = {'id': 11, kgType: 0};
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>
 </body>

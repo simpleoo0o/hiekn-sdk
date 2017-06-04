@@ -70,7 +70,7 @@
                         },
                         enable: true,
                         settings: {
-                            onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
+                            onPrompt: self.sdkUtils.onPromptKnowledge(self.promptSettings)
                         }
                     },
                     page: {
@@ -92,6 +92,9 @@
             self.tgc2Prompt = null;
             self.tgc2Page = null;
             self.init();
+            if(options.startInfo){
+                self.load(options.startInfo);
+            }
         };
 
         Service.prototype.init = function () {

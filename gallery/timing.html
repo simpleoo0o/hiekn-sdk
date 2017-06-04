@@ -34,15 +34,28 @@
 <body>
 <div id="container" style="position: fixed;top:0;bottom:0;left:0;right: 0;"></div>
 <script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings);
+    };
+
+    function initData(config) {
+        $(config.selector).empty();
+        new HieknTimingGraphService(config);
+    }
+
     $(function () {
         var config = {};
 //        config.kgName = 'kg_cbnode_c';
         config.kgName = 'u261_graph_e3ed6492';
         config.selector = '#container';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        var service = new HieknTimingGraphService(config);
-//        service.load({'id': 8796});
-        service.load({'id': 8});
+//        var service = new HieknTimingGraphService(config);
+////        service.load({'id': 8796});
+//        service.load({'id': 8});
+        config.startInfo = {'id': 8};
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>
 </body>

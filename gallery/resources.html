@@ -30,6 +30,18 @@
 <body>
 <div id="container"></div>
 <script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings);
+    };
+
+    function initData(config) {
+        $(config.container).empty();
+        var service = new HieknResourcesService(config);
+        service.loadData(1);
+    }
+
     $(function () {
         var config = {};
         config.container = '#container';
@@ -129,8 +141,7 @@
                 }
             });
         };
-        var service = new HieknResourcesService(config);
-        service.loadData(1);
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>
 </body>

@@ -30,7 +30,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
-                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
@@ -87,10 +87,10 @@
                     find: {
                         enable: true
                     },
-                    legend:{
+                    legend: {
                         enable: false,
-                        style:{
-                           left:'390px'
+                        style: {
+                            left: '390px'
                         },
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema)
@@ -109,6 +109,9 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
+                if(options.startInfo){
+                    self.load(options.startInfo);
+                }
             });
         };
 

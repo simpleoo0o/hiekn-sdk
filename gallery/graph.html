@@ -39,8 +39,7 @@
 
     function initData(config) {
         $(config.selector).empty();
-        var service = new HieknGraphService(config);
-        service.load();
+        new HieknGraphService(config);
     }
 
     $(function () {
@@ -64,6 +63,7 @@
             1601: '#ee891d',
             1602: '#ee891d'
         };
+        config.startInfo = {'id': 110000000210};
         hieknjs.getSearchParm('init') !== '0' && initData(config);
 
         function buildImgas(arr, path) {
