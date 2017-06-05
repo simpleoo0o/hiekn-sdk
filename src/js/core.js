@@ -170,6 +170,32 @@
             }
         };
 
+        Service.prototype.drawPromptItems = function (schema, hieknPrompt) {
+            var self = this;
+            var typeObj = {};
+            for (var i in schema.types) {
+                var type = schema.types[i];
+                typeObj[type.k] = type.v;
+            }
+            return function (data, pre) {
+                var $container = $('<div></div>');
+                data.forEach(function (v) {
+                    var text = hieknPrompt.instance.options.drawPromptItem(v, pre);
+                    var title = hieknPrompt.instance.options.drawItemTitle(v);
+                    var cls = 'prompt-item-' + v.classId;
+                    var $li = $('<li title="' + title + '" class="' + cls + '">' + text + '</li>').data('data', v);
+                    var ex = $container.find('.' + cls);
+                    if(ex.length){
+                        $(ex[ex.length - 1]).after($li);
+                        $li.find('.prompt-tip-type').empty();
+                    } else {
+                        $container.append($li);
+                    }
+                });
+                return $container.children();
+            }
+        };
+
         Service.prototype.onPromptStart = function (options) {
             var self = this;
             return function (pre, $self) {
@@ -205,6 +231,15 @@
             options.url = options.baseUrl + 'prompt/knowledge';
             options.type = 0;
             return self.onPromptStart(options);
+        };
+
+        Service.prototype.beforeSearch = function () {
+            var self = this;
+            return function (selectedItem, $container) {
+                if(selectedItem){
+                    $container.find('input[type=text]').val(selectedItem.name);
+                }
+            }
         };
 
         Service.prototype.schema = function (options, callback) {
