@@ -68,7 +68,7 @@
             var kw = self.tableService.getFilterKw();
             if (kw) {
                 var should = [];
-                var fields = self.options.config.fieldsTable || self.options.config.fields;
+                var fields = self.options.config.fieldsKw || self.options.config.fieldsTable || self.options.config.fields;
                 var obj = {};
                 obj.query = kw;
                 obj.fields = fields;

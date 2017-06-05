@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.8
+     *    v0.6.9
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -2247,7 +2247,7 @@
             var kw = self.tableService.getFilterKw();
             if (kw) {
                 var should = [];
-                var fields = self.options.config.fieldsTable || self.options.config.fields;
+                var fields = self.options.config.fieldsKw || self.options.config.fieldsTable || self.options.config.fields;
                 var obj = {};
                 obj.query = kw;
                 obj.fields = fields;
