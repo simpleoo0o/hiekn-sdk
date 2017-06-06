@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.12
+     *    v0.6.13
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -974,7 +974,7 @@
             return function (pre, $self) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                var param2 = self.options.data2 || {};
+                var param2 = options.data2 || {};
                 param2[options.paramName] = pre;
                 hieknjs.kgLoader({
                     url: options.url + '?' + $.param(param),
@@ -1020,7 +1020,7 @@
             var self = this;
             var param = options.data || {};
             param.kgName = options.kgName;
-            var param2 = self.options.data2 || {};
+            var param2 = options.data2 || {};
             hieknjs.kgLoader({
                 url: options.baseUrl + 'schema' + '?' + $.param(param),
                 type: 1,
@@ -1293,7 +1293,7 @@
             return function ($self, callback, failed) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                var param2 = self.options.data2 || {};
+                var param2 = options.data2 || {};
                 param2.id = options.tgc2.startInfo.id;
                 param2.isRelationMerge = true;
                 if (options.tgc2Filter) {
@@ -1332,7 +1332,7 @@
             var self = this;
             var param = options.data || {};
             param.kgName = options.kgName;
-            var param2 = self.options.data2 || {};
+            var param2 = options.data2 || {};
             param2.isTiming = options.isTiming;
             hieknjs.kgLoader({
                 url: options.baseUrl + 'graph/init' + '?' + $.param(param),
@@ -1358,7 +1358,7 @@
             return function ($self, callback, failed) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                var param2 = self.options.data2 || {};
+                var param2 = options.data2 || {};
                 param2.id = options.tgc2.startInfo.id;
                 param2.isRelationMerge = true;
                 if (options.tgc2Filter) {
@@ -1399,7 +1399,7 @@
                 var ids = _.map(options.tgc2.startInfo.nodes, 'id');
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                var param2 = self.options.data2 || {};
+                var param2 = options.data2 || {};
                 param2.ids = ids;
                 param2.isShortest = true;
                 param2.connectsCompute = true;
