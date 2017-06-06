@@ -89,8 +89,8 @@
                         };
                         $.extend(true, searchSettings, self.options.instance.searchSettings || {});
                         var param = self.options.data || {};
-                        param.kgName = self.options.kgName;
                         var param2 = self.options.data2 || {};
+                        param2.kgName = self.options.kgName;
                         param2[searchSettings.paramName || 'kw'] = kw;
                         hieknjs.kgLoader({
                             url: searchSettings.url + '?' + $.param(param),
