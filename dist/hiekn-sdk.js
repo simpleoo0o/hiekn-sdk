@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.10
+     *    v0.6.11
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -957,7 +957,7 @@
                     var cls = 'prompt-item-' + v.classId;
                     var $li = $('<li title="' + title + '" class="' + cls + '">' + text + '</li>').data('data', v);
                     var ex = $container.find('.' + cls);
-                    if(ex.length){
+                    if (ex.length) {
                         $(ex[ex.length - 1]).after($li);
                         $li.find('.prompt-tip-type').empty();
                     } else {
@@ -1008,7 +1008,7 @@
         Service.prototype.beforeSearch = function () {
             var self = this;
             return function (selectedItem, $container) {
-                if(selectedItem){
+                if (selectedItem) {
                     $container.find('input[type=text]').val(selectedItem.name);
                 }
             }
@@ -1262,6 +1262,7 @@
 
         Service.prototype.linkContentsFunction = function (linkData) {
             var self = this;
+            linkData.rInfo = $.extend(true, [], (linkData.nRInfo || []), (linkData.oRInfo || []));
             if (linkData.rInfo) {
                 var items = '';
                 for (var i in linkData.rInfo) {
