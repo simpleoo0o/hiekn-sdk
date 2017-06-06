@@ -265,16 +265,17 @@
         Service.prototype.load = function () {
             var self = this;
             var param = self.options.data || {};
-            param = $.extend(true, param, self.options.config.querySettings);
+            var param2 = self.options.data2 || {};
+            param2 = $.extend(true, param2, self.options.config.querySettings);
             if (self.options.beforeLoad) {
-                param = self.options.beforeLoad(param);
+                param2 = self.options.beforeLoad(param2);
             }
             var $container = self.$container;
             $container.empty();
             hieknjs.kgLoader({
-                url: self.options.baseUrl + 'stat/data',
+                url: self.options.baseUrl + 'stat/data' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 success: function (data, textStatus, jqXHR, params) {
                     if (data) {
                         self.stat = data.rsData[0];

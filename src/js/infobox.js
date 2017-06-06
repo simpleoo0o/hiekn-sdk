@@ -58,12 +58,13 @@
         Service.prototype.load = function (id, callback, onFailed) {
             var self = this;
             var param = self.options.data || {};
-            param.id = id;
             param.kgName = self.options.kgName;
+            var param2 = self.options.data2 || {};
+            param2.id = id;
             hieknjs.kgLoader({
-                url: self.options.baseUrl + 'infobox',
+                url: self.options.baseUrl + 'infobox' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
                         var data = response.rsData[0];

@@ -113,18 +113,19 @@
             self.options.beforeLoad(self);
             var res = self.options.config;
             var param = self.options.data || {};
-            param.databases = res.databases;
-            param.tables = res.tables;
-            param.fields = res.fields;
-            param.query = JSON.stringify(self.query);
-            param.pageNo = pageNo;
-            param.pageSize = param.pageSize || 15;
+            var param2 = self.options.data2 || {};
+            param2.databases = res.databases;
+            param2.tables = res.tables;
+            param2.fields = res.fields;
+            param2.query = JSON.stringify(self.query);
+            param2.pageNo = pageNo;
+            param2.pageSize = param2.pageSize || 15;
             var $container = instance.getTableContainer();
             $container.empty();
             hieknjs.kgLoader({
-                url: self.options.baseUrl + 'search',
+                url: self.options.baseUrl + 'search' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 success: function (data, textStatus, jqXHR, params) {
                     if (data) {
                         instance.drawPage(data.rsCount, params.pageNo, params.pageSize);

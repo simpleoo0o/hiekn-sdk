@@ -90,10 +90,11 @@
                         $.extend(true, searchSettings, self.options.instance.searchSettings || {});
                         var param = self.options.data || {};
                         param.kgName = self.options.kgName;
-                        param[searchSettings.paramName || 'kw'] = kw;
+                        var param2 = self.options.data2 || {};
+                        param2[searchSettings.paramName || 'kw'] = kw;
                         hieknjs.kgLoader({
-                            url: searchSettings.url,
-                            params: param,
+                            url: searchSettings.url + '?' + $.param(param),
+                            params: param2,
                             type: searchSettings.type,
                             success: function (data) {
                                 if (data) {

@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.11
+     *    v0.6.12
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -351,10 +351,11 @@
                         $.extend(true, searchSettings, self.options.instance.searchSettings || {});
                         var param = self.options.data || {};
                         param.kgName = self.options.kgName;
-                        param[searchSettings.paramName || 'kw'] = kw;
+                        var param2 = self.options.data2 || {};
+                        param2[searchSettings.paramName || 'kw'] = kw;
                         hieknjs.kgLoader({
-                            url: searchSettings.url,
-                            params: param,
+                            url: searchSettings.url + '?' + $.param(param),
+                            params: param2,
                             type: searchSettings.type,
                             success: function (data) {
                                 if (data) {
@@ -973,13 +974,14 @@
             return function (pre, $self) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param[options.paramName] = pre;
+                var param2 = self.options.data2 || {};
+                param2[options.paramName] = pre;
                 hieknjs.kgLoader({
-                    url: options.url,
-                    params: param,
+                    url: options.url + '?' + $.param(param),
+                    params: param2,
                     type: options.type,
                     success: function (data) {
-                        if ($self.prompt == param[options.paramName]) {
+                        if ($self.prompt == param2[options.paramName]) {
                             var d = data.rsData;
                             options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
                             $self.startDrawPromptItems(d, pre);
@@ -1018,10 +1020,11 @@
             var self = this;
             var param = options.data || {};
             param.kgName = options.kgName;
+            var param2 = self.options.data2 || {};
             hieknjs.kgLoader({
-                url: options.baseUrl + 'schema',
+                url: options.baseUrl + 'schema' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 beforeSend: function () {
                     options.that && $(options.that).find('.ajax-loading').html('<div class="schema-init">' +
                         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 14 32 18" width="32" height="4" preserveAspectRatio="none">' +
@@ -1290,21 +1293,22 @@
             return function ($self, callback, failed) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param.id = options.tgc2.startInfo.id;
-                param.isRelationMerge = true;
+                var param2 = self.options.data2 || {};
+                param2.id = options.tgc2.startInfo.id;
+                param2.isRelationMerge = true;
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
+                    $.extend(true, param2, filters);
                 }
                 if (options.tgc2Page) {
                     var page = options.tgc2Page.page;
-                    param.pageNo = page.pageNo;
-                    param.pageSize = page.pageSize;
+                    param2.pageNo = page.pageNo;
+                    param2.pageSize = page.pageSize;
                 }
                 hieknjs.kgLoader({
-                    url: options.baseUrl + 'graph',
+                    url: options.baseUrl + 'graph' + '?' + $.param(param),
                     type: 1,
-                    params: param,
+                    params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
@@ -1328,11 +1332,12 @@
             var self = this;
             var param = options.data || {};
             param.kgName = options.kgName;
-            param.isTiming = options.isTiming;
+            var param2 = self.options.data2 || {};
+            param2.isTiming = options.isTiming;
             hieknjs.kgLoader({
-                url: options.baseUrl + 'graph/init',
+                url: options.baseUrl + 'graph/init' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
                         var data = response.rsData[0];
@@ -1353,21 +1358,22 @@
             return function ($self, callback, failed) {
                 var param = options.data || {};
                 param.kgName = options.kgName;
-                param.id = options.tgc2.startInfo.id;
-                param.isRelationMerge = true;
+                var param2 = self.options.data2 || {};
+                param2.id = options.tgc2.startInfo.id;
+                param2.isRelationMerge = true;
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
+                    $.extend(true, param2, filters);
                 }
                 if (options.tgc2TimeChart) {
                     var settings = options.tgc2TimeChart.getSettings();
                     delete settings.type;
-                    $.extend(true, param, settings);
+                    $.extend(true, param2, settings);
                 }
                 hieknjs.kgLoader({
-                    url: options.baseUrl + 'graph/timing',
+                    url: options.baseUrl + 'graph/timing' + '?' + $.param(param),
                     type: 1,
-                    params: param,
+                    params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
@@ -1392,20 +1398,21 @@
             return function (instance, callback, failed) {
                 var ids = _.map(options.tgc2.startInfo.nodes, 'id');
                 var param = options.data || {};
-                param.ids = ids;
-                param.isShortest = true;
-                param.connectsCompute = true;
-                param.statsCompute = true;
                 param.kgName = options.kgName;
-                param.statsConfig = options.statsConfig;
+                var param2 = self.options.data2 || {};
+                param2.ids = ids;
+                param2.isShortest = true;
+                param2.connectsCompute = true;
+                param2.statsCompute = true;
+                param2.statsConfig = options.statsConfig;
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
+                    $.extend(true, param2, filters);
                 }
                 hieknjs.kgLoader({
-                    url: options.baseUrl + 'relation',
+                    url: options.baseUrl + 'relation' + '?' + $.param(param),
                     type: 1,
-                    params: param,
+                    params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
@@ -1430,21 +1437,22 @@
             var self = this;
             return function (instance, callback, failed) {
                 var param = options.data || {};
-                param.start = options.tgc2.startInfo.start.id;
-                param.end = options.tgc2.startInfo.end.id;
-                param.isShortest = true;
-                param.connectsCompute = true;
-                param.statsCompute = true;
                 param.kgName = options.kgName;
-                param.statsConfig = options.statsConfig;
+                var param2 = options.data2 || {};
+                param2.start = options.tgc2.startInfo.start.id;
+                param2.end = options.tgc2.startInfo.end.id;
+                param2.isShortest = true;
+                param2.connectsCompute = true;
+                param2.statsCompute = true;
+                param2.statsConfig = options.statsConfig;
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
-                    $.extend(true, param, filters);
+                    $.extend(true, param2, filters);
                 }
                 hieknjs.kgLoader({
-                    url: options.baseUrl + 'path',
+                    url: options.baseUrl + 'path' + '?' + $.param(param),
                     type: 1,
-                    params: param,
+                    params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
                             var data = response.rsData[0];
@@ -1689,12 +1697,13 @@
         Service.prototype.load = function (id, callback, onFailed) {
             var self = this;
             var param = self.options.data || {};
-            param.id = id;
             param.kgName = self.options.kgName;
+            var param2 = self.options.data2 || {};
+            param2.id = id;
             hieknjs.kgLoader({
-                url: self.options.baseUrl + 'infobox',
+                url: self.options.baseUrl + 'infobox' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
                         var data = response.rsData[0];
@@ -2297,18 +2306,19 @@
             self.options.beforeLoad(self);
             var res = self.options.config;
             var param = self.options.data || {};
-            param.databases = res.databases;
-            param.tables = res.tables;
-            param.fields = res.fields;
-            param.query = JSON.stringify(self.query);
-            param.pageNo = pageNo;
-            param.pageSize = param.pageSize || 15;
+            var param2 = self.options.data2 || {};
+            param2.databases = res.databases;
+            param2.tables = res.tables;
+            param2.fields = res.fields;
+            param2.query = JSON.stringify(self.query);
+            param2.pageNo = pageNo;
+            param2.pageSize = param2.pageSize || 15;
             var $container = instance.getTableContainer();
             $container.empty();
             hieknjs.kgLoader({
-                url: self.options.baseUrl + 'search',
+                url: self.options.baseUrl + 'search' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 success: function (data, textStatus, jqXHR, params) {
                     if (data) {
                         instance.drawPage(data.rsCount, params.pageNo, params.pageSize);
@@ -2725,16 +2735,17 @@
         Service.prototype.load = function () {
             var self = this;
             var param = self.options.data || {};
-            param = $.extend(true, param, self.options.config.querySettings);
+            var param2 = self.options.data2 || {};
+            param2 = $.extend(true, param2, self.options.config.querySettings);
             if (self.options.beforeLoad) {
-                param = self.options.beforeLoad(param);
+                param2 = self.options.beforeLoad(param2);
             }
             var $container = self.$container;
             $container.empty();
             hieknjs.kgLoader({
-                url: self.options.baseUrl + 'stat/data',
+                url: self.options.baseUrl + 'stat/data' + '?' + $.param(param),
                 type: 1,
-                params: param,
+                params: param2,
                 success: function (data, textStatus, jqXHR, params) {
                     if (data) {
                         self.stat = data.rsData[0];
