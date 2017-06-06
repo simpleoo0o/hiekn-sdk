@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.9
+     *    v0.6.10
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1642,7 +1642,9 @@
                 baseUrl: null,
                 kgName: null,
                 enableLink: false,
+                autoLen: true,
                 imagePrefix: null,
+                onLoad: $.noop,
                 href: null
             };
             self.options = $.extend(true, {}, defaultSettings, options);
@@ -1675,8 +1677,9 @@
         };
 
         Service.prototype.buildExtra = function (extra) {
+            var self = this;
             var detail = extra.v || '-';
-            if (extra.v.length > 80) {
+            if (self.options.autoLen && extra.v.length > 80) {
                 detail = '<span class="hiekn-infobox-info-detail-short">' + extra.v.substring(0, 56) + '<a href="javascript:void(0)">查看全部&gt;&gt;</a></span><span class="hiekn-infobox-info-detail-long">' + extra.v + '<a href="javascript:void(0)">收起&lt;&lt;</a></span>';
             }
             return '<tr><td class="hiekn-infobox-info-label">' + extra.k + '</td><td class="hiekn-infobox-info-detail">' + detail + '</td></tr>';
@@ -1704,6 +1707,7 @@
                         } else {
                             console.error('selector or callback must be config');
                         }
+                        self.options.onLoad(data);
                     } else {
                         onFailed && onFailed();
                     }
@@ -3035,11 +3039,12 @@
                 var values = self.getValues(d[k]);
                 for (var idx in values) {
                     if (!fieldsRenderer[k]) {
-                        str += self.rendererValue('string', values[idx], undefined, short);
+                        str += ',' + self.rendererValue('string', values[idx], undefined, short);
                     } else {
-                        str += self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k], short);
+                        str += ',' + self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k], short);
                     }
                 }
+                str = str.substring(1);
             }
             if (fieldsLink[k]) {
                 var name = d[k];

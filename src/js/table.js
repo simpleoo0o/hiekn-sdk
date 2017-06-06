@@ -290,11 +290,12 @@
                 var values = self.getValues(d[k]);
                 for (var idx in values) {
                     if (!fieldsRenderer[k]) {
-                        str += self.rendererValue('string', values[idx], undefined, short);
+                        str += ',' + self.rendererValue('string', values[idx], undefined, short);
                     } else {
-                        str += self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k], short);
+                        str += ',' + self.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], values[idx], fieldsRenderer[k], short);
                     }
                 }
+                str = str.substring(1);
             }
             if (fieldsLink[k]) {
                 var name = d[k];

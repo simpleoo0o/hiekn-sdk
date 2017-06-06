@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.9
+     *    v0.6.10
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -903,6 +903,7 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   max-width: 800px;
   line-height: 16px;
   white-space: normal;
+  padding: 8px 16px;
 }
 .hiekn-table .hiekn-table-normal tbody tr.hiekn-table-detail-line td div {
   margin: 16px 0;
