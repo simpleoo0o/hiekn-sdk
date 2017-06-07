@@ -1,3 +1,12 @@
+/**
+     * @author: 
+     *    jiangrun002
+     * @version: 
+     *    v0.6.15
+     * @license:
+     *    Copyright 2017, jiangrun. All rights reserved.
+     */
+
 (function (window, $) {
     'use strict';
 
@@ -928,7 +937,11 @@
                 typeObj[type.k] = type.v;
             }
             return function (data, pre) {
-                var line = '<span class="prompt-tip-title">' + data.name.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
+                var title = data.name;
+                if(data.meaningTag){
+                    title = title + ' ( ' + data.meaningTag + ' )';
+                }
+                var line = '<span class="prompt-tip-title">' + title.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
                 line = '<span class="prompt-tip-type prompt-tip-' + data.classId + '">' + (data.className || typeObj[data.classId] || '') + '</span>' + line;
                 return line;
             }
