@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <title>Association Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
+
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
+    <script src="../lib/jquery.hieknjs.min.js"></script>
+    <script src="../dist/hiekn-sdk.js"></script>
+</head>
+
+<body>
+<div id="container"></div>
+<script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings);
+    };
+
+    function initData(config) {
+        var service = new HieknSDKService();
+        service.association(config, function (data) {
+            $('#container').html(JSON.stringify(data));
+        });
+    }
+
+    $(function () {
+        var config = {};
+        config.kgName = 'u260_graph_cf223c53';
+        config.id = 100000000050;
+        config.allowAtts = [105,107];
+        config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
+    });
+</script>
+</body>
+</html>

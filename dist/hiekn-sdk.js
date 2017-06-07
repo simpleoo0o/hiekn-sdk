@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.16
+     *    v0.6.17
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1065,11 +1065,36 @@
             param.kw = options.kw;
             hieknjs.kgLoader({
                 url: options.baseUrl + 'segment' + '?' + $.param(param),
+                type: 0,
+                params: param2,
+                success: function (response) {
+                    if (response && response.rsData && response.rsData.length) {
+                        var data = response.rsData;
+                        callback(data);
+                    }
+                },
+                error: function () {
+                    toastr.error('网络接口错误！');
+                },
+                that: options.that
+            });
+        };
+
+        Service.prototype.association = function (options, callback) {
+            var self = this;
+            var param = options.data || {};
+            var param2 = options.data2 || {};
+            param2.kgName = options.kgName;
+            param2.id = options.id;
+            param2.allowAtts = options.allowAtts;
+            param2.pageSize = options.pageSize || 6;
+            hieknjs.kgLoader({
+                url: options.baseUrl + 'association' + '?' + $.param(param),
                 type: 1,
                 params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
-                        var data = response.rsData[0];
+                        var data = response.rsData;
                         callback(data);
                     }
                 },
