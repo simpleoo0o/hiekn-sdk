@@ -49,8 +49,11 @@
         Service.prototype.buildExtra = function (extra) {
             var self = this;
             var detail = extra.v || '-';
-            if (self.options.autoLen && extra.v.length > 80) {
-                detail = '<span class="hiekn-infobox-info-detail-short">' + extra.v.substring(0, 56) + '<a href="javascript:void(0)">查看全部&gt;&gt;</a></span><span class="hiekn-infobox-info-detail-long">' + extra.v + '<a href="javascript:void(0)">收起&lt;&lt;</a></span>';
+            if (self.options.autoLen) {
+                var max = typeof self.options.autoLen == 'number' ? self.options.autoLen: 80;
+                if (extra.v.length > max) {
+                    detail = '<span class="hiekn-infobox-info-detail-short">' + extra.v.substring(0, max) + '<a href="javascript:void(0)">查看全部&gt;&gt;</a></span><span class="hiekn-infobox-info-detail-long">' + extra.v + '<a href="javascript:void(0)">收起&lt;&lt;</a></span>';
+                }
             }
             return '<tr><td class="hiekn-infobox-info-label">' + extra.k + '</td><td class="hiekn-infobox-info-detail">' + detail + '</td></tr>';
         };
