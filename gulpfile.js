@@ -1,6 +1,7 @@
 'use strict';
 
 var pkg = require('./package.json');
+var pkgLock = require('./package-lock.json');
 var bowerFile = require('./bower.json');
 var gulp = require('gulp');
 var gulpLess = require('gulp-less');
@@ -136,6 +137,8 @@ gulp.task('lib', ['update-lib'], function (cb) {
 
 gulp.task('build-bower-file', function () {
     jsonfile.spaces = 2;
+    pkgLock.version = pkg.version;
+    jsonfile.writeFile('./package-lock.json', pkgLock);
     bowerFile.version = pkg.version;
     bowerFile.name = pkg.name;
     bowerFile.main = [

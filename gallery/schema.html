@@ -3,26 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
-    <title>Prompt Demo</title>
+    <title>Schema Demo</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="initial-scale=1"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
-          type="text/css"/>
-    <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
     <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
 
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
     <script src="../lib/jquery.hieknjs.min.js"></script>
-    <script src="../lib/hiekn-prompt.min.js"></script>
     <script src="../dist/hiekn-sdk.js"></script>
 </head>
 
 <body>
-<div id="container" style="position: fixed;top:50%;left:50%;margin-left: -100px;margin-top: -20px;"></div>
+<div id="container"></div>
 <script>
     window.onmessage = function (event) {
         var config = event.data;
@@ -31,19 +25,16 @@
     };
 
     function initData(config) {
-        $(config.container).empty();
-        new HieknConceptPromptService(config);
+        var service = new HieknSDKService();
+        service.schema(config, function (data) {
+            $('#container').html(JSON.stringify(data));
+        });
     }
 
     $(function () {
         var config = {};
-        config.kgName = 'kg_ct';
-        config.container = '#container';
+        config.kgName = 'u260_graph_cf223c53';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        config.onSearch = function (data, $container) {
-            console.log(data);
-            console.log($container);
-        };
         hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>

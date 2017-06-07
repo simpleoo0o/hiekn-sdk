@@ -280,6 +280,29 @@
             });
         };
 
+        Service.prototype.segment = function (options, callback) {
+            var self = this;
+            var param = options.data || {};
+            var param2 = options.data2 || {};
+            param.kgName = options.kgName;
+            param.kw = options.kw;
+            hieknjs.kgLoader({
+                url: options.baseUrl + 'segment' + '?' + $.param(param),
+                type: 1,
+                params: param2,
+                success: function (response) {
+                    if (response && response.rsData && response.rsData.length) {
+                        var data = response.rsData[0];
+                        callback(data);
+                    }
+                },
+                error: function () {
+                    toastr.error('网络接口错误！');
+                },
+                that: options.that
+            });
+        };
+
         Service.prototype.gentInfobox = function (options) {
             var self = this;
             var data = options.data || {};
