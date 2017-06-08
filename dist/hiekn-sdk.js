@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.17
+     *    v0.6.18
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1191,6 +1191,9 @@
                     } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
                     } else {
                         node.lineColor = options.nodeColors[node.data.classId];
+                        if(!options.imagePrefix && !options.images && !node.data.img){
+                            node.fillColor = node.lineColor;
+                        }
                         if (node.hovered) {
                             node.fillColor = node.lineColor;
                         }

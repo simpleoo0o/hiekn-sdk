@@ -418,6 +418,9 @@
                     } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
                     } else {
                         node.lineColor = options.nodeColors[node.data.classId];
+                        if(!options.imagePrefix && !options.images && !node.data.img){
+                            node.fillColor = node.lineColor;
+                        }
                         if (node.hovered) {
                             node.fillColor = node.lineColor;
                         }
