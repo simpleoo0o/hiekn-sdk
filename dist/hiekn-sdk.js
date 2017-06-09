@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.19
+     *    v0.6.20
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -927,7 +927,6 @@
                 'yellow': '#ffff00',
                 'yellowgreen': '#9acd32'
             };
-            this.linkNodes = [];
         };
 
         Service.prototype.drawPromptItem = function (schema) {
