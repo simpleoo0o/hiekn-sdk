@@ -927,6 +927,7 @@
                 'yellow': '#ffff00',
                 'yellowgreen': '#9acd32'
             };
+            this.linkNodes = [];
         };
 
         Service.prototype.drawPromptItem = function (schema) {
@@ -1170,32 +1171,46 @@
             return function (node) {
                 options.tgc2.nodeStyleFunction(node);
                 node.imageCropping = 'fit';
-                if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
-                } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                    node.fillColor = options.tgc2.settings.netChart.reduceColor;
-                    node.lineColor = node.fillColor;
-                    node.label = '';
+                if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                    if (options.tgc2.nodeIds[node.id]) {
+
+                    } else {
+                        node.fillColor = options.tgc2.settings.netChart.reduceColor;
+                        node.label = '';
+                        node.lineColor = node.fillColor;
+                    }
                 } else {
-                    node.fillColor = node.data.color || '#fff';
-                    node.lineColor = '#00b38a';
-                    if (node.hovered) {
-                        node.fillColor = node.lineColor;
-                        node.shadowBlur = 0;
+                    if (options.tgc2.inStart(node.id)) {
+
+                    } else {
+                        node.fillColor = node.data.color || '#fff';
+                        node.lineColor = '#00b38a';
+                        if (node.hovered) {
+                            node.fillColor = node.lineColor;
+                            node.shadowBlur = 0;
+                        }
                     }
                 }
                 if (options.nodeColors && options.nodeColors[node.data.classId]) {
                     node.lineWidth = 2;
-                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
-                        node.fillColor = options.tgc2.settings.netChart.emphasesColor;
-                        node.lineColor = node.fillColor;
-                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                    } else {
-                        node.lineColor = options.nodeColors[node.data.classId];
-                        if (!options.imagePrefix && !options.images && !node.data.img) {
-                            node.fillColor = node.lineColor;
+                    if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                        if (options.tgc2.nodeIds[node.id]) {
+                            node.fillColor = options.tgc2.settings.netChart.emphasesColor;
+                            node.lineColor = node.fillColor;
+                        } else {
                         }
-                        if (node.hovered) {
-                            node.fillColor = node.lineColor;
+                    } else {
+                        if (options.tgc2.inStart(node.id)) {
+                            node.fillColor = options.tgc2.settings.netChart.emphasesColor;
+                            node.lineColor = node.fillColor;
+                        } else {
+                            node.lineColor = options.nodeColors[node.data.classId];
+                            if (!options.imagePrefix && !options.images && !node.data.img) {
+                                node.fillColor = node.lineColor;
+                            }
+                            if (node.hovered) {
+                                node.fillColor = node.lineColor;
+                            }
                         }
                     }
                 }
@@ -1210,12 +1225,14 @@
                     }
                     node.fillColor = '#fff';
                 } else if (options.images && options.images[node.data.classId]) {
-                    if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
-                        node.image = options.images[node.data.classId].emphases;
-                    } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                        node.image = '';
+                    if (!$.isEmptyObject(options.tgc2.nodeIds)) {
+                        if (options.tgc2.nodeIds[node.id]) {
+                            node.image = options.images[node.data.classId].emphases;
+                        } else {
+                            node.image = '';
+                        }
                     } else {
-                        if (node.hovered) {
+                        if (options.tgc2.inStart(node.id) || node.hovered) {
                             node.image = options.images[node.data.classId].emphases;
                         } else {
                             node.image = options.images[node.data.classId].normal;
