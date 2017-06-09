@@ -37,7 +37,8 @@
 
     function initData(config) {
         $(config.selector).empty();
-        new HieknGraphService(config);
+        var s = new HieknGraphService(config);
+        console.log(s);
     }
 
     $(function () {
@@ -45,8 +46,8 @@
         config.kgName = 'kg_ct';
         config.selector = '#container';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        config.imagePrefix = 'http://opvdgx0ov.bkt.clouddn.com/';
-        config.images = buildImgas([2, 7, 9, 10, 11, 12, 13, 16, 17, 18, 1601, 1602], '../images/kg_ct');
+//        config.imagePrefix = 'http://opvdgx0ov.bkt.clouddn.com/';
+//        config.images = buildImgas([2, 7, 9, 10, 11, 12, 13, 16, 17, 18, 1601, 1602], '../images/kg_ct');
         config.nodeColors = {
             2: '#f45b5b',
             7: '#3e3eb5',
@@ -61,7 +62,26 @@
             1601: '#ee891d',
             1602: '#ee891d'
         };
+        config.textColors = {
+            2: '#fff',
+            7: '#fff',
+            9: '#fff',
+            10: '#fff',
+            11: '#fff',
+            12: '#fff',
+            13: '#fff',
+            16: '#fff',
+            17: '#fff',
+            18: '#fff',
+            1601: '#fff',
+            1602: '#fff',
+            21: {
+                normal: '#333',
+                emphases: '#fff'
+            }
+        };
         config.startInfo = {'id': 110000000210};
+        config.display = 'roundtext';
         hieknjs.getSearchParm('init') !== '0' && initData(config);
 
         function buildImgas(arr, path) {

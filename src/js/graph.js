@@ -33,6 +33,7 @@
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
+                textColors: options.textColors,
                 minRadius: options.minRadius || 10,
                 tgc2: null
             };
@@ -105,6 +106,9 @@
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
+                                node:{
+                                    display: options.display || 'circle'
+                                },
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
                             },
                             info: {

@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.18
+     *    v0.6.19
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -938,7 +938,7 @@
             }
             return function (data, pre) {
                 var title = data.name;
-                if(data.meaningTag){
+                if (data.meaningTag) {
                     title = title + ' ( ' + data.meaningTag + ' )';
                 }
                 var line = '<span class="prompt-tip-title">' + title.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
@@ -1191,7 +1191,7 @@
                     } else if (!$.isEmptyObject(options.tgc2.nodeIds)) {
                     } else {
                         node.lineColor = options.nodeColors[node.data.classId];
-                        if(!options.imagePrefix && !options.images && !node.data.img){
+                        if (!options.imagePrefix && !options.images && !node.data.img) {
                             node.fillColor = node.lineColor;
                         }
                         if (node.hovered) {
@@ -1231,6 +1231,33 @@
                     if (options.tgc2.inStart(node.id)) {
                         self.nodeRadius = radius;
                         !self.centerNode && (self.centerNode = node);
+                    }
+                }
+                if (options.textColors && options.textColors[node.data.classId]) {
+                    if (typeof options.textColors[node.data.classId] == 'string') {
+                        node.labelStyle.textStyle.fillColor = options.textColors[node.data.classId];
+                    } else {
+                        if (options.tgc2.inStart(node.id) || options.tgc2.nodeIds[node.id]) {
+                            node.labelStyle.textStyle.fillColor = options.textColors[node.data.classId].emphases;
+                        } else {
+                            if (node.hovered) {
+                                node.labelStyle.textStyle.fillColor = options.textColors[node.data.classId].emphases;
+                            } else {
+                                node.labelStyle.textStyle.fillColor = options.textColors[node.data.classId].normal;
+                            }
+                        }
+                    }
+                }
+                var len = node.label.length;
+                if (node.display == 'roundtext' && node.label.indexOf(' ') < 0 && len > 5) {
+                    if (len > 9) {
+                        var perLine = Math.floor(node.label.length / 3);
+                        var split2 = len - perLine;
+                        node.label = node.label.substring(0, perLine) + ' ' +
+                            node.label.substring(perLine, split2) + ' ' +
+                            node.label.substring(split2);
+                    } else {
+                        node.label = node.label.substring(0, 4) + ' ' + node.label.substring(4);
                     }
                 }
             }
@@ -1567,6 +1594,7 @@
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
+                textColors: options.textColors,
                 minRadius: options.minRadius || 10,
                 tgc2: null
             };
@@ -1639,6 +1667,9 @@
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
+                                node:{
+                                    display: options.display || 'circle'
+                                },
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
                             },
                             info: {
