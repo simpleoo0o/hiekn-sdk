@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.21
+     *    v0.6.22
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -3302,6 +3302,7 @@
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 var defaultOptions = {
                     selector: options.selector,
+                    autoResize: true,
                     prompt: {
                         enable: true,
                         style: {

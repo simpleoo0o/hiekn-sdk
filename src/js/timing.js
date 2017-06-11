@@ -61,6 +61,7 @@
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 var defaultOptions = {
                     selector: options.selector,
+                    autoResize: true,
                     prompt: {
                         enable: true,
                         style: {
