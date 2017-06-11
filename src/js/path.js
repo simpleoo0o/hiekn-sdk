@@ -88,12 +88,7 @@
                         enable: true
                     },
                     legend: {
-                        enable: false,
-                        style: {
-                            left: '390px'
-                        },
-                        data: options.nodeColors || [],
-                        onDraw: self.sdkUtils.legend(schema)
+                        enable: false
                     },
                     loader: self.sdkUtils.path(self.loaderSettings, schema),
                     schema: schema,
