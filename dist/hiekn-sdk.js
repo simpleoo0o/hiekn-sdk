@@ -1150,9 +1150,27 @@
             var self = this;
             var $obj = $(e.currentTarget);
             $obj.toggleClass('off');
-            var classId = $obj.data('data');
+            var classId = $obj.data('key');
             $self.legendFilter[classId] = $obj.hasClass('off');
             $self.tgc2.netChart.updateFilters();
+        };
+
+        Service.prototype.legendMouseEnter = function (e, $self) {
+            var self = this;
+            var $obj = $(e.currentTarget);
+            $obj.addClass('active').siblings().addClass('inactive');
+            $self.nodeSettings.legendClass = $obj.data('key');
+            $self.nodeSettings.legendColor = $obj.data('value');
+            $self.tgc2.netChart.updateStyle();
+        };
+
+        Service.prototype.legendMouseLeave = function (e, $self) {
+            var self = this;
+            var $obj = $(e.currentTarget);
+            $obj.removeClass('active inactive').siblings().removeClass('active inactive');
+            $self.nodeSettings.legendClass = null;
+            $self.nodeSettings.legendColor = null;
+            $self.tgc2.netChart.updateStyle();
         };
 
         Service.prototype.nodeFilter = function (nodeData, $self) {
@@ -1184,13 +1202,14 @@
             return function (node) {
                 options.tgc2.nodeStyleFunction(node);
                 node.imageCropping = 'fit';
-                if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                    if (options.tgc2.nodeIds[node.id]) {
-
+                if (!$.isEmptyObject(options.tgc2.nodeIds) || options.legendClass) {
+                    if (options.tgc2.nodeIds[node.id] || options.legendClass == node.data.classId) {
+                        node.radius = node.radius * 1.5;
                     } else {
                         node.fillColor = options.tgc2.settings.netChart.reduceColor;
                         node.label = '';
                         node.lineColor = node.fillColor;
+                        node.radius = node.radius * 0.5;
                     }
                 } else {
                     if (options.tgc2.inStart(node.id)) {
@@ -1206,9 +1225,9 @@
                 }
                 if (options.nodeColors && options.nodeColors[node.data.classId]) {
                     node.lineWidth = 2;
-                    if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                        if (options.tgc2.nodeIds[node.id]) {
-                            node.fillColor = options.tgc2.settings.netChart.emphasesColor;
+                    if (!$.isEmptyObject(options.tgc2.nodeIds) || options.legendClass) {
+                        if (options.tgc2.nodeIds[node.id] || options.legendClass == node.data.classId) {
+                            node.fillColor = options.legendColor || options.tgc2.settings.netChart.emphasesColor;
                             node.lineColor = node.fillColor;
                         } else {
                         }
@@ -1233,14 +1252,28 @@
                     } else {
                         node.image = node.data.img;
                     }
-                    if (!options.tgc2.inStart(node.id) && !options.tgc2.nodeIds[node.id] && !$.isEmptyObject(options.tgc2.nodeIds)) {
-                        node.image = '';
+                    if (!$.isEmptyObject(options.tgc2.nodeIds) || options.legendClass) {
+                        if (options.tgc2.nodeIds[node.id] || options.legendClass == node.data.classId) {
+                        } else {
+                            node.image = '';
+                        }
+                    } else {
+                        if (options.tgc2.inStart(node.id) || node.hovered) {
+                        } else {
+                            node.image = '';
+                        }
                     }
+                    // && !$.isEmptyObject(options.tgc2.nodeIds)
+                    // if (!options.tgc2.inStart(node.id)
+                    //     && !options.tgc2.nodeIds[node.id]
+                    //     || (options.legendClass && options.legendClass !== node.data.classId) ) {
+                    //     node.image = '';
+                    // }
                     node.fillColor = '#fff';
                 } else if (options.images && options.images[node.data.classId]) {
-                    if (!$.isEmptyObject(options.tgc2.nodeIds)) {
-                        if (options.tgc2.nodeIds[node.id]) {
-                            node.image = options.images[node.data.classId].emphases;
+                    if (!$.isEmptyObject(options.tgc2.nodeIds) || options.legendClass) {
+                        if (options.tgc2.nodeIds[node.id] || options.legendClass == node.data.classId) {
+                            node.image = options.legendColor || options.images[node.data.classId].emphases;
                         } else {
                             node.image = '';
                         }
@@ -1626,6 +1659,8 @@
                 nodeColors: options.nodeColors,
                 textColors: options.textColors,
                 minRadius: options.minRadius || 10,
+                legendClass: null,
+                legendColor: null,
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
@@ -1693,6 +1728,12 @@
                         onDraw: self.sdkUtils.legend(schema),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
+                        },
+                        onMouseEnter: function (e) {
+                            self.sdkUtils.legendMouseEnter(e, self);
+                        },
+                        onMouseLeave: function (e) {
+                            self.sdkUtils.legendMouseLeave(e, self);
                         }
                     },
                     netChart: {
@@ -3275,6 +3316,8 @@
                 images: options.images,
                 nodeColors: options.nodeColors,
                 minRadius: options.minRadius || 10,
+                legendClass: null,
+                legendColor: null,
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
@@ -3330,12 +3373,17 @@
                         onDraw: self.sdkUtils.legend(schema),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
+                        },
+                        onMouseEnter: function (e) {
+                            self.sdkUtils.legendMouseEnter(e, self);
+                        },
+                        onMouseLeave: function (e) {
+                            self.sdkUtils.legendMouseLeave(e, self);
                         }
                     },
                     timeChart: {
                         enable: true,
                         style: {
-                            left: '520px',
                             right: '20px'
                         }
                     },

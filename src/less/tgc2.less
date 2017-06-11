@@ -86,11 +86,14 @@
   }
   .tgc2-legend .tgc2-legend-item {
     cursor: pointer;
-    &.off{
+    &.off, &.inactive{
       opacity: 0.5;
       i{
         background: @color-ac-03!important;
       }
+    }
+    &.active{
+
     }
   }
 }

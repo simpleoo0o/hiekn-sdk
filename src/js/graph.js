@@ -35,6 +35,8 @@
                 nodeColors: options.nodeColors,
                 textColors: options.textColors,
                 minRadius: options.minRadius || 10,
+                legendClass: null,
+                legendColor: null,
                 tgc2: null
             };
             self.promptSettings = self.baseSettings;
@@ -102,6 +104,12 @@
                         onDraw: self.sdkUtils.legend(schema),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
+                        },
+                        onMouseEnter: function (e) {
+                            self.sdkUtils.legendMouseEnter(e, self);
+                        },
+                        onMouseLeave: function (e) {
+                            self.sdkUtils.legendMouseLeave(e, self);
                         }
                     },
                     netChart: {
