@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.20
+     *    v0.6.21
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1035,4 +1035,13 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
 .tgc2 .tgc2-find-container,
 .tgc2 .tgc2-crumb {
   min-height: 218px;
+}
+.tgc2 .tgc2-legend .tgc2-legend-item {
+  cursor: pointer;
+}
+.tgc2 .tgc2-legend .tgc2-legend-item.off {
+  opacity: 0.5;
+}
+.tgc2 .tgc2-legend .tgc2-legend-item.off i {
+  background: #999 !important;
 }

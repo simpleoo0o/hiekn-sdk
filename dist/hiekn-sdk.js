@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.20
+     *    v0.6.21
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1142,8 +1142,22 @@
                 typeObj[type.k] = type.v;
             }
             return function (key, value) {
-                return '<div class="tgc2-legend-item tgc2-legend-item-' + key + '"><i style="background: ' + value + '"></i><span>' + typeObj[key] + '</span></div>';
+                return '<i style="background: ' + value + '"></i><span title="' + typeObj[key] + '">' + typeObj[key] + '</span>';
             }
+        };
+
+        Service.prototype.legendClick = function (e, $self) {
+            var self = this;
+            var $obj = $(e.currentTarget);
+            $obj.toggleClass('off');
+            var classId = $obj.data('data');
+            $self.legendFilter[classId] = $obj.hasClass('off');
+            $self.tgc2.netChart.updateFilters();
+        };
+
+        Service.prototype.nodeFilter = function (nodeData, $self) {
+            var self = this;
+            return $self.tgc2.inStart(nodeData.id) || !$self.legendFilter[nodeData.classId];
         };
 
         Service.prototype.qiniuImg = function (img) {
@@ -1606,7 +1620,7 @@
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
-                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
+                enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
                 nodeColors: options.nodeColors,
@@ -1623,7 +1637,7 @@
                 that: $(options.selector)[0],
                 isTiming: false,
                 success: function (data) {
-                    if(data.entityList && data.entityList.length){
+                    if (data.entityList && data.entityList.length) {
                         self.load(data.entityList[0]);
                     }
                 },
@@ -1631,6 +1645,7 @@
             };
             $.extend(true, self.initSettings, self.baseSettings);
             self.tgc2Settings = {};
+            self.legendFilter = {};
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
@@ -1646,8 +1661,8 @@
                     prompt: {
                         enable: true,
                         style: {
-                            left: '20px',
-                            top: '40px'
+                            left: '10px',
+                            top: '10px'
                         },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
@@ -1672,18 +1687,26 @@
                     find: {
                         enable: true
                     },
-                    legend:{
+                    legend: {
                         enable: true,
                         data: options.nodeColors || [],
-                        onDraw: self.sdkUtils.legend(schema)
+                        onDraw: self.sdkUtils.legend(schema),
+                        onClick: function (e) {
+                            self.sdkUtils.legendClick(e, self);
+                        }
                     },
                     netChart: {
                         settings: {
+                            filters: {
+                                nodeFilter: function (nodeData) {
+                                    return self.sdkUtils.nodeFilter(nodeData, self);
+                                }
+                            },
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },
                             style: {
-                                node:{
+                                node: {
                                     display: options.display || 'circle'
                                 },
                                 nodeStyleFunction: self.sdkUtils.nodeStyleFunction(self.nodeSettings)
@@ -1698,7 +1721,7 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
-                if(options.startInfo){
+                if (options.startInfo) {
                     self.load(options.startInfo);
                 }
             });
@@ -1725,9 +1748,9 @@
             var self = this;
             setTimeout(function () {
                 if (self.isInit) {
-                    if(!startInfo){
+                    if (!startInfo) {
                         self.sdkUtils.graphInit(self.initSettings);
-                    }else{
+                    } else {
                         self.tgc2.load(startInfo);
                     }
                 } else {
@@ -3272,6 +3295,8 @@
             $.extend(true, self.initSettings, self.baseSettings);
 
             self.tgc2Settings = {};
+            self.legendFilter = {};
+
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
@@ -3280,8 +3305,8 @@
                     prompt: {
                         enable: true,
                         style: {
-                            left: '340px',
-                            top: '20px'
+                            left: '330px',
+                            top: '10px'
                         },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
@@ -3302,8 +3327,8 @@
                         enable: true,
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema),
-                        style: {
-                            left: '380px'
+                        onClick: function (e) {
+                            self.sdkUtils.legendClick(e, self);
                         }
                     },
                     timeChart: {
@@ -3321,6 +3346,11 @@
                             left: '320px'
                         },
                         settings: {
+                            filters: {
+                                nodeFilter: function (nodeData) {
+                                    return self.sdkUtils.nodeFilter(nodeData, self);
+                                }
+                            },
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },

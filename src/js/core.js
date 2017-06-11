@@ -369,8 +369,22 @@
                 typeObj[type.k] = type.v;
             }
             return function (key, value) {
-                return '<div class="tgc2-legend-item tgc2-legend-item-' + key + '"><i style="background: ' + value + '"></i><span>' + typeObj[key] + '</span></div>';
+                return '<i style="background: ' + value + '"></i><span title="' + typeObj[key] + '">' + typeObj[key] + '</span>';
             }
+        };
+
+        Service.prototype.legendClick = function (e, $self) {
+            var self = this;
+            var $obj = $(e.currentTarget);
+            $obj.toggleClass('off');
+            var classId = $obj.data('data');
+            $self.legendFilter[classId] = $obj.hasClass('off');
+            $self.tgc2.netChart.updateFilters();
+        };
+
+        Service.prototype.nodeFilter = function (nodeData, $self) {
+            var self = this;
+            return $self.tgc2.inStart(nodeData.id) || !$self.legendFilter[nodeData.classId];
         };
 
         Service.prototype.qiniuImg = function (img) {

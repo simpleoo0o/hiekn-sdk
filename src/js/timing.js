@@ -54,6 +54,8 @@
             $.extend(true, self.initSettings, self.baseSettings);
 
             self.tgc2Settings = {};
+            self.legendFilter = {};
+
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
@@ -62,8 +64,8 @@
                     prompt: {
                         enable: true,
                         style: {
-                            left: '340px',
-                            top: '20px'
+                            left: '330px',
+                            top: '10px'
                         },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
@@ -84,8 +86,8 @@
                         enable: true,
                         data: options.nodeColors || [],
                         onDraw: self.sdkUtils.legend(schema),
-                        style: {
-                            left: '380px'
+                        onClick: function (e) {
+                            self.sdkUtils.legendClick(e, self);
                         }
                     },
                     timeChart: {
@@ -103,6 +105,11 @@
                             left: '320px'
                         },
                         settings: {
+                            filters: {
+                                nodeFilter: function (nodeData) {
+                                    return self.sdkUtils.nodeFilter(nodeData, self);
+                                }
+                            },
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
                             },
