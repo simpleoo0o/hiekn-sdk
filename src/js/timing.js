@@ -42,9 +42,6 @@
             self.schemaSettings = {
                 that: $(options.selector)[0]
             };
-            self.legendSettings = {
-                tgc2: null
-            };
             $.extend(true, self.schemaSettings, self.baseSettings);
             self.initSettings = {
                 that: $(options.selector)[0],
@@ -91,7 +88,7 @@
                     legend: {
                         enable: true,
                         data: options.nodeColors || [],
-                        legendDraw: self.sdkUtils.legendDraw(schema, self.legendSettings),
+                        legendDraw: self.sdkUtils.legendDraw(schema, self, 'fab'),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
                         },
@@ -157,7 +154,6 @@
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2TimeChart = self.tgc2TimeChart;
             self.nodeSettings.tgc2 = self.tgc2;
-            self.legendSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
             try {

@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
     <title>Graph Demo</title>
@@ -11,6 +10,7 @@
           type="text/css"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
           type="text/css"/>
+    <link rel="stylesheet" href="../lib/jquery.hieknjs.min.css" type="text/css"/>
     <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
     <link rel="stylesheet" href="../lib/tgc2.min.css" type="text/css"/>
     <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
@@ -44,7 +44,7 @@
         var config = {};
         config.kgName = 'kg_ct';
         config.selector = '#container';
-        config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.baseUrl = 'http://192.168.1.188:8888/plantdata_console/sdk/';
 //        config.imagePrefix = 'http://opvdgx0ov.bkt.clouddn.com/';
 //        config.images = buildImgas([2, 7, 9, 10, 11, 12, 13, 16, 17, 18, 1601, 1602], '../images/kg_ct');
         config.nodeColors = {

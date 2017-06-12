@@ -5,52 +5,52 @@
     background: @color-light;
     border-radius: 4px;
   }
-  .DVSL-info-left,.DVSL-info-center,.DVSL-info-right{
+  .DVSL-info-left, .DVSL-info-center, .DVSL-info-right {
     background: @color-light;
     border-radius: 4px;
-    .link-info{
-      &>li{
+    .link-info {
+      & > li {
         padding: 0 16px;
       }
-      th{
+      th {
         background: @color-primary-04;
         border-top: 1px solid @color-bg-3;
         line-height: 22px;
-        padding: 4px 10px!important;
-        &:first-child{
+        padding: 4px 10px !important;
+        &:first-child {
           border-left: 1px solid @color-bg-3;
         }
-        &:last-child{
+        &:last-child {
           border-right: 1px solid @color-bg-3;
         }
       }
-      tbody{
-        td{
+      tbody {
+        td {
           line-height: 22px;
-          padding: 4px 10px!important;
-          &:first-child{
+          padding: 4px 10px !important;
+          &:first-child {
             border-left: 1px solid @color-bg-3;
           }
-          &:last-child{
+          &:last-child {
             border-right: 1px solid @color-bg-3;
           }
-          div.link-info-value{
+          div.link-info-value {
             max-width: 180px;
-            white-space: pre-wrap; 
+            white-space: pre-wrap;
           }
         }
-        tr:last-child{
-          td{
+        tr:last-child {
+          td {
             border-bottom: 1px solid @color-bg-3;
           }
         }
       }
     }
   }
-  .tgc2-netchart-container{
-    .ajax-loading{
+  .tgc2-netchart-container {
+    .ajax-loading {
       position: absolute;
-      top:0;
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
@@ -81,19 +81,40 @@
       }
     }
   }
-  .tgc2-find-container,.tgc2-crumb{
+  .tgc2-find-container, .tgc2-crumb {
     min-height: 218px;
   }
-  .tgc2-legend .tgc2-legend-item {
-    cursor: pointer;
-    &.off, &.inactive{
-      opacity: 0.5;
-      i{
-        background: @color-ac-03!important;
+  .tgc2-legend {
+    &.hiekn-gb {
+      bottom: 180px;
+      right: 0;
+      overflow: visible;
+      width: 56px;
+      &.active{
+        width: 256px;
+        margin: 0 -100px -100px 0;
+      }
+      .hiekn-gi>*{
+        margin: 0;
       }
     }
-    &.active{
+    .tgc2-legend-item {
+      cursor: pointer;
+      &.off, &.inactive {
+        opacity: 0.5;
+        i {
+          background: @color-ac-03 !important;
+        }
+      }
+      &.active {
 
+      }
+    }
+    &.hiekn-gb .hiekn-gi {
+      &.off, &.inactive {
+        opacity: 0.5;
+        background: @color-ac-03 !important;
+      }
     }
   }
 }

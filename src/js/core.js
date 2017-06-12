@@ -373,7 +373,7 @@
             }
         };
 
-        Service.prototype.legendDraw = function (schema, options) {
+        Service.prototype.legendDraw = function (schema, $self, legendType) {
             var self = this;
             var typeObj = {};
             for (var i in schema.types) {
@@ -381,19 +381,71 @@
                 typeObj[type.k] = type.v;
             }
             return function (data, $container) {
-                var nodes = _.filter(options.tgc2.getAvailableData().nodes, function (n) {
+                var nodes = _.filter($self.tgc2.getAvailableData().nodes, function (n) {
                     return !n.hidden;
                 });
                 var classIds = _.keys(_.groupBy(nodes, 'classId'));
-                $container.html('');
-                for (var key in data) {
-                    if(_.indexOf(classIds,key) >= 0){
-                        var $obj = $('<div class="tgc2-legend-item tgc2-legend-item-' + key + '"></div>').data({
-                            'key': key,
-                            'value': data[key]
-                        });
-                        var html = $obj.html('<i style="background: ' + data[key] + '"></i><span title="' + typeObj[key] + '">' + typeObj[key] + '</span>');
-                        $container.append(html);
+                // var $fabContainer = $('<div class="legend-fab-container"></div>');
+                // $container.html($fabContainer);
+                if (legendType == 'fab') {
+                    var items = [];
+                    for (var key in data) {
+                        if (_.indexOf(classIds, key) >= 0) {
+                            items.push({
+                                html: '<div class="line-hidden" title="' + typeObj[key] + '">' + typeObj[key] + '</div>',
+                                data: {
+                                    'key': key,
+                                    'value': data[key]
+                                },
+                                style: {
+                                    'background': data[key],
+                                    'color': '#fff'
+                                },
+                                events: {
+                                    'click': function (e) {
+                                        $self.sdkUtils.legendClick(e, $self);
+                                    },
+                                    'mouseenter': function (e) {
+                                        $self.sdkUtils.legendMouseEnter(e, $self);
+                                    },
+                                    'mouseleave': function (e) {
+                                        $self.sdkUtils.legendMouseLeave(e, $self);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    var fab = new hieknjs.fab({
+                        container: $container,
+                        angle: 180,
+                        startAngle: 270,
+                        initStatus: $self.layoutStatus,
+                        main: {
+                            html: '图例',
+                            style: {
+                                background: $self.primary || '#00b38a',
+                                color: '#fff'
+                            },
+                            events: {
+                                'click': function () {
+                                    $self.layoutStatus = !$self.layoutStatus;
+                                }
+                            }
+                        },
+                        items: items
+                    });
+                    // fab.run();
+                } else {
+                    $container.html('');
+                    for (var key in data) {
+                        if (_.indexOf(classIds, key) >= 0) {
+                            var $obj = $('<div class="tgc2-legend-item tgc2-legend-item-' + key + '"></div>').data({
+                                'key': key,
+                                'value': data[key]
+                            });
+                            var html = $obj.html('<i style="background: ' + data[key] + '"></i><span title="' + typeObj[key] + '">' + typeObj[key] + '</span>');
+                            $container.append(html);
+                        }
                     }
                 }
             }
@@ -415,6 +467,11 @@
             $self.nodeSettings.legendClass = $obj.data('key');
             $self.nodeSettings.legendColor = $obj.data('value');
             $self.tgc2.netChart.updateStyle();
+            // var nodes = _.filter($self.tgc2.getAvailableData().nodes, function (n) {
+            //     return !n.hidden && n.classId == $obj.data('key');
+            // });
+            // var ids = _.keys(_.groupBy(nodes, 'id'));
+            // $self.tgc2.netChart.scrollIntoView(ids);
         };
 
         Service.prototype.legendMouseLeave = function (e, $self) {
@@ -572,7 +629,7 @@
                         node.label = node.label.substring(0, perLine) + ' ' +
                             node.label.substring(perLine, split2) + ' ' +
                             node.label.substring(split2);
-                    } else {
+                    } else if (len > 5) {
                         node.label = node.label.substring(0, 4) + ' ' + node.label.substring(4);
                     }
                 }
