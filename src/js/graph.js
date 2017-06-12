@@ -57,6 +57,7 @@
             $.extend(true, self.initSettings, self.baseSettings);
             self.tgc2Settings = {};
             self.legendFilter = {};
+            self.layoutStatus = options.layoutStatus;
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
@@ -101,7 +102,7 @@
                     legend: {
                         enable: true,
                         data: options.nodeColors || [],
-                        legendDraw: self.sdkUtils.legendDraw(schema, self, 'fab'),
+                        legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
                         },

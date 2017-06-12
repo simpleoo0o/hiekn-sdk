@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.23
+     *    v0.6.24
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1765,6 +1765,7 @@
             $.extend(true, self.initSettings, self.baseSettings);
             self.tgc2Settings = {};
             self.legendFilter = {};
+            self.layoutStatus = options.layoutStatus;
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
@@ -1809,7 +1810,7 @@
                     legend: {
                         enable: true,
                         data: options.nodeColors || [],
-                        legendDraw: self.sdkUtils.legendDraw(schema, self, 'fab'),
+                        legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
                         },
@@ -3413,6 +3414,7 @@
 
             self.tgc2Settings = {};
             self.legendFilter = {};
+            self.layoutStatus = options.layoutStatus;
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
@@ -3444,7 +3446,7 @@
                     legend: {
                         enable: true,
                         data: options.nodeColors || [],
-                        legendDraw: self.sdkUtils.legendDraw(schema, self, 'fab'),
+                        legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
                         },
