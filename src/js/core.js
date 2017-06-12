@@ -417,6 +417,7 @@
                     }
                     var fab = new hieknjs.fab({
                         container: $container,
+                        radius: 80,
                         angle: 180,
                         startAngle: 270,
                         initStatus: $self.layoutStatus,
