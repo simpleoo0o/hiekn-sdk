@@ -23,8 +23,8 @@
   ],
   "dependencies": {
     "hiekn-prompt": "^0.1.12",
-    "hieknjs": "^0.3.0",
-    "tgc2": "^0.4.8",
+    "hieknjs": "^0.3.2",
+    "tgc2": "^0.4.16",
     "echarts": "^3.5.4",
     "bootstrap-datepicker": "^1.6.4",
     "tooltipster": "^4.2.5",
