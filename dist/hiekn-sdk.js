@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.24
+     *    v0.6.25
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1191,8 +1191,8 @@
                     var fab = new hieknjs.fab({
                         container: $container,
                         radius: 80,
-                        angle: 180,
-                        startAngle: 270,
+                        angle: 90,
+                        // startAngle: 270,
                         initStatus: $self.layoutStatus,
                         main: {
                             html: '图例',
