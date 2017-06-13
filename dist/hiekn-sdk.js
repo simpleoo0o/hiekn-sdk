@@ -1164,8 +1164,15 @@
                     var items = [];
                     for (var key in data) {
                         if (_.indexOf(classIds, key) >= 0) {
+                            var html = '';
+                            var text = typeObj[key];
+                            if (text.length > 3) {
+                                html = '<div title="' + text + '"><div>' + text.substring(0, 2) + '</div><div class="line-hidden">' + text.substring(2) + '</div></div>';
+                            } else {
+                                html = '<div class="line-hidden" title="' + text + '">' + text + '</div>';
+                            }
                             items.push({
-                                html: '<div class="line-hidden" title="' + typeObj[key] + '">' + typeObj[key] + '</div>',
+                                html: html,
                                 data: {
                                     'key': key,
                                     'value': data[key]
@@ -1396,15 +1403,29 @@
                     }
                 }
                 var len = node.label.length;
-                if (node.display == 'roundtext' && node.label.indexOf(' ') < 0 && len > 5) {
-                    if (len > 9) {
-                        var perLine = Math.floor(node.label.length / 3);
-                        var split2 = len - perLine;
-                        node.label = node.label.substring(0, perLine) + ' ' +
-                            node.label.substring(perLine, split2) + ' ' +
-                            node.label.substring(split2);
-                    } else if (len > 5) {
-                        node.label = node.label.substring(0, 4) + ' ' + node.label.substring(4);
+                if (node.display == 'roundtext') {
+                    var label = node.label;
+                    for (var i = 1; i < label.length - 1; i++) {
+                        var regChinese = /^[\u4e00-\u9fa5]$/;
+                        var regEnglish = /^[a-zA-Z]$/;
+                        var char = label.charAt(i);
+                        var charNext = label.charAt(i + 1);
+                        if ((regChinese.test(char) && regEnglish.test(charNext)) || (regEnglish.test(char) && regChinese.test(charNext))) {
+                            label = label.substring(0, i + 1) + ' ' + label.substring(i + 1);
+                            i++;
+                        }
+                    }
+                    node.label = label;
+                    if (node.label.indexOf(' ') < 0 && len > 5) {
+                        if (len > 9) {
+                            var perLine = Math.floor(node.label.length / 3);
+                            var split2 = len - perLine;
+                            node.label = node.label.substring(0, perLine) + ' ' +
+                                node.label.substring(perLine, split2) + ' ' +
+                                node.label.substring(split2);
+                        } else if (len > 5) {
+                            node.label = node.label.substring(0, 4) + ' ' + node.label.substring(4);
+                        }
                     }
                 }
             }
