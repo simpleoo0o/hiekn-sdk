@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.25
+     *    v0.6.26
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1154,6 +1154,7 @@
                 typeObj[type.k] = type.v;
             }
             return function (data, $container) {
+                $self.legendFilter = {};
                 var nodes = _.filter($self.tgc2.getAvailableData().nodes, function (n) {
                     return !n.hidden;
                 });
@@ -1190,6 +1191,9 @@
                                     },
                                     'mouseleave': function (e) {
                                         $self.sdkUtils.legendMouseLeave(e, $self);
+                                    },
+                                    'dblclick': function (e) {
+                                        $self.sdkUtils.legendDblClick(e, $self);
                                     }
                                 }
                             });
@@ -1238,6 +1242,21 @@
             $obj.toggleClass('off');
             var classId = $obj.data('key');
             $self.legendFilter[classId] = $obj.hasClass('off');
+            $self.tgc2.netChart.updateFilters();
+        };
+
+        Service.prototype.legendDblClick = function (e, $self) {
+            var self = this;
+            var $obj = $(e.currentTarget);
+            var others = $obj.removeClass('off').siblings();
+            others.addClass('off');
+            var classId = $obj.data('key');
+            $self.legendFilter = {};
+            $self.legendFilter[classId] = false;
+            for (var i = 0; i < others.length; i++) {
+                var id = $(others[i]).data('key');
+                $self.legendFilter[id] = true;
+            }
             $self.tgc2.netChart.updateFilters();
         };
 
@@ -1834,6 +1853,9 @@
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
+                        },
+                        onDblclick: function (e) {
+                            self.sdkUtils.legendDblClick(e, self);
                         },
                         onMouseEnter: function (e) {
                             self.sdkUtils.legendMouseEnter(e, self);
@@ -3470,6 +3492,9 @@
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
+                        },
+                        onDblClick: function (e) {
+                            self.sdkUtils.legendDblClick(e, self);
                         },
                         onMouseEnter: function (e) {
                             self.sdkUtils.legendMouseEnter(e, self);

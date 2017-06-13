@@ -106,6 +106,9 @@
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
                         },
+                        onDblclick: function (e) {
+                            self.sdkUtils.legendDblClick(e, self);
+                        },
                         onMouseEnter: function (e) {
                             self.sdkUtils.legendMouseEnter(e, self);
                         },

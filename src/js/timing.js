@@ -93,6 +93,9 @@
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
                         },
+                        onDblClick: function (e) {
+                            self.sdkUtils.legendDblClick(e, self);
+                        },
                         onMouseEnter: function (e) {
                             self.sdkUtils.legendMouseEnter(e, self);
                         },
