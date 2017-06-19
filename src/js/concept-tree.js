@@ -49,7 +49,8 @@
                 },
                 namespace: 'hiekn-concept-tree',
                 pIdKey: 'parentId',
-                readAll: false
+                readAll: false,
+                hiddenIds:[]
             };
             self.options = $.extend(true, {}, defaultSettings, options);
             self.zTreeSettings = null;
@@ -156,8 +157,13 @@
                 var result = [];
                 for (var i = 0; i < len; i++) {
                     !self.options.readAll && (childNodes[i].isParent = true);
-                    if (!parentNode || childNodes[i][self.options.idKey] != parentNode[self.options.idKey]) {
-                        result.push(childNodes[i]);
+                    if(_.indexOf(self.options.hiddenIds, childNodes[i][self.options.idKey]) < 0 && _.indexOf(self.options.hiddenIds, childNodes[i][self.options.pIdKey]) < 0){
+                        if (!parentNode || childNodes[i][self.options.idKey] != parentNode[self.options.idKey]) {
+                            result.push(childNodes[i]);
+                        }
+                    }
+                    if(_.indexOf(self.options.hiddenIds, childNodes[i][self.options.pIdKey]) >= 0){
+                        self.options.hiddenIds.push(childNodes[i][self.options.idKey]);
                     }
                 }
                 if (result.length == 0) {
