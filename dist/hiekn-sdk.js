@@ -300,7 +300,7 @@
                         enable: false,
                         instanceEnable: false,
                         infobox: false,
-                        conceptGraphSettings:{}
+                        conceptGraphSettings: {}
                     }
                 },
                 instance: {
@@ -311,7 +311,7 @@
                 namespace: 'hiekn-concept-tree',
                 pIdKey: 'parentId',
                 readAll: false,
-                hiddenIds:[]
+                hiddenIds: {self: [], rec: []}
             };
             self.options = $.extend(true, {}, defaultSettings, options);
             self.zTreeSettings = null;
@@ -418,13 +418,15 @@
                 var result = [];
                 for (var i = 0; i < len; i++) {
                     !self.options.readAll && (childNodes[i].isParent = true);
-                    if(_.indexOf(self.options.hiddenIds, childNodes[i][self.options.idKey]) < 0 && _.indexOf(self.options.hiddenIds, childNodes[i][self.options.pIdKey]) < 0){
+                    if (_.indexOf(self.options.hiddenIds.self, childNodes[i][self.options.idKey]) < 0
+                        && _.indexOf(self.options.hiddenIds.rec, childNodes[i][self.options.idKey]) < 0
+                        && _.indexOf(self.options.hiddenIds.rec, childNodes[i][self.options.pIdKey]) < 0) {
                         if (!parentNode || childNodes[i][self.options.idKey] != parentNode[self.options.idKey]) {
                             result.push(childNodes[i]);
                         }
                     }
-                    if(_.indexOf(self.options.hiddenIds, childNodes[i][self.options.pIdKey]) >= 0){
-                        self.options.hiddenIds.push(childNodes[i][self.options.idKey]);
+                    if (_.indexOf(self.options.hiddenIds.rec, childNodes[i][self.options.pIdKey]) >= 0) {
+                        self.options.hiddenIds.rec.push(childNodes[i][self.options.idKey]);
                     }
                 }
                 if (result.length == 0) {
@@ -594,7 +596,7 @@
                     self.onNodeClick(node);
                 }
             }
-            var root = self.zTree.getNodeByParam(self.options.idKey, 0);
+            var root = self.zTree.getNodeByParam(self.options.idKey, self.options.initId);
             self.addHoverDom(treeId, root);
             self.isFirst = false;
             self.startAsync = false;
