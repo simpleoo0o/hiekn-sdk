@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.28
+     *    v0.6.29
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -2877,7 +2877,7 @@
             var legend = [];
             for (var is in d.series) {
                 var s = d.series[is];
-                if (stat.seriesName) {
+                if (stat.seriesName && stat.seriesName[s.name]) {
                     s.name = stat.seriesName[s.name] || s.name;
                     legend.push(s.name);
                 }
@@ -3022,8 +3022,11 @@
                         $.extend(true, defaultSeries, stat.chartSettings.series);
                     }
                 }
+                if(series.name == ''){
+                    delete series.name;
+                }
                 var s = $.extend(true, {}, defaultSeries, series);
-                if (stat.seriesName) {
+                if (stat.seriesName && stat.seriesName[s.name]) {
                     s.name = stat.seriesName[s.name] || s.name;
                 }
                 seriesArr.push(s);
@@ -3033,14 +3036,6 @@
             var defaultOption = {
                 color: self.options.chartColor,
                 tooltip: {
-                    formatter: function (param) {
-                        var str = '';
-                        for (var itemi in param) {
-                            var item = param[itemi];
-                            str += item.seriesName + ':' + item.data + '<br>';
-                        }
-                        return str;
-                    },
                     position: 'top',
                     trigger: 'axis',
                     axisPointer: {
@@ -3066,6 +3061,16 @@
                     }
                 ]
             };
+            if (stat.seriesName && !$.isEmptyObject(stat.seriesName)) {
+                defaultOption.tooltip.formatter = function (param) {
+                    var str = '';
+                    for (var itemi in param) {
+                        var item = param[itemi];
+                        str += item.seriesName + ':' + item.data + '<br>';
+                    }
+                    return str;
+                }
+            }
             var option = {};
             if (stat.chartSettings) {
                 option = $.extend(true, {}, defaultOption, stat.chartSettings);
