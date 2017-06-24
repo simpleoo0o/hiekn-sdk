@@ -276,6 +276,9 @@
                 url: self.options.baseUrl + 'stat/data' + '?' + $.param(param),
                 type: 1,
                 params: param2,
+                dataFilter: self.options.dataFilter || function (data) {
+                    return data;
+                },
                 success: function (data, textStatus, jqXHR, params) {
                     if (data) {
                         self.stat = data.rsData[0];

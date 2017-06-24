@@ -59,6 +59,10 @@
             1601: '#ee891d',
             1602: '#ee891d'
         };
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         config.startInfo ={id: new Date().getTime(), start: {'id': 110000000210}, end: {'id': 110000007603}};
         hieknjs.getSearchParm('init') !== '0' && initData(config);
 

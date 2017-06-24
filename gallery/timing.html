@@ -64,6 +64,10 @@
 ////        service.load({'id': 8796});
 //        service.load({'id': 8});
         config.startInfo = {'id': 8};
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>

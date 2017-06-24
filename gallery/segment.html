@@ -36,6 +36,10 @@
         config.kgName = 'u260_graph_cf223c53';
         config.kw = 'Google';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>

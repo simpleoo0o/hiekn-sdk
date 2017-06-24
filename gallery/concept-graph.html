@@ -45,6 +45,10 @@
         var config = {};
         config.kgName = 'kg_ct';
         config.selector = '#container';
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         config.instanceEnable = true;
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         config.startInfo = {'id': 11, kgType: 0};

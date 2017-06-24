@@ -42,6 +42,10 @@
         config.enableLink = true;
         config.imagePrefix = 'http://opvdgx0ov.bkt.clouddn.com/';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         hieknjs.getSearchParm('init') !== '0' && initData(config, 100042667081);
     });
 </script>

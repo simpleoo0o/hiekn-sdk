@@ -17,11 +17,13 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 statsConfig: options.statsConfig,
                 tgc2: null,
@@ -39,6 +41,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
+                dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);

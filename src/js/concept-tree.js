@@ -97,6 +97,9 @@
                             url: searchSettings.url + '?' + $.param(param),
                             params: param2,
                             type: searchSettings.type,
+                            dataFilter: self.options.dataFilter || function (data) {
+                                return data;
+                            },
                             success: function (data) {
                                 if (data) {
                                     var $container = self.select('.instance-loader-container');
@@ -148,6 +151,9 @@
 
         Service.prototype.dataFilter = function (treeId, parentNode, childNodes) {
             var self = this;
+            if(self.options.dataFilter){
+                childNodes = self.options.dataFilter(childNodes);
+            }
             if (childNodes.code == 200) {
                 if (!childNodes.data || !childNodes.data.rsData) {
                     return null;
@@ -289,6 +295,9 @@
                     $container.data('inLoading', 1);
                     hieknjs.kgLoader({
                         url: self.options.instance.url + '?' + $.param(param),
+                        dataFilter: self.options.dataFilter || function (data) {
+                            return data;
+                        },
                         success: function (data, textStatus, jqXHR, params) {
                             if (data) {
                                 var d = data.rsData;

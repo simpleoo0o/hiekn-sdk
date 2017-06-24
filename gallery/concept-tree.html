@@ -72,6 +72,10 @@
                 paramName: 'text'
             }
         };
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         config.initId = 9;
         config.hiddenIds = {rec: ['2', '11', '16']};
         hieknjs.getSearchParm('init') !== '0' && initData(config);

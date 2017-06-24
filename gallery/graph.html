@@ -79,6 +79,10 @@
                 emphases: '#fff'
             }
         };
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         config.legendType = 'fab';
         config.layoutStatus = 1;
         config.startInfo = {'id': 110000000210};

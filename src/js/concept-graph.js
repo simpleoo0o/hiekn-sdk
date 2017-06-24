@@ -140,6 +140,9 @@
             hieknjs.kgLoader({
                 url: self.options.baseUrl + 'graph/knowlegde?' + $.param(param),
                 type: 0,
+                dataFilter: self.options.dataFilter || function (data) {
+                    return data;
+                },
                 that: $(self.options.tgc2Settings.selector)[0],
                 success: function (data) {
                     if (data && data.rsData && data.rsData.length) {

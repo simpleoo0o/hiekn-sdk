@@ -49,6 +49,10 @@
             param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
             return param;
         };
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         config.config = {
             id: 4,
             type: 'wordCloud',
@@ -72,7 +76,7 @@
             }
         };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
-        hieknjs.getSearchParm('init') !== '0' && initData(settings);
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>
 </body>

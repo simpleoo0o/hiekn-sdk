@@ -59,6 +59,10 @@
             1601: '#ee891d',
             1602: '#ee891d'
         };
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         config.startInfo = {id: 1, nodes: [{'id': 110000000210}, {'id': 110000007603}]};
         hieknjs.getSearchParm('init') !== '0' && initData(config);
 

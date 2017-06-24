@@ -211,6 +211,9 @@
                     url: options.url + '?' + $.param(param),
                     params: param2,
                     type: options.type,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     success: function (data) {
                         if ($self.prompt == param2[options.paramName]) {
                             var d = data.rsData;
@@ -255,6 +258,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'schema' + '?' + $.param(param),
                 type: 1,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 beforeSend: function () {
                     options.that && $(options.that).find('.ajax-loading').html('<div class="schema-init">' +
@@ -293,6 +299,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'segment' + '?' + $.param(param),
                 type: 0,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
@@ -318,6 +327,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'association' + '?' + $.param(param),
                 type: 1,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
@@ -804,6 +816,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'graph' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
@@ -833,6 +848,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'graph/init' + '?' + $.param(param),
                 type: 1,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
@@ -869,6 +887,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'graph/timing' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
@@ -908,6 +929,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'relation' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
@@ -948,6 +972,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'path' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {

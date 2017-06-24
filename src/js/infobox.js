@@ -68,6 +68,9 @@
                 url: self.options.baseUrl + 'infobox' + '?' + $.param(param),
                 type: 1,
                 params: param2,
+                dataFilter: self.options.dataFilter || function (data) {
+                    return data;
+                },
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
                         var data = response.rsData[0];

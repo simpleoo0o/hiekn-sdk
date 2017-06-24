@@ -139,6 +139,10 @@
                 }
             });
         };
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         hieknjs.getSearchParm('init') !== '0' && initData(config);
     });
 </script>

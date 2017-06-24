@@ -142,6 +142,10 @@
             ],
             img: 'images/res-2.svg'
         };
+        config.dataFilter = function (data) {
+            console.log(data);
+            return data;
+        };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         hieknjs.getSearchParm('init') !== '0' && initData(config);
     });

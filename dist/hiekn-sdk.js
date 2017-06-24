@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.27
+     *    v0.6.28
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -149,6 +149,9 @@
             hieknjs.kgLoader({
                 url: self.options.baseUrl + 'graph/knowlegde?' + $.param(param),
                 type: 0,
+                dataFilter: self.options.dataFilter || function (data) {
+                    return data;
+                },
                 that: $(self.options.tgc2Settings.selector)[0],
                 success: function (data) {
                     if (data && data.rsData && data.rsData.length) {
@@ -358,6 +361,9 @@
                             url: searchSettings.url + '?' + $.param(param),
                             params: param2,
                             type: searchSettings.type,
+                            dataFilter: self.options.dataFilter || function (data) {
+                                return data;
+                            },
                             success: function (data) {
                                 if (data) {
                                     var $container = self.select('.instance-loader-container');
@@ -409,6 +415,9 @@
 
         Service.prototype.dataFilter = function (treeId, parentNode, childNodes) {
             var self = this;
+            if(self.options.dataFilter){
+                childNodes = self.options.dataFilter(childNodes);
+            }
             if (childNodes.code == 200) {
                 if (!childNodes.data || !childNodes.data.rsData) {
                     return null;
@@ -550,6 +559,9 @@
                     $container.data('inLoading', 1);
                     hieknjs.kgLoader({
                         url: self.options.instance.url + '?' + $.param(param),
+                        dataFilter: self.options.dataFilter || function (data) {
+                            return data;
+                        },
                         success: function (data, textStatus, jqXHR, params) {
                             if (data) {
                                 var d = data.rsData;
@@ -992,6 +1004,9 @@
                     url: options.url + '?' + $.param(param),
                     params: param2,
                     type: options.type,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     success: function (data) {
                         if ($self.prompt == param2[options.paramName]) {
                             var d = data.rsData;
@@ -1036,6 +1051,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'schema' + '?' + $.param(param),
                 type: 1,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 beforeSend: function () {
                     options.that && $(options.that).find('.ajax-loading').html('<div class="schema-init">' +
@@ -1074,6 +1092,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'segment' + '?' + $.param(param),
                 type: 0,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
@@ -1099,6 +1120,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'association' + '?' + $.param(param),
                 type: 1,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
@@ -1585,6 +1609,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'graph' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
@@ -1614,6 +1641,9 @@
             hieknjs.kgLoader({
                 url: options.baseUrl + 'graph/init' + '?' + $.param(param),
                 type: 1,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
                 params: param2,
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
@@ -1650,6 +1680,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'graph/timing' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
@@ -1689,6 +1722,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'relation' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
@@ -1729,6 +1765,9 @@
                 hieknjs.kgLoader({
                     url: options.baseUrl + 'path' + '?' + $.param(param),
                     type: 1,
+                    dataFilter: options.dataFilter || function (data) {
+                        return data;
+                    },
                     params: param2,
                     success: function (response) {
                         if (response && response.rsData && response.rsData.length) {
@@ -1773,11 +1812,13 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 tgc2: null,
                 tgc2Filter: null,
@@ -1797,10 +1838,12 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
+                dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
             self.initSettings = {
+                dataFilter: options.dataFilter,
                 that: $(options.selector)[0],
                 isTiming: false,
                 success: function (data) {
@@ -2009,6 +2052,9 @@
                 url: self.options.baseUrl + 'infobox' + '?' + $.param(param),
                 type: 1,
                 params: param2,
+                dataFilter: self.options.dataFilter || function (data) {
+                    return data;
+                },
                 success: function (response) {
                     if (response && response.rsData && response.rsData.length) {
                         var data = response.rsData[0];
@@ -2173,11 +2219,13 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 statsConfig: options.statsConfig,
                 tgc2: null,
@@ -2195,6 +2243,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
+                dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
@@ -2362,11 +2411,13 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 statsConfig: options.statsConfig,
                 tgc2: null,
@@ -2384,6 +2435,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
+                dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
@@ -2614,6 +2666,9 @@
                 url: self.options.baseUrl + 'search' + '?' + $.param(param),
                 type: 1,
                 params: param2,
+                dataFilter: self.options.dataFilter || function (data) {
+                    return data;
+                },
                 success: function (data, textStatus, jqXHR, params) {
                     if (data) {
                         instance.drawPage(data.rsCount, params.pageNo, params.pageSize);
@@ -3041,6 +3096,9 @@
                 url: self.options.baseUrl + 'stat/data' + '?' + $.param(param),
                 type: 1,
                 params: param2,
+                dataFilter: self.options.dataFilter || function (data) {
+                    return data;
+                },
                 success: function (data, textStatus, jqXHR, params) {
                     if (data) {
                         self.stat = data.rsData[0];
@@ -3425,11 +3483,13 @@
                 selectedTypes: options.selectedTypes
             };
             self.infoboxSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 imagePrefix: options.imagePrefix
             };
             $.extend(true, self.infoboxSettings, self.baseSettings);
             self.loaderSettings = {
+                dataFilter: options.dataFilter,
                 selector: options.selector,
                 tgc2: null,
                 tgc2Filter: null,
@@ -3448,6 +3508,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
+                dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
