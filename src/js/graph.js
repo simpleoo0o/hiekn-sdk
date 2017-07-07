@@ -76,20 +76,12 @@
                     selector: options.selector,
                     prompt: {
                         enable: true,
-                        style: {
-                            left: '10px',
-                            top: '10px'
-                        },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
                             onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
                         }
                     },
                     page: {
-                        style: {
-                            right: '10px',
-                            bottom: '20px'
-                        },
                         enable: true,
                         pageSize: 20
                     },

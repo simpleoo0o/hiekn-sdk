@@ -1161,15 +1161,14 @@ ul.hiekn-search-prompt li{
   }
   .tgc2-legend {
     &.hiekn-gb {
-      bottom: 60px;
-      right: 0;
+      bottom: 10px;
       overflow: visible;
       width: 56px;
-      &.active{
+      &.active {
         width: 256px;
         margin: 0 -100px -100px 0;
       }
-      .hiekn-gi>*{
+      .hiekn-gi > * {
         margin: 0;
         line-height: 14px;
       }
@@ -1190,6 +1189,13 @@ ul.hiekn-search-prompt li{
       &.off, &.inactive {
         opacity: 0.5;
         background: @color-ac-03 !important;
+      }
+    }
+    &.hiekn-gb {
+      &.active {
+        .hiekn-gbc {
+          left: 0;
+        }
       }
     }
   }

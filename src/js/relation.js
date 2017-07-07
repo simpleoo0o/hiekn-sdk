@@ -59,9 +59,6 @@
                 var defaultOptions = {
                     selector: options.selector,
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()

@@ -63,10 +63,7 @@
                     },
                     prompt: {
                         style: {
-                            top: '10px',
-                            right: '10px',
-                            left: 'auto',
-                            bottom: 'auto'
+                            left: '150px'
                         },
                         enable: true,
                         settings: {
@@ -74,11 +71,10 @@
                         }
                     },
                     page: {
-                        style: {
-                            right: '10px',
-                            bottom: '20px'
-                        },
                         enable: true,
+                        style:{
+                          right:'15px'
+                        },
                         pageSize: 20
                     },
                     loader: function (instance, callback, onFailed) {

@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.29
+     *    v0.6.30
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -72,10 +72,7 @@
                     },
                     prompt: {
                         style: {
-                            top: '10px',
-                            right: '10px',
-                            left: 'auto',
-                            bottom: 'auto'
+                            left: '150px'
                         },
                         enable: true,
                         settings: {
@@ -83,11 +80,10 @@
                         }
                     },
                     page: {
-                        style: {
-                            right: '10px',
-                            bottom: '20px'
-                        },
                         enable: true,
+                        style:{
+                          right:'15px'
+                        },
                         pageSize: 20
                     },
                     loader: function (instance, callback, onFailed) {
@@ -233,6 +229,7 @@
                 baseUrl: null,
                 kgName: null,
                 ready: $.noop,
+                replaceSearch: false,
                 onSearch: $.noop
             };
             self.options = $.extend(true, {}, defaultSettings, options);
@@ -254,6 +251,9 @@
                 },
                 onPrompt: sdk.onPromptKnowledge(self.options)
             };
+            if (self.options.replaceSearch) {
+                promptSettings.beforeSearch = sdk.beforeSearch();
+            }
             $.extend(true, promptSettings, self.options);
             self.instance = new hieknPrompt(promptSettings);
             self.options.ready(self.instance);
@@ -1235,7 +1235,7 @@
                         container: $container,
                         radius: 80,
                         angle: 90,
-                        // startAngle: 270,
+                        startAngle: 90,
                         initStatus: $self.layoutStatus,
                         main: {
                             html: '图例',
@@ -1871,20 +1871,12 @@
                     selector: options.selector,
                     prompt: {
                         enable: true,
-                        style: {
-                            left: '10px',
-                            top: '10px'
-                        },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
                             onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
                         }
                     },
                     page: {
-                        style: {
-                            right: '10px',
-                            bottom: '20px'
-                        },
                         enable: true,
                         pageSize: 20
                     },
@@ -2261,9 +2253,6 @@
                 var defaultOptions = {
                     selector: options.selector,
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
@@ -2453,9 +2442,6 @@
                 var defaultOptions = {
                     selector: options.selector,
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
@@ -3541,10 +3527,6 @@
                     autoResize: true,
                     prompt: {
                         enable: true,
-                        style: {
-                            left: '330px',
-                            top: '10px'
-                        },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
                             onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
@@ -3562,6 +3544,9 @@
                     },
                     legend: {
                         enable: true,
+                        style: {
+                            bottom: '60px'
+                        },
                         data: options.nodeColors || [],
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
@@ -3578,18 +3563,12 @@
                         }
                     },
                     timeChart: {
-                        enable: true,
-                        style: {
-                            right: '20px'
-                        }
+                        enable: true
                     },
                     event: {
                         enable: true
                     },
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             filters: {
                                 nodeFilter: function (nodeData) {
@@ -3612,7 +3591,7 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
-                if(options.startInfo){
+                if (options.startInfo) {
                     self.load(options.startInfo);
                 }
             });
