@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.29
+     *    v0.6.30
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -233,6 +233,7 @@
                 baseUrl: null,
                 kgName: null,
                 ready: $.noop,
+                replaceSearch: false,
                 onSearch: $.noop
             };
             self.options = $.extend(true, {}, defaultSettings, options);
@@ -254,6 +255,9 @@
                 },
                 onPrompt: sdk.onPromptKnowledge(self.options)
             };
+            if (self.options.replaceSearch) {
+                promptSettings.beforeSearch = sdk.beforeSearch();
+            }
             $.extend(true, promptSettings, self.options);
             self.instance = new hieknPrompt(promptSettings);
             self.options.ready(self.instance);
