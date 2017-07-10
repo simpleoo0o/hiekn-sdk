@@ -70,10 +70,6 @@
                     autoResize: true,
                     prompt: {
                         enable: true,
-                        style: {
-                            left: '330px',
-                            top: '10px'
-                        },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
                             onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
@@ -91,6 +87,9 @@
                     },
                     legend: {
                         enable: true,
+                        style: {
+                            bottom: '60px'
+                        },
                         data: options.nodeColors || [],
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
@@ -107,18 +106,12 @@
                         }
                     },
                     timeChart: {
-                        enable: true,
-                        style: {
-                            right: '20px'
-                        }
+                        enable: true
                     },
                     event: {
                         enable: true
                     },
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             filters: {
                                 nodeFilter: function (nodeData) {
@@ -141,7 +134,7 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
-                if(options.startInfo){
+                if (options.startInfo) {
                     self.load(options.startInfo);
                 }
             });

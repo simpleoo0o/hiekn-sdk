@@ -442,7 +442,7 @@
                         container: $container,
                         radius: 80,
                         angle: 90,
-                        // startAngle: 270,
+                        startAngle: 90,
                         initStatus: $self.layoutStatus,
                         main: {
                             html: '图例',

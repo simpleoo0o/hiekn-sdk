@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.32
+     *    v0.7.0
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -72,10 +72,7 @@
                     },
                     prompt: {
                         style: {
-                            top: '10px',
-                            right: '10px',
-                            left: 'auto',
-                            bottom: 'auto'
+                            left: '150px'
                         },
                         enable: true,
                         settings: {
@@ -83,11 +80,10 @@
                         }
                     },
                     page: {
-                        style: {
-                            right: '10px',
-                            bottom: '20px'
-                        },
                         enable: true,
+                        style:{
+                          right:'15px'
+                        },
                         pageSize: 20
                     },
                     loader: function (instance, callback, onFailed) {
@@ -1239,7 +1235,7 @@
                         container: $container,
                         radius: 80,
                         angle: 90,
-                        // startAngle: 270,
+                        startAngle: 90,
                         initStatus: $self.layoutStatus,
                         main: {
                             html: '图例',
@@ -1875,20 +1871,12 @@
                     selector: options.selector,
                     prompt: {
                         enable: true,
-                        style: {
-                            left: '10px',
-                            top: '10px'
-                        },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
                             onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
                         }
                     },
                     page: {
-                        style: {
-                            right: '10px',
-                            bottom: '20px'
-                        },
                         enable: true,
                         pageSize: 20
                     },
@@ -1995,7 +1983,6 @@
         var Service = function (options) {
             var self = this;
             var defaultSettings = {
-                atts: {visible: [], hidden: []},
                 selector: null,
                 data: null,
                 baseUrl: null,
@@ -2039,7 +2026,7 @@
             var self = this;
             var detail = extra.v || '-';
             if (self.options.autoLen) {
-                var max = typeof self.options.autoLen == 'number' ? self.options.autoLen : 80;
+                var max = typeof self.options.autoLen == 'number' ? self.options.autoLen: 80;
                 if (extra.v.length > max) {
                     detail = '<span class="hiekn-infobox-info-detail-short">' + extra.v.substring(0, max) + '<a href="javascript:void(0)">查看全部&gt;&gt;</a></span><span class="hiekn-infobox-info-detail-long">' + extra.v + '<a href="javascript:void(0)">收起&lt;&lt;</a></span>';
                 }
@@ -2092,26 +2079,18 @@
                 $infoxbox.append('<div class="hiekn-infobox-head"></div><div class="hiekn-infobox-body"></div>');
                 var entity = self.buildEntity(data.self, false);
                 $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-title">' + entity + '</div>');
-                if (data.self.img) {
+                if(data.self.img) {
                     var imgUlrl = data.self.img;
-                    if (data.self.img.indexOf('http') != 0) {
+                    if(data.self.img.indexOf('http') != 0){
                         imgUlrl = self.options.imagePrefix + data.self.img + '?_=' + Math.round(new Date() / 3600000);
                     }
                     $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-img"><img src="' + imgUlrl + '" alt=""></div>');
                 }
                 if (data.self.extra) {
                     var html = '';
-                    var visible = self.options.atts.visible || [];
-                    var hidden = self.options.atts.hidden || [];
                     for (var i in data.self.extra) {
                         var extra = data.self.extra[i];
-                        if (visible.length && _.indexOf(visible, extra.k) >= 0) {
-                            html += self.buildExtra(extra);
-                        } else if (hidden.length && _.indexOf(hidden, extra.k) < 0) {
-                            html += self.buildExtra(extra);
-                        } else if (!visible.length && !hidden.length) {
-                            html += self.buildExtra(extra);
-                        }
+                        html += self.buildExtra(extra);
                     }
                     if (data.atts) {
                         for (var m in data.atts) {
@@ -2123,13 +2102,7 @@
                                     var entity = self.buildEntity(obj, true);
                                     lis += '<li>' + entity + '</li>';
                                 }
-                                if (visible.length && _.indexOf(visible, att.k) >= 0) {
-                                    html += '<tr><td class="hiekn-infobox-info-label">' + att.k + '</td><td class="hiekn-infobox-info-detail">' + lis + '</td></tr>';
-                                } else if (hidden.length && _.indexOf(hidden, att.k) < 0) {
-                                    html += '<tr><td class="hiekn-infobox-info-label">' + att.k + '</td><td class="hiekn-infobox-info-detail">' + lis + '</td></tr>';
-                                } else if (!visible.length && !hidden.length) {
-                                    html += '<tr><td class="hiekn-infobox-info-label">' + att.k + '</td><td class="hiekn-infobox-info-detail">' + lis + '</td></tr>';
-                                }
+                                html += '<tr><td class="hiekn-infobox-info-label">' + att.k + '</td><td class="hiekn-infobox-info-detail">' + lis + '</td></tr>';
                             }
                         }
                     }
@@ -2280,9 +2253,6 @@
                 var defaultOptions = {
                     selector: options.selector,
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
@@ -2472,9 +2442,6 @@
                 var defaultOptions = {
                     selector: options.selector,
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             nodeMenu: {
                                 contentsFunction: self.sdkUtils.infobox()
@@ -2896,7 +2863,7 @@
             var legend = [];
             for (var is in d.series) {
                 var s = d.series[is];
-                if (stat.seriesName) {
+                if (stat.seriesName && stat.seriesName[s.name]) {
                     s.name = stat.seriesName[s.name] || s.name;
                     legend.push(s.name);
                 }
@@ -3017,14 +2984,6 @@
             };
             var d = self.stat;
             var stat = self.options.config;
-            var legend = [];
-            for (var is in d.series) {
-                var s = d.series[is];
-                if (stat.seriesName) {
-                    s.name = stat.seriesName[s.name] || s.name;
-                    legend.push(s.name);
-                }
-            }
             var idx = 0;
             var xAxisArr = [];
             for (var xAxisi in d.xAxis) {
@@ -3049,7 +3008,7 @@
                         $.extend(true, defaultSeries, stat.chartSettings.series);
                     }
                 }
-                if (series.name == '') {
+                if(series.name == ''){
                     delete series.name;
                 }
                 var s = $.extend(true, {}, defaultSeries, series);
@@ -3068,12 +3027,6 @@
                     axisPointer: {
                         type: 'line'
                     }
-                },
-                legend: {
-                    show: false,
-                    orient: 'vertical',
-                    x: 'left',
-                    data: legend
                 },
                 grid: {
                     left: 9,
@@ -3574,10 +3527,6 @@
                     autoResize: true,
                     prompt: {
                         enable: true,
-                        style: {
-                            left: '330px',
-                            top: '10px'
-                        },
                         settings: {
                             drawPromptItem: self.sdkUtils.drawPromptItem(schema),
                             onPrompt: self.sdkUtils.onPrompt(self.promptSettings)
@@ -3595,6 +3544,9 @@
                     },
                     legend: {
                         enable: true,
+                        style: {
+                            bottom: '60px'
+                        },
                         data: options.nodeColors || [],
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
@@ -3611,18 +3563,12 @@
                         }
                     },
                     timeChart: {
-                        enable: true,
-                        style: {
-                            right: '20px'
-                        }
+                        enable: true
                     },
                     event: {
                         enable: true
                     },
                     netChart: {
-                        style: {
-                            left: '320px'
-                        },
                         settings: {
                             filters: {
                                 nodeFilter: function (nodeData) {
@@ -3645,7 +3591,7 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
-                if(options.startInfo){
+                if (options.startInfo) {
                     self.load(options.startInfo);
                 }
             });
