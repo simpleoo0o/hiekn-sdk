@@ -7,7 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="initial-scale=1"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          type="text/css"/>
     <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
     <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
 
@@ -42,8 +43,11 @@
         config.enableLink = true;
         config.imagePrefix = 'http://opvdgx0ov.bkt.clouddn.com/';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.atts = {
+            visible: [],
+            hidden: ['同义词']
+        };
         config.dataFilter = function (data) {
-            console.log(data);
             return data;
         };
         hieknjs.getSearchParm('init') !== '0' && initData(config, 100042667081);

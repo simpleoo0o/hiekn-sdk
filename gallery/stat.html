@@ -46,7 +46,7 @@
         var config = {};
         config.container = '#container';
         config.beforeLoad = function (param) {
-            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
+//            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
             return param;
         };
         config.dataFilter = function (data) {
@@ -54,24 +54,50 @@
             return data;
         };
         config.config = {
-            id: 4,
-            type: 'wordCloud',
+            'id': '3',
+            type: "pie",
             querySettings: {
-                databases: ['u260'],
-                tables: ['u260_data_543b880d', 'u260_data_a120c72a', 'u260_data_e24b287d', 'u260_data_2d2bb77c'],
-                key1: 'annotation_tag.name',
+                aggs: {
+                    by_key1: {
+                        terms: {
+                            field: "ins",
+                            size: 6
+                        }
+                    }
+                },
+                databases: ["u260"],
+                tables: ["u260_data_543b8811"],
+                dimension: "",
                 returnType: 1,
-                pageSize: 50
+                pageSize: ""
             },
-            changeXY: true,
+            seriesName: {
+                // "中国科学院大气物理研究所": "中国科学院大气物理研究所"
+            },
             chartSettings: {
                 title: {
-                    text:'知识点热点关键词',
+                    text: "知识点相关机构发文数",
                     textStyle: {
-                        color: '#666',
+                        color: "#666",
                         fontSize: 16
                     },
-                    left: 'center'
+                    left: "center"
+                },
+                series: {
+                    avoidLabelOverlap: !1,
+                    label: {
+                        normal: {
+                            show: !1,
+                            position: "center"
+                        },
+                        emphasis: {
+                            show: !0,
+                            formatter: "{d} %",
+                            textStyle: {
+                                fontSize: "30"
+                            }
+                        }
+                    }
                 }
             }
         };
