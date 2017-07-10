@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v0.6.30
+     *    v0.6.31
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -2881,7 +2881,7 @@
             var legend = [];
             for (var is in d.series) {
                 var s = d.series[is];
-                if (stat.seriesName && stat.seriesName[s.name]) {
+                if (stat.seriesName) {
                     s.name = stat.seriesName[s.name] || s.name;
                     legend.push(s.name);
                 }
@@ -3002,6 +3002,14 @@
             };
             var d = self.stat;
             var stat = self.options.config;
+            var legend = [];
+            for (var is in d.series) {
+                var s = d.series[is];
+                if (stat.seriesName) {
+                    s.name = stat.seriesName[s.name] || s.name;
+                    legend.push(s.name);
+                }
+            }
             var idx = 0;
             var xAxisArr = [];
             for (var xAxisi in d.xAxis) {
@@ -3026,7 +3034,7 @@
                         $.extend(true, defaultSeries, stat.chartSettings.series);
                     }
                 }
-                if(series.name == ''){
+                if (series.name == '') {
                     delete series.name;
                 }
                 var s = $.extend(true, {}, defaultSeries, series);
@@ -3045,6 +3053,12 @@
                     axisPointer: {
                         type: 'line'
                     }
+                },
+                legend: {
+                    show: false,
+                    orient: 'vertical',
+                    x: 'left',
+                    data: legend
                 },
                 grid: {
                     left: 9,
