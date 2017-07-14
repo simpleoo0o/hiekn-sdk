@@ -8,7 +8,7 @@
   "authors": [
     "jiangrun002"
   ],
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "private",
   "keywords": [
     "hiekn-sdk"
@@ -22,9 +22,9 @@
     "tests"
   ],
   "dependencies": {
-    "hiekn-prompt": "^0.1.15",
+    "hiekn-prompt": "^0.2.0",
     "hieknjs": "^0.3.5",
-    "tgc2": "^1.0.0",
+    "tgc2": "^1.1.0",
     "echarts": "~3.5.4",
     "bootstrap-datepicker": "^1.6.4",
     "tooltipster": "^4.2.5",
