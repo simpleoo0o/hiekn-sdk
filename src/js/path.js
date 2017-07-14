@@ -25,10 +25,10 @@
             self.loaderSettings = {
                 dataFilter: options.dataFilter,
                 selector: options.selector,
-                statsConfig: options.statsConfig,
                 tgc2: null,
                 tgc2Filter: null,
-                tgc2Page: null
+                tgc2Page: null,
+                tgc2Stats: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
@@ -79,10 +79,15 @@
                         filters: filters
                     },
                     stats: {
-                        enable: true
+                        enable: true,
+                        editable: true,
+                        atts: schema.atts,
+                        types: schema.types,
+                        statsConfig: options.statsConfig
                     },
                     connects: {
-                        enable: true
+                        enable: true,
+                        mode: 'click'
                     },
                     crumb: {
                         enable: true
@@ -125,6 +130,7 @@
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;
+            self.loaderSettings.tgc2Stats = self.tgc2Stats;
             self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
