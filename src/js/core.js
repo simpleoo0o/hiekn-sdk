@@ -921,7 +921,9 @@
                 param2.isShortest = true;
                 param2.connectsCompute = true;
                 param2.statsCompute = true;
-                param2.statsConfig = options.statsConfig;
+                if(options.tgc2Stats){
+                    param2.statsConfig = options.tgc2Stats.getStatsConfig();
+                }
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param2, filters);
@@ -964,7 +966,9 @@
                 param2.isShortest = true;
                 param2.connectsCompute = true;
                 param2.statsCompute = true;
-                param2.statsConfig = options.statsConfig;
+                if(options.tgc2Stats){
+                    param2.statsConfig = options.tgc2Stats.getStatsConfig();
+                }
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param2, filters);

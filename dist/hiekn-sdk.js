@@ -1718,7 +1718,9 @@
                 param2.isShortest = true;
                 param2.connectsCompute = true;
                 param2.statsCompute = true;
-                param2.statsConfig = options.statsConfig;
+                if(options.tgc2Stats){
+                    param2.statsConfig = options.tgc2Stats.getStatsConfig();
+                }
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param2, filters);
@@ -1761,7 +1763,9 @@
                 param2.isShortest = true;
                 param2.connectsCompute = true;
                 param2.statsCompute = true;
-                param2.statsConfig = options.statsConfig;
+                if(options.tgc2Stats){
+                    param2.statsConfig = options.tgc2Stats.getStatsConfig();
+                }
                 if (options.tgc2Filter) {
                     var filters = options.tgc2Filter.getFilterOptions();
                     $.extend(true, param2, filters);
@@ -2246,10 +2250,10 @@
             self.loaderSettings = {
                 dataFilter: options.dataFilter,
                 selector: options.selector,
-                statsConfig: options.statsConfig,
                 tgc2: null,
                 tgc2Filter: null,
-                tgc2Page: null
+                tgc2Page: null,
+                tgc2Stats: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
@@ -2300,10 +2304,15 @@
                         filters: filters
                     },
                     stats: {
-                        enable: true
+                        enable: true,
+                        editable: true,
+                        atts: schema.atts,
+                        types: schema.types,
+                        statsConfig: options.statsConfig
                     },
                     connects: {
-                        enable: true
+                        enable: true,
+                        mode: 'click'
                     },
                     crumb: {
                         enable: true
@@ -2346,6 +2355,7 @@
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;
+            self.loaderSettings.tgc2Stats = self.tgc2Stats;
             self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
@@ -2438,10 +2448,10 @@
             self.loaderSettings = {
                 dataFilter: options.dataFilter,
                 selector: options.selector,
-                statsConfig: options.statsConfig,
                 tgc2: null,
                 tgc2Filter: null,
-                tgc2Page: null
+                tgc2Page: null,
+                tgc2Stats: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
             self.nodeSettings = {
@@ -2492,10 +2502,15 @@
                         filters: filters
                     },
                     stats: {
-                        enable: true
+                        enable: true,
+                        editable: true,
+                        atts: schema.atts,
+                        types: schema.types,
+                        statsConfig: options.statsConfig
                     },
                     connects: {
-                        enable: true
+                        enable: true,
+                        mode: 'click'
                     },
                     crumb: {
                         enable: true
@@ -2538,6 +2553,7 @@
             self.loaderSettings.tgc2 = self.tgc2;
             self.loaderSettings.tgc2Filter = self.tgc2Filter;
             self.loaderSettings.tgc2Page = self.tgc2Page;
+            self.loaderSettings.tgc2Stats = self.tgc2Stats;
             self.nodeSettings.tgc2 = self.tgc2;
             self.tgc2.init();
             self.isInit = true;
