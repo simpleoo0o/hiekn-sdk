@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v2.1.0
+     *    v2.2.0
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1091,6 +1091,58 @@
             param.kw = options.kw;
             hieknjs.kgLoader({
                 url: options.baseUrl + 'segment' + '?' + $.param(param),
+                type: 0,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
+                params: param2,
+                success: function (response) {
+                    if (response && response.rsData && response.rsData.length) {
+                        var data = response.rsData;
+                        callback(data);
+                    }
+                },
+                error: function () {
+                    toastr.error('网络接口错误！');
+                },
+                that: options.that
+            });
+        };
+
+        Service.prototype.disambiguate = function (options, callback) {
+            var self = this;
+            var param = options.data || {};
+            var param2 = options.data2 || {};
+            param.kgName = options.kgName;
+            param.kw = options.kw;
+            hieknjs.kgLoader({
+                url: options.baseUrl + 'disambiguate' + '?' + $.param(param),
+                type: 0,
+                dataFilter: options.dataFilter || function (data) {
+                    return data;
+                },
+                params: param2,
+                success: function (response) {
+                    if (response && response.rsData && response.rsData.length) {
+                        var data = response.rsData;
+                        callback(data);
+                    }
+                },
+                error: function () {
+                    toastr.error('网络接口错误！');
+                },
+                that: options.that
+            });
+        };
+
+        Service.prototype.tagging = function (options, callback) {
+            var self = this;
+            var param = options.data || {};
+            var param2 = options.data2 || {};
+            param.kgName = options.kgName;
+            param.kw = options.kw;
+            hieknjs.kgLoader({
+                url: options.baseUrl + 'tagging' + '?' + $.param(param),
                 type: 0,
                 dataFilter: options.dataFilter || function (data) {
                     return data;
