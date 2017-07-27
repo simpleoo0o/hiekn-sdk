@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v2.2.0
+     *    v2.2.1
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -10,14 +10,6 @@
 /* define end */
 .tgc2.tgc2-concept-graph {
   font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', Roboto, Helvetica Neue, sans-serif;
-}
-.tgc2.tgc2-concept-graph .prompt {
-  border: 0;
-  background: #f5f5f5;
-  width: 150px;
-}
-.tgc2.tgc2-concept-graph .prompt input {
-  background: transparent;
 }
 .tgc2.tgc2-concept-graph .tgc2-info-bottom {
   position: absolute;
@@ -33,7 +25,7 @@
   position: absolute;
   z-index: 1;
   left: 0;
-  top: 0;
+  bottom: 48px;
   padding: 8px 16px;
 }
 .tgc2.tgc2-concept-graph .tgc2-info-top li {
@@ -50,15 +42,6 @@
 }
 .tgc2.tgc2-concept-graph .tgc2-info-top .instance i {
   color: #00b38a;
-}
-.tgc2.tgc2-concept-graph .tgc2-page-container button svg {
-  fill: #00b38a;
-}
-.tgc2.tgc2-concept-graph .tgc2-page-container button:hover svg {
-  fill: #fff;
-}
-.tgc2.tgc2-concept-graph .tgc2-right-panels {
-  width: 0;
 }
 
 /* define end */
@@ -1031,10 +1014,6 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
 .tgc2 .link-info table th:last-child,
 .tgc2 .link-info table td:last-child {
   padding-right: 24px;
-}
-.tgc2 .tgc2-find-container,
-.tgc2 .tgc2-crumb {
-  min-height: 218px;
 }
 .tgc2 .tgc2-legend.hiekn-gb {
   bottom: 10px;

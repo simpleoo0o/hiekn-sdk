@@ -62,9 +62,6 @@
                         }
                     },
                     prompt: {
-                        style: {
-                            left: '150px'
-                        },
                         enable: true,
                         settings: {
                             onPrompt: self.sdkUtils.onPromptKnowledge(self.promptSettings)

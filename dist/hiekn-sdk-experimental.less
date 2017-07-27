@@ -2,14 +2,6 @@
 
 .tgc2.tgc2-concept-graph{
   font-family: @default-font;
-  .prompt {
-    border: 0;
-    background: @color-bg-1;
-    width: 150px;
-    input {
-      background: transparent;
-    }
-  }
   .tgc2-info-bottom {
     position: absolute;
     z-index: 1;
@@ -26,7 +18,7 @@
     position: absolute;
     z-index: 1;
     left: 0;
-    top: 0;
+    bottom: 48px;
     padding: 8px 16px;
     li {
       line-height: 30px;
@@ -49,17 +41,6 @@
         color: @color-primary;
       }
     }
-  }
-  .tgc2-page-container button {
-    svg {
-      fill: @color-primary;
-    }
-    &:hover svg{
-      fill: @color-light;
-    }
-  }
-  .tgc2-right-panels{
-    width: 0;
   }
 }
 
@@ -1155,9 +1136,6 @@ ul.hiekn-search-prompt li{
         }
       }
     }
-  }
-  .tgc2-find-container, .tgc2-crumb {
-    min-height: 218px;
   }
   .tgc2-legend {
     &.hiekn-gb {

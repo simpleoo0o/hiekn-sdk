@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v2.2.0
+     *    v2.2.1
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -71,9 +71,6 @@
                         }
                     },
                     prompt: {
-                        style: {
-                            left: '150px'
-                        },
                         enable: true,
                         settings: {
                             onPrompt: self.sdkUtils.onPromptKnowledge(self.promptSettings)
