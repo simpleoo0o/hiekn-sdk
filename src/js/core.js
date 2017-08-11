@@ -154,6 +154,27 @@
                 'yellow': '#ffff00',
                 'yellowgreen': '#9acd32'
             };
+            this.colorBase = ['#7bc0e1',
+                '#9ec683',
+                '#fde14d',
+                '#ab89f4',
+                '#e26f63',
+                '#dca8c6',
+                '#596690',
+                '#eaad84',
+                '#abe8bf',
+                '#7979fc'];
+            this.colorEx = ['#6db5d6',
+                '#d0648a',
+                '#c0d684',
+                '#f2bac9',
+                '#847d99',
+                '#baf2d8',
+                '#bfb3de',
+                '#f4817c',
+                '#94cdba',
+                '#b2cede'];
+            this.color = this.colorBase.concat(this.colorEx);
         };
 
         Service.prototype.drawPromptItem = function (schema) {

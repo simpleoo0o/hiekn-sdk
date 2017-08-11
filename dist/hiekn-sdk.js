@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v2.2.1
+     *    v2.2.2
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -944,6 +944,27 @@
                 'yellow': '#ffff00',
                 'yellowgreen': '#9acd32'
             };
+            this.colorBase = ['#7bc0e1',
+                '#9ec683',
+                '#fde14d',
+                '#ab89f4',
+                '#e26f63',
+                '#dca8c6',
+                '#596690',
+                '#eaad84',
+                '#abe8bf',
+                '#7979fc'];
+            this.colorEx = ['#6db5d6',
+                '#d0648a',
+                '#c0d684',
+                '#f2bac9',
+                '#847d99',
+                '#baf2d8',
+                '#bfb3de',
+                '#f4817c',
+                '#94cdba',
+                '#b2cede'];
+            this.color = this.colorBase.concat(this.colorEx);
         };
 
         Service.prototype.drawPromptItem = function (schema) {
@@ -1878,11 +1899,12 @@
                 tgc2Page: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
+            var nodeColors = options.nodeColors;
             self.nodeSettings = {
                 enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
-                nodeColors: options.nodeColors,
+                nodeColors: nodeColors,
                 textColors: options.textColors,
                 minRadius: options.minRadius || 10,
                 legendClass: null,
@@ -1913,6 +1935,14 @@
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                if(options.autoColor){
+                    var colors = {};
+                    for(var i in schema.types){
+                        colors[schema.types[i].k] = self.sdkUtils.color[i % self.sdkUtils.color.length];
+                    }
+                    nodeColors = $.extend(true,colors,nodeColors || {});
+                    self.nodeSettings.nodeColors = nodeColors;
+                }
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
@@ -1945,7 +1975,7 @@
                     },
                     legend: {
                         enable: true,
-                        data: options.nodeColors || [],
+                        data: nodeColors || [],
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
@@ -2293,11 +2323,12 @@
                 tgc2Stats: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
+            var nodeColors = options.nodeColors;
             self.nodeSettings = {
                 enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
-                nodeColors: options.nodeColors,
+                nodeColors: nodeColors,
                 minRadius: options.minRadius || 10,
                 tgc2: null
             };
@@ -2311,6 +2342,14 @@
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                if(options.autoColor){
+                    var colors = {};
+                    for(var i in schema.types){
+                        colors[schema.types[i].k] = self.sdkUtils.color[i % self.sdkUtils.color.length];
+                    }
+                    nodeColors = $.extend(true,colors,nodeColors || {});
+                    self.nodeSettings.nodeColors = nodeColors;
+                }
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
@@ -2355,7 +2394,21 @@
                         enable: true
                     },
                     legend: {
-                        enable: false
+                        enable: false,
+                        data: nodeColors || [],
+                        legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
+                        onClick: function (e) {
+                            self.sdkUtils.legendClick(e, self);
+                        },
+                        onDblclick: function (e) {
+                            self.sdkUtils.legendDblClick(e, self);
+                        },
+                        onMouseEnter: function (e) {
+                            self.sdkUtils.legendMouseEnter(e, self);
+                        },
+                        onMouseLeave: function (e) {
+                            self.sdkUtils.legendMouseLeave(e, self);
+                        }
                     },
                     loader: self.sdkUtils.path(self.loaderSettings, schema),
                     schema: schema,
@@ -2488,11 +2541,12 @@
                 tgc2Stats: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
+            var nodeColors = options.nodeColors;
             self.nodeSettings = {
                 enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle: true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
-                nodeColors: options.nodeColors,
+                nodeColors: nodeColors,
                 minRadius: options.minRadius || 10,
                 tgc2: null
             };
@@ -2506,6 +2560,14 @@
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                if(options.autoColor){
+                    var colors = {};
+                    for(var i in schema.types){
+                        colors[schema.types[i].k] = self.sdkUtils.color[i % self.sdkUtils.color.length];
+                    }
+                    nodeColors = $.extend(true,colors,nodeColors || {});
+                    self.nodeSettings.nodeColors = nodeColors;
+                }
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
@@ -2550,7 +2612,21 @@
                         enable: true
                     },
                     legend:{
-                        enable: false
+                        enable: false,
+                        data: nodeColors || [],
+                        legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
+                        onClick: function (e) {
+                            self.sdkUtils.legendClick(e, self);
+                        },
+                        onDblclick: function (e) {
+                            self.sdkUtils.legendDblClick(e, self);
+                        },
+                        onMouseEnter: function (e) {
+                            self.sdkUtils.legendMouseEnter(e, self);
+                        },
+                        onMouseLeave: function (e) {
+                            self.sdkUtils.legendMouseLeave(e, self);
+                        }
                     },
                     loader: self.sdkUtils.relation(self.loaderSettings, schema),
                     schema: schema,
@@ -3581,11 +3657,12 @@
                 tgc2TimeChart: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
+            var nodeColors = options.nodeColors;
             self.nodeSettings = {
                 enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
-                nodeColors: options.nodeColors,
+                nodeColors: nodeColors,
                 minRadius: options.minRadius || 10,
                 legendClass: null,
                 legendColor: null,
@@ -3615,6 +3692,14 @@
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                if(options.autoColor){
+                    var colors = {};
+                    for(var i in schema.types){
+                        colors[schema.types[i].k] = self.sdkUtils.color[i % self.sdkUtils.color.length];
+                    }
+                    nodeColors = $.extend(true,colors,nodeColors || {});
+                    self.nodeSettings.nodeColors = nodeColors;
+                }
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 var defaultOptions = {
                     selector: options.selector,
@@ -3641,7 +3726,7 @@
                         style: {
                             bottom: '60px'
                         },
-                        data: options.nodeColors || [],
+                        data: nodeColors || [],
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);

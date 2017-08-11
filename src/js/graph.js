@@ -30,11 +30,12 @@
                 tgc2Page: null
             };
             $.extend(true, self.loaderSettings, self.baseSettings);
+            var nodeColors = options.nodeColors;
             self.nodeSettings = {
                 enableAutoUpdateStyle: typeof (options.enableAutoUpdateStyle) == 'boolean' ? options.enableAutoUpdateStyle : true,
                 imagePrefix: options.imagePrefix,
                 images: options.images,
-                nodeColors: options.nodeColors,
+                nodeColors: nodeColors,
                 textColors: options.textColors,
                 minRadius: options.minRadius || 10,
                 legendClass: null,
@@ -65,6 +66,14 @@
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
+                if(options.autoColor){
+                    var colors = {};
+                    for(var i in schema.types){
+                        colors[schema.types[i].k] = self.sdkUtils.color[i % self.sdkUtils.color.length];
+                    }
+                    nodeColors = $.extend(true,colors,nodeColors || {});
+                    self.nodeSettings.nodeColors = nodeColors;
+                }
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
                 filters = [{
                     key: 'distance',
@@ -97,7 +106,7 @@
                     },
                     legend: {
                         enable: true,
-                        data: options.nodeColors || [],
+                        data: nodeColors || [],
                         legendDraw: self.sdkUtils.legendDraw(schema, self, options.legendType),
                         onClick: function (e) {
                             self.sdkUtils.legendClick(e, self);
