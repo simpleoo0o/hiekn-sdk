@@ -940,6 +940,23 @@
             });
         };
 
+        Service.prototype.orderRelation = function (data) {
+            var obj = {};
+            var from = _.countBy(data, 'from');
+            var to = _.countBy(data, 'to');
+            for (var f in from) {
+                obj[f] = (obj[f] || 0) + (to[f] || 0) + from[f];
+            }
+            for (var t in to) {
+                obj[t] = (obj[t] || 0) + (from[t] || 0) + to[t];
+            }
+            var arr = [];
+            for (var o in obj) {
+                arr.push({k: o, v: obj[o]});
+            }
+            return _.orderBy(arr, 'v', 'desc');
+        };
+
         Service.prototype.timing = function (options, schema) {
             var self = this;
             return function ($self, callback, failed) {

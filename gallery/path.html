@@ -37,12 +37,13 @@
 
     function initData(config) {
         $(config.selector).empty();
-        new HieknPathService(config);
+        var service = new HieknPathService(config);
+        service.load();
     }
 
     $(function () {
         var config = {};
-        config.kgName = 'kg_ct';
+        config.kgName = 'u89_graph_bf35661d';
         config.selector = '#container';
         config.statsConfig = '[{"key":"VC invest","type":13,"atts":[1301]}]';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
@@ -71,7 +72,7 @@
                 enable: true
             }
         };
-        config.startInfo = {id: new Date().getTime(), start: {'id': 110000000210}, end: {'id': 110000007603}};
+//        config.startInfo = {id: new Date().getTime(), start: {'id': 110000000210}, end: {'id': 110000007603}};
         hieknjs.getSearchParm('init') !== '0' && initData(config);
 
         function buildImgas(arr, path) {

@@ -46,16 +46,31 @@
                 that: $(options.selector)[0]
             };
             $.extend(true, self.schemaSettings, self.baseSettings);
+            self.initSettings = {
+                dataFilter: options.dataFilter,
+                that: $(options.selector)[0],
+                isTiming: false,
+                success: function (data) {
+                    if (data.relationList && data.relationList.length) {
+                        var arr = self.sdkUtils.orderRelation(data.relationList);
+                        var start = arr[2] ? arr[2].k : arr[0].k;
+                        var end = arr[1].k;
+                        self.load({id: new Date().getTime(), start: {'id': start}, end: {'id': end}});
+                    }
+                },
+                failed: $.noop
+            };
+            $.extend(true, self.initSettings, self.baseSettings);
             self.tgc2Settings = {};
 
             self.sdkUtils = new window.HieknSDKService();
             self.sdkUtils.schema(self.schemaSettings, function (schema) {
-                if(options.autoColor){
+                if (options.autoColor) {
                     var colors = {};
-                    for(var i in schema.types){
+                    for (var i in schema.types) {
                         colors[schema.types[i].k] = self.sdkUtils.color[i % self.sdkUtils.color.length];
                     }
-                    nodeColors = $.extend(true,colors,nodeColors || {});
+                    nodeColors = $.extend(true, colors, nodeColors || {});
                     self.nodeSettings.nodeColors = nodeColors;
                 }
                 var filters = self.sdkUtils.buildFilter(schema, self.filterSettings);
@@ -132,7 +147,7 @@
                 self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
                 self.sdkUtils.gentInfobox(self.infoboxSettings);
                 self.init();
-                if(options.startInfo){
+                if (options.startInfo) {
                     self.load(options.startInfo);
                 }
             });
@@ -160,7 +175,12 @@
             var self = this;
             setTimeout(function () {
                 if (self.isInit) {
-                    self.tgc2.load(startInfo);
+                    // self.tgc2.load(startInfo);
+                    if (!startInfo) {
+                        self.sdkUtils.graphInit(self.initSettings);
+                    } else {
+                        self.tgc2.load(startInfo);
+                    }
                 } else {
                     self.load(startInfo);
                 }
