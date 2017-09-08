@@ -41,9 +41,9 @@
 
     $(function () {
         var config = {};
-        config.kgName = 'u89_graph_bf35661d';
+        config.kgName = 'kg_ct';
         config.selector = '#container';
-        config.statsConfig = '[{"key":"VC invest","type":13,"atts":[1301]}]';
+//        config.statsConfig = '[{"key":"VC invest","type":13,"atts":[1301]}]';
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         config.images = buildImgas([2, 7, 9, 11, 12, 13], '../images/kg_ct');
 //        config.nodeColors = {
@@ -70,7 +70,7 @@
                 enable: true
             }
         };
-//        config.startInfo = {id: 1, nodes: [{'id': 110000000210}, {'id': 110000007603}]};
+        config.startInfo = {id: 1, nodes: [{'id': 110000000210}, {'id': 110000007603}]};
         hieknjs.getSearchParm('init') !== '0' && initData(config);
 
         function buildImgas(arr, path) {

@@ -174,7 +174,7 @@
             };
             self.tgc2Settings = $.extend(true, {}, defaultOptions, options.tgc2Settings);
             self.infoboxSettings.enable && self.sdkUtils.gentInfobox(self.infoboxSettings);
-            self.tgc2 = new Tgc2Graph(self.tgc2Settings);
+            self.tgc2 = new Tgc2Relation(self.tgc2Settings);
             self.tgc2Filter = new Tgc2Filter(self.tgc2, self.tgc2Settings.filter);
             self.tgc2Stats = new Tgc2Stats(self.tgc2, self.tgc2Settings.stats);
             self.tgc2Connects = new Tgc2Connects(self.tgc2, self.tgc2Settings.connects);
