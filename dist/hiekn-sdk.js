@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v2.4.1
+     *    v2.4.2
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -1930,7 +1930,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
-                data: options.schema,
+                preloadData: options.schema,
                 dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
@@ -1953,8 +1953,8 @@
 
             self.sdkUtils = new window.HieknSDKService();
 
-            if (self.schemaSettings.data) {
-                self.init(options, self.schemaSettings.data);
+            if (self.schemaSettings.preloadData) {
+                self.init(options, self.schemaSettings.preloadData);
             } else {
                 self.sdkUtils.schema(self.schemaSettings, function (schema) {
                     self.init(options, schema);
@@ -2360,7 +2360,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
-                data: options.schema,
+                preloadData: options.schema,
                 dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
@@ -2386,8 +2386,8 @@
 
             self.sdkUtils = new window.HieknSDKService();
 
-            if (self.schemaSettings.data) {
-                self.init(options, self.schemaSettings.data);
+            if (self.schemaSettings.preloadData) {
+                self.init(options, self.schemaSettings.preloadData);
             } else {
                 self.sdkUtils.schema(self.schemaSettings, function (schema) {
                     self.init(options, schema);
@@ -2615,7 +2615,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
-                data: options.schema,
+                preloadData: options.schema,
                 dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
@@ -2645,8 +2645,8 @@
 
             self.sdkUtils = new window.HieknSDKService();
 
-            if (self.schemaSettings.data) {
-                self.init(options, self.schemaSettings.data);
+            if (self.schemaSettings.preloadData) {
+                self.init(options, self.schemaSettings.preloadData);
             } else {
                 self.sdkUtils.schema(self.schemaSettings, function (schema) {
                     self.init(options, schema);
@@ -3772,7 +3772,7 @@
             };
             self.promptSettings = self.baseSettings;
             self.schemaSettings = {
-                data: options.schema,
+                preloadData: options.schema,
                 dataFilter: options.dataFilter,
                 that: $(options.selector)[0]
             };
@@ -3795,8 +3795,8 @@
 
             self.sdkUtils = new window.HieknSDKService();
 
-            if (self.schemaSettings.data) {
-                self.init(options, self.schemaSettings.data);
+            if (self.schemaSettings.preloadData) {
+                self.init(options, self.schemaSettings.preloadData);
             } else {
                 self.sdkUtils.schema(self.schemaSettings, function (schema) {
                     self.init(options, schema);
