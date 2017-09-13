@@ -1,6 +1,6 @@
 @import "define";
 
-.hiekn-table{
+.hiekn-table {
 
   .hiekn-table-filter {
     padding: 30px 0;
@@ -23,7 +23,7 @@
         background: @color-primary-06;
         border-top: 1px solid @color-ac-04;
         margin-left: 90px;
-        padding: 10px 125px 8px 16px;
+        padding: 10px 132px 8px 16px;
         min-height: 50px;
         span {
           line-height: 24px;
@@ -39,11 +39,14 @@
             background: @color-primary-04;
             color: @color-primary;
             border-color: @color-primary;
+            svg{
+              fill: @color-primary;
+            }
           }
         }
       }
-      &.hiekn-table-filter-item-kw{
-        .hiekn-table-filter-item-content{
+      &.hiekn-table-filter-item-kw {
+        .hiekn-table-filter-item-content {
           padding-right: 16px;
         }
       }
@@ -83,14 +86,18 @@
         position: absolute;
         top: 0;
         right: 0;
-        width: 125px;
+        width: 132px;
         line-height: 50px;
         span {
           background: @color-light;
           border-color: @color-ac-04;
+          svg {
+            fill: @color-ac-02;
+            vertical-align: -3px;
+          }
         }
         .btn {
-          width: 52px;
+          width: 62px;
           height: 26px;
           min-height: 26px;
           min-width: 52px;
@@ -159,9 +166,17 @@
           min-width: 16px;
           cursor: pointer;
           text-align: center;
-          .normal-transition();
+          vertical-align: middle;
+          line-height: 1em;
           &.on {
-            transform: rotate(90deg);
+            svg {
+              transform: rotate(0deg);
+            }
+          }
+          svg {
+            fill: @color-ac-02;
+            transform: rotate(-90deg);
+            .normal-transition();
           }
         }
         a {
@@ -197,7 +212,7 @@
     }
   }
 
-  .hiekn-table-page{
+  .hiekn-table-page {
     text-align: center;
   }
 }

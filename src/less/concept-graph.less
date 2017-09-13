@@ -22,23 +22,28 @@
     padding: 8px 16px;
     li {
       line-height: 30px;
-      i {
+      .legend-circle,.legend-circle-o {
         margin-right: 8px;
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        border-radius: 50%;
+        vertical-align: -3px;
       }
     }
     .current {
-      i {
-        color: @color-emphases;
+      .legend-circle {
+        background-color: @color-emphases;
       }
     }
     .concept {
-      i {
-        color: @color-primary;
+      .legend-circle {
+        background-color: @color-primary;
       }
     }
     .instance {
-      i {
-        color: @color-primary;
+      .legend-circle-o {
+        border:2px solid @color-primary;
       }
     }
   }
