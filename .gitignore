@@ -5,3 +5,6 @@ node_modules
 .idea
 lib
 src/**/*.css
+src/ts/**/*.js
+src/ts/**/*.map
+src/ts/**/*.d.ts

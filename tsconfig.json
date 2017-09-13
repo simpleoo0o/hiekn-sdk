@@ -6,6 +6,7 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "declaration": true,
     "lib": [
       "es2015",
       "dom"
@@ -14,13 +15,13 @@
     "suppressImplicitAnyIndexErrors": true,
     "skipLibCheck": true,
     "typeRoots": [
-      "node_modules/@types/",
-      "assets/"
+      "node_modules/@types/"
     ]
   },
   "compileOnSave": true,
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "dist/**/*"
   ]
 }
 

@@ -1,49 +1,134 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var HieknSDKNetChart = /** @class */ (function () {
-    function HieknSDKNetChart(options) {
-        this.isInit = false;
-        this.isTiming = false;
-        this.options = {};
-        this.baseSettings = {};
-        this.promptSettings = {};
-        this.filterSettings = {};
-        this.infoboxSettings = {};
-        this.loaderSettings = {};
-        this.nodeSettings = {};
-        this.schemaSettings = {};
-        this.initSettings = {};
-        this.defaultTgc2Options = {};
-        this.defaultColor = '#00b38a';
+type HieknTypeNE = { normal: string, emphases: string };
+type HieknTypeUnionStringNE = string | HieknTypeNE;
+type HieknTypeUnionMap = { [key: string]: HieknTypeUnionStringNE };
+type HieknTypeStartInfo = Tgc2StartInfo | Tgc2PathStartInfo | Tgc2RelationStartInfo;
+
+interface HieknNetChartFilterSetting {
+    selectedAtts?: number[];
+    selectedTypes?: number[];
+}
+
+interface HieknNetChartLoaderSetting extends HieknBaseSetting {
+    enable?: boolean;
+    selector?: string;
+}
+
+interface HieknNetChartNodeSetting {
+    autoUpdateStyle?: boolean;
+    imagePrefix?: string;
+    images?: HieknTypeUnionMap;
+    legendClass?: number;
+    legendColor?: string;
+    minRadius?: number;
+    nodeColors?: HieknTypeUnionMap;
+    textColors?: HieknTypeUnionMap;
+}
+
+interface HieknNetChartDataNode extends Tgc2DataNode {
+    classId?: number;
+    img?: string;
+}
+
+interface HieknNetChartInitSetting extends HieknBaseSetting {
+    failed?: Function;
+    success?: Function;
+    that?: HTMLElement;
+}
+
+interface HieknNetChartInfoboxSetting extends HieknInfoboxSetting {
+    enable?: boolean;
+}
+
+interface HieknTgc2Setting extends Tgc2Setting, Tgc2PathSetting, Tgc2RelationSetting {
+    filter: Tgc2FilterSettings;
+    prompt: Tgc2PromptSetting;
+    page: Tgc2PageSetting;
+    crumb: Tgc2CrumbSettings;
+    find: Tgc2FindSettings;
+    legend: Tgc2LegendSettings;
+    timeChart: Tgc2TimeChartSettings;
+    event: Tgc2EventSettings;
+    stats: Tgc2StatsSettings;
+    connects: Tgc2ConncetsSetting;
+}
+
+interface HieknNetChartSetting {
+    kgName?: string;
+    autoColor?: boolean;
+    autoUpdateStyle?: boolean;
+    baseUrl?: string;
+    dataFilter?: JQueryAjaxDataFilter;
+    display?: string;
+    formData?: any;
+    imagePrefix?: string;
+    images?: HieknTypeUnionMap;
+    infoboxSetting?: HieknNetChartInfoboxSetting;
+    layoutStatus?: boolean;
+    legendType?: string;
+    minRadius?: number;
+    nodeColors?: HieknTypeUnionMap;
+    queryData?: any;
+    schema?: HieknSchema;
+    schemaSetting?: HieknSchemaSetting;
+    selectedAtts?: number[];
+    selectedDistance?: number;
+    selectedTypes?: number[];
+    selector?: string;
+    startInfo?: HieknTypeStartInfo;
+    textColors?: HieknTypeUnionMap;
+    tgc2Settings?: HieknTgc2Setting;
+    statsConfig?: any[];
+}
+
+abstract class HieknSDKNetChart {
+    isInit = false;
+    isTiming = false;
+    options: HieknNetChartSetting = {};
+
+    baseSettings: HieknBaseSetting = {};
+    promptSettings: HieknPromptSetting = {};
+    filterSettings: HieknNetChartFilterSetting = {};
+    infoboxSettings: HieknNetChartInfoboxSetting = {};
+    loaderSettings: HieknNetChartLoaderSetting = {};
+    nodeSettings: HieknNetChartNodeSetting = {};
+    schemaSettings: HieknSchemaSetting = {};
+    initSettings: HieknNetChartInitSetting = {};
+    defaultTgc2Options: any = {};
+    tgc2Settings: HieknTgc2Setting;
+
+    tgc2: Tgc2;
+    tgc2Filter: Tgc2Filter;
+    tgc2Crumb: Tgc2Crumb;
+    tgc2Find: Tgc2Find;
+    tgc2Legend: Tgc2Legend;
+
+    infoboxService: HieknSDKInfobox;
+    legendFilter: { [key: number]: boolean };
+    layoutStatus: boolean;
+    centerNode: ItemsChartNode;
+    centerNodeRadius: number;
+    defaultColor: string = '#00b38a';
+
+    constructor(options: HieknNetChartSetting) {
         this.options = options;
         this.beforeInit(options);
     }
-    HieknSDKNetChart.prototype.load = function (startInfo) {
-        var _this = this;
-        setTimeout(function () {
-            if (_this.isInit) {
+
+    load(startInfo: HieknTypeStartInfo) {
+        setTimeout(() => {
+            if (this.isInit) {
                 if (!startInfo) {
-                    _this.graphInit(_this.initSettings);
+                    this.graphInit(this.initSettings);
+                } else {
+                    this.tgc2.load(startInfo);
                 }
-                else {
-                    _this.tgc2.load(startInfo);
-                }
-            }
-            else {
-                _this.load(startInfo);
+            } else {
+                this.load(startInfo);
             }
         }, 30);
-    };
-    HieknSDKNetChart.prototype.beforeInit = function (options) {
-        var _this = this;
+    }
+
+    protected beforeInit(options: HieknNetChartSetting) {
         this.isInit = false;
         this.baseSettings = {
             baseUrl: options.baseUrl,
@@ -64,7 +149,7 @@ var HieknSDKNetChart = /** @class */ (function () {
         $.extend(true, this.infoboxSettings, this.baseSettings, options.infoboxSetting);
         this.loaderSettings = {
             selector: options.selector,
-            formData: { kgName: options.kgName }
+            formData: {kgName: options.kgName}
         };
         $.extend(true, this.loaderSettings, this.baseSettings);
         this.nodeSettings = {
@@ -82,65 +167,67 @@ var HieknSDKNetChart = /** @class */ (function () {
         };
         $.extend(true, this.promptSettings, this.baseSettings);
         this.initSettings = {
-            formData: { kgName: options.kgName },
+            formData: {kgName: options.kgName},
             that: $(options.selector)[0]
         };
         $.extend(true, this.initSettings, this.baseSettings);
+
         this.legendFilter = {};
         this.layoutStatus = options.layoutStatus;
+
         if (options.schema) {
             this.init(options, options.schema);
-        }
-        else {
+        } else {
             this.schemaSettings = {
                 kgName: options.kgName,
                 that: $(options.selector)[0]
             };
             $.extend(true, this.schemaSettings, this.baseSettings, options.schemaSetting);
-            this.schemaSettings.success = function (schema) {
-                _this.init(options, schema);
+            this.schemaSettings.success = (schema: HieknSchema) => {
+                this.init(options, schema);
             };
             HieknSDKSchema.load(this.schemaSettings);
         }
-    };
-    HieknSDKNetChart.prototype.graphInit = function (options) {
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
+    }
+
+    protected graphInit(options: HieknNetChartInitSetting) {
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
         formData.isTiming = this.isTiming;
         HieknSDKUtils.ajax({
             url: HieknSDKUtils.buildUrl(options.baseUrl + 'graph/init', queryData),
             type: 'POST',
             data: formData,
             dataFilter: options.dataFilter,
-            success: function (data) {
+            success: (data: any) => {
                 options.success(data[0]);
             }
         });
-    };
-    HieknSDKNetChart.prototype.gentInfobox = function (options) {
+    }
+
+    protected gentInfobox(options: HieknNetChartInfoboxSetting) {
         options.formData.isRelationAtts = typeof (options.formData.isRelationAtts) == 'boolean' ? options.formData.isRelationAtts : true;
         this.infoboxService = new HieknSDKInfobox(options);
         this.infoboxService.initEvent($(options.selector));
-    };
-    HieknSDKNetChart.prototype.infobox = function (data, node, callback) {
-        var _this = this;
+    }
+
+    protected infobox(data: any, node: any, callback: Function): string {
         if (node.detail) {
             callback(node.detail);
-        }
-        else {
-            this.infoboxService.load(data.id, function (data) {
-                data = _this.infoboxService.buildInfobox(data)[0].outerHTML;
+        } else {
+            this.infoboxService.load(data.id, (data: any) => {
+                data = this.infoboxService.buildInfobox(data)[0].outerHTML;
                 node.detail = data;
                 callback(data);
             });
         }
         return null;
-    };
-    HieknSDKNetChart.prototype.init = function (options, schema) {
-        var _this = this;
+    }
+
+    protected init(options: HieknNetChartSetting, schema: HieknSchema) {
         if (options.autoColor) {
-            var colors = {};
-            for (var i in schema.types) {
+            let colors: HieknTypeUnionMap = {};
+            for (const i in schema.types) {
                 colors[schema.types[i].k] = HieknSDKUtils.color[parseInt(i) % HieknSDKUtils.color.length];
             }
             $.extend(true, colors, this.nodeSettings.nodeColors || {});
@@ -162,29 +249,29 @@ var HieknSDKNetChart = /** @class */ (function () {
                 enable: true,
                 data: this.nodeSettings.nodeColors || {},
                 legendDraw: this.legendDraw(schema, options.legendType),
-                onClick: function (e) {
-                    _this.legendClick(e);
+                onClick: (e: MouseEvent) => {
+                    this.legendClick(e);
                 },
-                onDblClick: function (e) {
-                    _this.legendDblClick(e);
+                onDblClick: (e: MouseEvent) => {
+                    this.legendDblClick(e);
                 },
-                onMouseEnter: function (e) {
-                    _this.legendMouseEnter(e);
+                onMouseEnter: (e: MouseEvent) => {
+                    this.legendMouseEnter(e);
                 },
-                onMouseLeave: function (e) {
-                    _this.legendMouseLeave(e);
+                onMouseLeave: (e: MouseEvent) => {
+                    this.legendMouseLeave(e);
                 }
             },
             netChart: {
                 settings: {
                     filters: {
-                        nodeFilter: function (nodeData) {
-                            return _this.nodeFilter(nodeData);
+                        nodeFilter: (nodeData: HieknNetChartDataNode) => {
+                            return this.nodeFilter(nodeData);
                         }
                     },
                     nodeMenu: {
-                        contentsFunction: function (data, node, callback) {
-                            return _this.infobox(data, node, callback);
+                        contentsFunction: (data: any, node: any, callback: Function) => {
+                            return this.infobox(data, node, callback);
                         }
                     },
                     style: {
@@ -211,61 +298,60 @@ var HieknSDKNetChart = /** @class */ (function () {
         if (options.startInfo) {
             this.load(options.startInfo);
         }
-    };
-    HieknSDKNetChart.prototype.legend = function (schema) {
-        var typeObj = {};
-        for (var _i = 0, _a = schema.types; _i < _a.length; _i++) {
-            var type = _a[_i];
+    }
+
+    protected legend(schema: HieknSchema) {
+        let typeObj = {};
+        for (const type of schema.types) {
             typeObj[type.k] = type.v;
         }
-        return function (key, value) {
+        return (key: string, value: string) => {
             return '<i style="background: ' + value + '"></i><span title="' + typeObj[key] + '">' + typeObj[key] + '</span>';
-        };
-    };
-    HieknSDKNetChart.prototype.legendClick = function (e) {
-        var $obj = $(e.currentTarget);
+        }
+    }
+
+    protected legendClick(e: MouseEvent) {
+        const $obj = $(e.currentTarget);
         $obj.toggleClass('off');
         this.legendFilter[$obj.data('key')] = $obj.hasClass('off');
         this.tgc2.netChart.updateFilters();
-    };
-    HieknSDKNetChart.prototype.legendDblClick = function (e) {
-        var _this = this;
-        var $obj = $(e.currentTarget);
-        var others = $obj.removeClass('off').siblings();
+    }
+
+    protected legendDblClick(e: MouseEvent) {
+        const $obj = $(e.currentTarget);
+        const others = $obj.removeClass('off').siblings();
         others.addClass('off');
-        var classId = $obj.data('key');
+        const classId = $obj.data('key');
         this.legendFilter = {};
         this.legendFilter[classId] = false;
-        others.each(function (i, v) {
-            _this.legendFilter[$(v).data('key')] = true;
+        others.each((i: number, v: HTMLElement) => {
+            this.legendFilter[$(v).data('key')] = true;
         });
         this.tgc2.netChart.updateFilters();
-    };
-    HieknSDKNetChart.prototype.legendDraw = function (schema, legendType) {
-        var _this = this;
-        var typeObj = {};
-        for (var _i = 0, _a = schema.types; _i < _a.length; _i++) {
-            var type = _a[_i];
+    }
+
+    protected legendDraw(schema: HieknSchema, legendType: string) {
+        let typeObj = {};
+        for (const type of schema.types) {
             typeObj[type.k] = type.v;
         }
-        return function (data, $container) {
-            _this.legendFilter = {};
-            var nodes = _.filter(_this.tgc2.getAvailableData().nodes, function (n) {
+        return (data: any, $container: JQuery) => {
+            this.legendFilter = {};
+            const nodes = _.filter(this.tgc2.getAvailableData().nodes, (n: Tgc2DataNode) => {
                 return !n.hidden;
             });
-            var classIds = _.keys(_.groupBy(nodes, 'classId'));
+            const classIds = _.keys(_.groupBy(nodes, 'classId'));
             // const $fabContainer = $('<div class="legend-fab-container"></div>');
             // $container.html($fabContainer);
             if (legendType == 'fab') {
-                var items = [];
-                for (var key in data) {
+                let items = [];
+                for (const key in data) {
                     if (data.hasOwnProperty(key) && _.indexOf(classIds, key) >= 0) {
-                        var html = '';
-                        var text = typeObj[key];
+                        let html = '';
+                        const text = typeObj[key];
                         if (text.length > 3) {
                             html = '<div title="' + text + '"><div>' + text.substring(0, 2) + '</div><div class="line-hidden">' + text.substring(2) + '</div></div>';
-                        }
-                        else {
+                        } else {
                             html = '<div class="line-hidden" title="' + text + '">' + text + '</div>';
                         }
                         items.push({
@@ -279,49 +365,48 @@ var HieknSDKNetChart = /** @class */ (function () {
                                 'color': '#fff'
                             },
                             events: {
-                                'click': function (e) {
-                                    _this.legendClick(e);
+                                'click': (e: MouseEvent) => {
+                                    this.legendClick(e);
                                 },
-                                'mouseenter': function (e) {
-                                    _this.legendMouseEnter(e);
+                                'mouseenter': (e: MouseEvent) => {
+                                    this.legendMouseEnter(e);
                                 },
-                                'mouseleave': function (e) {
-                                    _this.legendMouseLeave(e);
+                                'mouseleave': (e: MouseEvent) => {
+                                    this.legendMouseLeave(e);
                                 },
-                                'dblclick': function (e) {
-                                    _this.legendDblClick(e);
+                                'dblclick': (e: MouseEvent) => {
+                                    this.legendDblClick(e);
                                 }
                             }
                         });
                     }
                 }
-                var fab = new hieknjs.fab({
+                const fab = new hieknjs.fab({
                     container: $container,
                     radius: 80,
                     angle: 90,
                     startAngle: 90,
-                    initStatus: _this.layoutStatus,
+                    initStatus: this.layoutStatus,
                     main: {
                         html: '图例',
                         style: {
-                            background: _this.defaultColor,
+                            background: this.defaultColor,
                             color: '#fff'
                         },
                         events: {
-                            'click': function () {
-                                _this.layoutStatus = !_this.layoutStatus;
+                            'click': () => {
+                                this.layoutStatus = !this.layoutStatus;
                             }
                         }
                     },
                     items: items
                 });
                 // fab.run();
-            }
-            else {
+            } else {
                 $container.html('');
-                for (var key in data) {
+                for (const key in data) {
                     if (data.hasOwnProperty(key) && _.indexOf(classIds, key) >= 0) {
-                        var $obj = $('<div class="tgc2-legend-item tgc2-legend-item-' + key + '"></div>').data({
+                        const $obj = $('<div class="tgc2-legend-item tgc2-legend-item-' + key + '"></div>').data({
                             'key': key,
                             'value': data[key]
                         });
@@ -329,10 +414,11 @@ var HieknSDKNetChart = /** @class */ (function () {
                     }
                 }
             }
-        };
-    };
-    HieknSDKNetChart.prototype.legendMouseEnter = function (e) {
-        var $obj = $(e.currentTarget);
+        }
+    }
+
+    protected legendMouseEnter(e: MouseEvent) {
+        const $obj = $(e.currentTarget);
         $obj.addClass('active').siblings().addClass('inactive');
         this.nodeSettings.legendClass = $obj.data('key');
         this.nodeSettings.legendColor = $obj.data('value');
@@ -342,58 +428,60 @@ var HieknSDKNetChart = /** @class */ (function () {
         // });
         // const ids = _.keys(_.groupBy(nodes, 'id'));
         // this.tgc2.netChart.scrollIntoView(ids);
-    };
-    HieknSDKNetChart.prototype.legendMouseLeave = function (e) {
-        var $obj = $(e.currentTarget);
+    }
+
+    protected legendMouseLeave(e: MouseEvent) {
+        const $obj = $(e.currentTarget);
         $obj.removeClass('active inactive').siblings().removeClass('active inactive');
         this.nodeSettings.legendClass = null;
         this.nodeSettings.legendColor = null;
         this.tgc2.netChart.updateStyle();
-    };
-    HieknSDKNetChart.prototype.loader = function (options, schema) {
-        var _this = this;
-        return function ($self, callback, failed) {
-            var params = _this.buildLoaderParams(options);
+    }
+
+    protected loader(options: HieknNetChartLoaderSetting, schema: HieknSchema) {
+        return ($self: any, callback: Function, failed: Function) => {
+            const params: any = this.buildLoaderParams(options);
             HieknSDKUtils.ajax({
                 url: HieknSDKUtils.buildUrl(options.baseUrl + params.url, params.queryData),
                 type: 'POST',
                 data: params.formData,
                 dataFilter: options.dataFilter,
-                success: function (data) {
+                success: (data: any) => {
                     data = data[0];
                     if (data) {
                         data = HieknSDKNetChart.dealGraphData(data, schema);
                     }
                     callback(data);
                 },
-                error: function () {
+                error: () => {
                     failed();
                 },
                 that: $(options.selector).find('.tgc2-netchart-container')[0]
             });
-        };
-    };
-    HieknSDKNetChart.prototype.nodeFilter = function (nodeData) {
+        }
+    }
+
+    protected nodeFilter(nodeData: HieknNetChartDataNode) {
         return this.tgc2.inStart(nodeData.id) || !this.legendFilter[nodeData.classId];
-    };
-    HieknSDKNetChart.prototype.nodeStyleFunction = function (options) {
-        var _this = this;
+    }
+
+    protected nodeStyleFunction(options: HieknNetChartNodeSetting) {
         if (options.autoUpdateStyle) {
-            setInterval(function () {
-                _this.updateStyle();
+            setInterval(() => {
+                this.updateStyle();
             }, 30);
         }
-        return function (node) {
-            var data = node.data;
-            var classId = data.classId;
-            var nodeIds = _this.tgc2.getEmphasesNode();
-            var tgc2NetChartSetting = _this.tgc2.settings.netChart;
+        return (node: Tgc2ChartNode) => {
+            const data = <HieknNetChartDataNode>node.data;
+            const classId = data.classId;
+            const nodeIds = this.tgc2.getEmphasesNode();
+            const tgc2NetChartSetting = this.tgc2.settings.netChart;
             node.label = node.data.name;
             node.lineWidth = 2;
             node.fillColor = node.data.color || tgc2NetChartSetting.nodeDefaultColor || node.fillColor;
             node.labelStyle.textStyle.font = '18px Microsoft Yahei';
             node.aura = node.data.auras;
-            if (_this.tgc2.inStart(node.id)) {
+            if (this.tgc2.inStart(node.id)) {
                 node.radius = 50;
                 node.fillColor = tgc2NetChartSetting.emphasesColor;
             }
@@ -401,8 +489,7 @@ var HieknSDKNetChart = /** @class */ (function () {
                 node.fillColor = tgc2NetChartSetting.emphasesColor;
                 node.label = node.data.name;
                 node.radius = node.radius * 1.5;
-            }
-            else if (!$.isEmptyObject(nodeIds)) {
+            } else if (!$.isEmptyObject(nodeIds)) {
                 node.fillColor = tgc2NetChartSetting.reduceColor;
                 node.radius = node.radius * 0.5;
             }
@@ -410,20 +497,18 @@ var HieknSDKNetChart = /** @class */ (function () {
             if (!$.isEmptyObject(nodeIds) || options.legendClass) {
                 if (nodeIds[node.id] || options.legendClass == data.classId) {
                     node.radius = node.radius * 1.5;
-                }
-                else {
-                    node.fillColor = _this.tgc2.settings.netChart.reduceColor;
+                } else {
+                    node.fillColor = this.tgc2.settings.netChart.reduceColor;
                     node.label = '';
                     node.lineColor = node.fillColor;
                     node.radius = node.radius * 0.5;
                 }
-            }
-            else {
-                if (_this.tgc2.inStart(node.id)) {
-                }
-                else {
+            } else {
+                if (this.tgc2.inStart(node.id)) {
+
+                } else {
                     node.fillColor = data.color || '#fff';
-                    node.lineColor = _this.defaultColor;
+                    node.lineColor = this.defaultColor;
                     if (node.hovered) {
                         node.fillColor = node.lineColor;
                         node.shadowBlur = 0;
@@ -431,22 +516,19 @@ var HieknSDKNetChart = /** @class */ (function () {
                 }
             }
             if (options.nodeColors) {
-                var value = HieknSDKNetChart.getHieknTypeUnionMapValue(options.nodeColors[classId]);
+                const value = <string>HieknSDKNetChart.getHieknTypeUnionMapValue(options.nodeColors[classId]);
                 if (value) {
                     if (!$.isEmptyObject(nodeIds) || options.legendClass) {
                         if (nodeIds[node.id] || options.legendClass == classId) {
-                            node.fillColor = options.legendColor || _this.tgc2.settings.netChart.emphasesColor;
+                            node.fillColor = options.legendColor || this.tgc2.settings.netChart.emphasesColor;
                             node.lineColor = node.fillColor;
+                        } else {
                         }
-                        else {
-                        }
-                    }
-                    else {
-                        if (_this.tgc2.inStart(node.id)) {
-                            node.fillColor = _this.tgc2.settings.netChart.emphasesColor;
+                    } else {
+                        if (this.tgc2.inStart(node.id)) {
+                            node.fillColor = this.tgc2.settings.netChart.emphasesColor;
                             node.lineColor = node.fillColor;
-                        }
-                        else {
+                        } else {
                             node.lineColor = value;
                             if (!options.imagePrefix && !options.images && !data.img) {
                                 node.fillColor = node.lineColor;
@@ -461,21 +543,17 @@ var HieknSDKNetChart = /** @class */ (function () {
             if (data.img) {
                 if (data.img.indexOf('http') != 0 && options.imagePrefix) {
                     node.image = HieknSDKUtils.qiniuImg(options.imagePrefix + data.img);
-                }
-                else {
+                } else {
                     node.image = data.img;
                 }
                 if (!$.isEmptyObject(nodeIds) || options.legendClass) {
                     if (nodeIds[node.id] || options.legendClass == classId) {
-                    }
-                    else {
+                    } else {
                         node.image = '';
                     }
-                }
-                else {
-                    if (_this.tgc2.inStart(node.id) || node.hovered) {
-                    }
-                    else {
+                } else {
+                    if (this.tgc2.inStart(node.id) || node.hovered) {
+                    } else {
                         node.image = '';
                     }
                 }
@@ -486,68 +564,61 @@ var HieknSDKNetChart = /** @class */ (function () {
                 //     node.image = '';
                 // }
                 node.fillColor = '#fff';
-            }
-            else if (options.images && options.images[classId]) {
-                var value = HieknSDKNetChart.getHieknTypeUnionMapValue(options.images[classId]);
+            } else if (options.images && options.images[classId]) {
+                const value = <HieknTypeNE>HieknSDKNetChart.getHieknTypeUnionMapValue(options.images[classId]);
                 if (value) {
                     if (!$.isEmptyObject(nodeIds) || options.legendClass) {
                         if (nodeIds[node.id] || options.legendClass == classId) {
                             node.image = options.legendColor || value.emphases;
-                        }
-                        else {
+                        } else {
                             node.image = '';
                         }
-                    }
-                    else {
-                        if (_this.tgc2.inStart(node.id) || node.hovered) {
+                    } else {
+                        if (this.tgc2.inStart(node.id) || node.hovered) {
                             node.image = value.emphases;
-                        }
-                        else {
+                        } else {
                             node.image = value.normal;
                         }
                     }
                 }
             }
-            var radius = _this.tgc2.netChart.getNodeDimensions(node).radius;
+            const radius = this.tgc2.netChart.getNodeDimensions(node).radius;
             if (options.autoUpdateStyle) {
                 if (radius < options.minRadius) {
                     node.image = '';
                     node.fillColor = node.lineColor;
                 }
-                if (_this.tgc2.inStart(node.id)) {
-                    _this.centerNodeRadius = radius;
-                    !_this.centerNode && (_this.centerNode = node);
+                if (this.tgc2.inStart(node.id)) {
+                    this.centerNodeRadius = radius;
+                    !this.centerNode && (this.centerNode = node);
                 }
             }
             if (options.textColors) {
-                var value = HieknSDKNetChart.getHieknTypeUnionMapValue(options.textColors[classId]);
+                const value = HieknSDKNetChart.getHieknTypeUnionMapValue(options.textColors[classId]);
                 if (value) {
                     if (typeof value == 'string') {
                         node.labelStyle.textStyle.fillColor = value;
-                    }
-                    else {
-                        if (_this.tgc2.inStart(node.id) || nodeIds[node.id]) {
+                    } else {
+                        if (this.tgc2.inStart(node.id) || nodeIds[node.id]) {
                             node.labelStyle.textStyle.fillColor = value.emphases;
-                        }
-                        else {
+                        } else {
                             if (node.hovered) {
                                 node.labelStyle.textStyle.fillColor = value.emphases;
-                            }
-                            else {
+                            } else {
                                 node.labelStyle.textStyle.fillColor = value.normal;
                             }
                         }
                     }
                 }
             }
-            var len = node.label.length;
+            const len = node.label.length;
             if (node.display == 'roundtext') {
-                var label = node.label;
-                var regChinese = HieknSDKUtils.regChinese;
-                var regEnglish = HieknSDKUtils.regEnglish;
-                for (var i = 1; i < label.length - 1; i++) {
-                    var char = label.charAt(i);
-                    var charNext = label.charAt(i + 1);
+                let label = node.label;
+                const regChinese = HieknSDKUtils.regChinese;
+                const regEnglish = HieknSDKUtils.regEnglish;
+                for (let i = 1; i < label.length - 1; i++) {
+                    const char = label.charAt(i);
+                    const charNext = label.charAt(i + 1);
                     if ((regChinese.test(char) && regEnglish.test(charNext)) || (regEnglish.test(char) && regChinese.test(charNext))) {
                         label = label.substring(0, i + 1) + ' ' + label.substring(i + 1);
                         i++;
@@ -556,48 +627,48 @@ var HieknSDKNetChart = /** @class */ (function () {
                 node.label = label;
                 if (node.label.indexOf(' ') < 0 && len > 5) {
                     if (len > 9) {
-                        var perLine = Math.floor(node.label.length / 3);
-                        var split2 = len - perLine;
+                        const perLine = Math.floor(node.label.length / 3);
+                        const split2 = len - perLine;
                         node.label = node.label.substring(0, perLine) + ' ' +
                             node.label.substring(perLine, split2) + ' ' +
                             node.label.substring(split2);
-                    }
-                    else if (len > 5) {
+                    } else if (len > 5) {
                         node.label = node.label.substring(0, 4) + ' ' + node.label.substring(4);
                     }
                 }
             }
-        };
-    };
-    HieknSDKNetChart.prototype.updateStyle = function () {
+        }
+    }
+
+    protected updateStyle() {
         if (this.centerNode) {
-            var radius = this.tgc2.netChart.getNodeDimensions(this.centerNode).radius;
+            const radius = this.tgc2.netChart.getNodeDimensions(this.centerNode).radius;
             if (this.centerNodeRadius != radius) {
-                var nodes = this.tgc2.netChart.nodes();
-                var ids = [];
-                for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
-                    var node = nodes_1[_i];
+                const nodes = this.tgc2.netChart.nodes();
+                let ids = [];
+                for (let node of nodes) {
                     ids.push(node.id);
                 }
                 this.tgc2.netChart.updateStyle(ids);
             }
         }
-    };
-    HieknSDKNetChart.buildFilter = function (schema, options) {
-        var allowAtts = [];
-        var allowAttsSelected = [];
-        var allowTypes = [];
-        var allowTypesSelected = [];
-        for (var i in schema.atts) {
-            var att = schema.atts[i];
+    }
+
+    protected static buildFilter(schema: HieknSchema, options: HieknNetChartFilterSetting) {
+        let allowAtts = [];
+        let allowAttsSelected = [];
+        let allowTypes = [];
+        let allowTypesSelected = [];
+        for (const i in schema.atts) {
+            const att = schema.atts[i];
             if (att.type == 1) {
-                allowAtts.push({ value: att.k, label: att.v });
+                allowAtts.push({value: att.k, label: att.v});
                 allowAttsSelected.push(att.k);
             }
         }
-        for (var j in schema.types) {
-            var type = schema.types[j];
-            allowTypes.push({ value: type.k, label: type.v });
+        for (const j in schema.types) {
+            const type = schema.types[j];
+            allowTypes.push({value: type.k, label: type.v});
             allowTypesSelected.push(type.k);
         }
         allowAttsSelected = options.selectedAtts || allowAttsSelected;
@@ -615,51 +686,48 @@ var HieknSDKNetChart = /** @class */ (function () {
                 selected: allowAttsSelected,
                 options: allowAtts
             }
-        ];
-    };
-    HieknSDKNetChart.dealGraphData = function (data, schema) {
+        ]
+    }
+
+    protected static dealGraphData(data: any, schema: HieknSchema) {
         data.nodes = data.entityList;
         data.links = data.relationList;
         delete data.entityList;
         delete data.relationList;
-        var schemas = {};
-        var arr = _.concat(schema.types, schema.atts);
-        for (var _i = 0, arr_1 = arr; _i < arr_1.length; _i++) {
-            var kv = arr_1[_i];
+        let schemas: any = {};
+        const arr = _.concat(schema.types, schema.atts);
+        for (const kv of arr) {
             schemas[kv.k] = kv.v;
         }
-        for (var _a = 0, _b = data.nodes; _a < _b.length; _a++) {
-            var node = _b[_a];
+        for (let node of data.nodes) {
             node.typeName = schemas[node.classId];
         }
-        for (var _c = 0, _d = data.links; _c < _d.length; _c++) {
-            var link = _d[_c];
+        for (let link of data.links) {
             link.typeName = schemas[link.attId];
         }
         return data;
-    };
-    HieknSDKNetChart.getHieknTypeUnionMapValue = function (value, type) {
+    }
+
+    protected static getHieknTypeUnionMapValue(value: HieknTypeUnionStringNE, type?: string): HieknTypeUnionStringNE {
         if (value instanceof String) {
             return value;
-        }
-        else if (type) {
+        } else if (type) {
             return value[type];
-        }
-        else {
+        } else {
             return value;
         }
-    };
-    HieknSDKNetChart.linkContentsFunction = function (linkData) {
-        var rInfo = $.extend(true, [], (linkData.nRInfo || []), (linkData.oRInfo || []));
+    }
+
+    protected static linkContentsFunction(linkData: Tgc2DataLink) {
+        const rInfo = $.extend(true, [], (linkData.nRInfo || []), (linkData.oRInfo || []));
         if (rInfo) {
-            var items = '';
-            for (var _i = 0, rInfo_1 = rInfo; _i < rInfo_1.length; _i++) {
-                var d = rInfo_1[_i];
+            let items = '';
+            for (const d of rInfo) {
                 items += '<tr>';
-                var kvs = d.kvs;
-                var thead = '<tr>';
-                var tbody = '<tr>';
-                for (var j in kvs) {
+                const kvs = d.kvs;
+                let thead = '<tr>';
+                let tbody = '<tr>';
+                for (const j in kvs) {
                     if (kvs.hasOwnProperty(j)) {
                         thead += '<th><div class="link-info-key">' + kvs[j].k + '</div></th>';
                         tbody += '<td><div class="link-info-value">' + kvs[j].v + '</div></td>';
@@ -668,51 +736,65 @@ var HieknSDKNetChart = /** @class */ (function () {
                 items += '<li><table><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></li>';
             }
             return '<ul class="link-info">' + items + '</ul>';
-        }
-        else {
+        } else {
             return linkData.typeName;
         }
-    };
-    HieknSDKNetChart.orderRelation = function (data) {
-        var obj = {};
-        var from = _.countBy(data, 'from');
-        var to = _.countBy(data, 'to');
-        for (var f in from) {
+    }
+
+    protected static orderRelation(data: any) {
+        let obj = {};
+        const from = _.countBy(data, 'from');
+        const to = _.countBy(data, 'to');
+        for (const f in from) {
             obj[f] = (obj[f] || 0) + (to[f] || 0) + from[f];
         }
-        for (var t in to) {
+        for (const t in to) {
             obj[t] = (obj[t] || 0) + (from[t] || 0) + to[t];
         }
-        var arr = [];
-        for (var o in obj) {
-            arr.push({ k: o, v: obj[o] });
+        let arr = [];
+        for (const o in obj) {
+            arr.push({k: o, v: obj[o]});
         }
         return _.orderBy(arr, 'v', 'desc');
-    };
-    return HieknSDKNetChart;
-}());
-var HieknSDKGraph = /** @class */ (function (_super) {
-    __extends(HieknSDKGraph, _super);
-    function HieknSDKGraph() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
-    HieknSDKGraph.prototype.buildPrivateSetting = function (schema) {
-        var _this = this;
-        var initSettings = {
-            success: function (data) {
+
+    protected abstract buildLoaderParams(options: HieknNetChartLoaderSetting): { queryData: any, formData: any, url: string };
+
+    protected abstract buildPrivateSetting(schema: HieknSchema): void;
+
+}
+declare class HieknSDKGraph extends HieknSDKNetChart {
+    tgc2Prompt: Tgc2Prompt;
+    tgc2Page: Tgc2Page;
+    protected buildPrivateSetting(schema: HieknSchema): void;
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting): {
+        queryData: any;
+        formData: any;
+        url: string;
+    };
+}
+
+class HieknSDKGraph extends HieknSDKNetChart {
+
+    tgc2Prompt: Tgc2Prompt;
+    tgc2Page: Tgc2Page;
+
+    protected buildPrivateSetting(schema: HieknSchema) {
+        const initSettings = {
+            success: (data: any) => {
                 if (data.entityList && data.entityList.length) {
-                    _this.load(data.entityList[0]);
+                    this.load(data.entityList[0]);
                 }
             }
         };
         $.extend(true, this.initSettings, initSettings);
-        var filters = [{
-                key: 'distance',
-                label: '设定显示层数',
-                selected: this.options.selectedDistance || 1,
-                options: [1, 2, 3]
-            }].concat(this.defaultTgc2Options.filter.filters);
-        var defaultTgc2Options = {
+        const filters = [{
+            key: 'distance',
+            label: '设定显示层数',
+            selected: this.options.selectedDistance || 1,
+            options: [1, 2, 3]
+        }].concat(this.defaultTgc2Options.filter.filters);
+        const defaultTgc2Options = {
             prompt: {
                 enable: true,
                 settings: {
@@ -730,50 +812,207 @@ var HieknSDKGraph = /** @class */ (function (_super) {
         this.tgc2 = new Tgc2Graph(this.tgc2Settings);
         this.tgc2Prompt = new Tgc2Prompt(this.tgc2, this.tgc2Settings.prompt);
         this.tgc2Page = new Tgc2Page(this.tgc2, this.tgc2Settings.page);
-    };
-    HieknSDKGraph.prototype.buildLoaderParams = function (options) {
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
+    }
+
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting) {
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
         formData.id = this.tgc2.startInfo.id;
         formData.isRelationMerge = true;
         if (this.tgc2Filter) {
-            var filters = this.tgc2Filter.getFilterOptions();
+            const filters = this.tgc2Filter.getFilterOptions();
             $.extend(true, formData, filters);
         }
         if (this.tgc2Page) {
-            var page = this.tgc2Page.page;
+            const page = this.tgc2Page.page;
             formData.pageNo = page.pageNo;
             formData.pageSize = page.pageSize;
         }
-        return { queryData: queryData, formData: formData, url: 'graph' };
-    };
-    return HieknSDKGraph;
-}(HieknSDKNetChart));
-var HieknSDKPath = /** @class */ (function (_super) {
-    __extends(HieknSDKPath, _super);
-    function HieknSDKPath() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return {queryData: queryData, formData: formData, url: 'graph'};
     }
-    HieknSDKPath.prototype.buildPrivateSetting = function (schema) {
-        var _this = this;
-        var initSettings = {
-            success: function (data) {
+}
+/// <reference types="jquery" />
+declare type HieknTypeNE = {
+    normal: string;
+    emphases: string;
+};
+declare type HieknTypeUnionStringNE = string | HieknTypeNE;
+declare type HieknTypeUnionMap = {
+    [key: string]: HieknTypeUnionStringNE;
+};
+declare type HieknTypeStartInfo = Tgc2StartInfo | Tgc2PathStartInfo | Tgc2RelationStartInfo;
+interface HieknNetChartFilterSetting {
+    selectedAtts?: number[];
+    selectedTypes?: number[];
+}
+interface HieknNetChartLoaderSetting extends HieknBaseSetting {
+    enable?: boolean;
+    selector?: string;
+}
+interface HieknNetChartNodeSetting {
+    autoUpdateStyle?: boolean;
+    imagePrefix?: string;
+    images?: HieknTypeUnionMap;
+    legendClass?: number;
+    legendColor?: string;
+    minRadius?: number;
+    nodeColors?: HieknTypeUnionMap;
+    textColors?: HieknTypeUnionMap;
+}
+interface HieknNetChartDataNode extends Tgc2DataNode {
+    classId?: number;
+    img?: string;
+}
+interface HieknNetChartInitSetting extends HieknBaseSetting {
+    failed?: Function;
+    success?: Function;
+    that?: HTMLElement;
+}
+interface HieknNetChartInfoboxSetting extends HieknInfoboxSetting {
+    enable?: boolean;
+}
+interface HieknTgc2Setting extends Tgc2Setting, Tgc2PathSetting, Tgc2RelationSetting {
+    filter: Tgc2FilterSettings;
+    prompt: Tgc2PromptSetting;
+    page: Tgc2PageSetting;
+    crumb: Tgc2CrumbSettings;
+    find: Tgc2FindSettings;
+    legend: Tgc2LegendSettings;
+    timeChart: Tgc2TimeChartSettings;
+    event: Tgc2EventSettings;
+    stats: Tgc2StatsSettings;
+    connects: Tgc2ConncetsSetting;
+}
+interface HieknNetChartSetting {
+    kgName?: string;
+    autoColor?: boolean;
+    autoUpdateStyle?: boolean;
+    baseUrl?: string;
+    dataFilter?: JQueryAjaxDataFilter;
+    display?: string;
+    formData?: any;
+    imagePrefix?: string;
+    images?: HieknTypeUnionMap;
+    infoboxSetting?: HieknNetChartInfoboxSetting;
+    layoutStatus?: boolean;
+    legendType?: string;
+    minRadius?: number;
+    nodeColors?: HieknTypeUnionMap;
+    queryData?: any;
+    schema?: HieknSchema;
+    schemaSetting?: HieknSchemaSetting;
+    selectedAtts?: number[];
+    selectedDistance?: number;
+    selectedTypes?: number[];
+    selector?: string;
+    startInfo?: HieknTypeStartInfo;
+    textColors?: HieknTypeUnionMap;
+    tgc2Settings?: HieknTgc2Setting;
+    statsConfig?: any[];
+}
+declare abstract class HieknSDKNetChart {
+    isInit: boolean;
+    isTiming: boolean;
+    options: HieknNetChartSetting;
+    baseSettings: HieknBaseSetting;
+    promptSettings: HieknPromptSetting;
+    filterSettings: HieknNetChartFilterSetting;
+    infoboxSettings: HieknNetChartInfoboxSetting;
+    loaderSettings: HieknNetChartLoaderSetting;
+    nodeSettings: HieknNetChartNodeSetting;
+    schemaSettings: HieknSchemaSetting;
+    initSettings: HieknNetChartInitSetting;
+    defaultTgc2Options: any;
+    tgc2Settings: HieknTgc2Setting;
+    tgc2: Tgc2;
+    tgc2Filter: Tgc2Filter;
+    tgc2Crumb: Tgc2Crumb;
+    tgc2Find: Tgc2Find;
+    tgc2Legend: Tgc2Legend;
+    infoboxService: HieknSDKInfobox;
+    legendFilter: {
+        [key: number]: boolean;
+    };
+    layoutStatus: boolean;
+    centerNode: ItemsChartNode;
+    centerNodeRadius: number;
+    defaultColor: string;
+    constructor(options: HieknNetChartSetting);
+    load(startInfo: HieknTypeStartInfo): void;
+    protected beforeInit(options: HieknNetChartSetting): void;
+    protected graphInit(options: HieknNetChartInitSetting): void;
+    protected gentInfobox(options: HieknNetChartInfoboxSetting): void;
+    protected infobox(data: any, node: any, callback: Function): string;
+    protected init(options: HieknNetChartSetting, schema: HieknSchema): void;
+    protected legend(schema: HieknSchema): (key: string, value: string) => string;
+    protected legendClick(e: MouseEvent): void;
+    protected legendDblClick(e: MouseEvent): void;
+    protected legendDraw(schema: HieknSchema, legendType: string): (data: any, $container: JQuery) => void;
+    protected legendMouseEnter(e: MouseEvent): void;
+    protected legendMouseLeave(e: MouseEvent): void;
+    protected loader(options: HieknNetChartLoaderSetting, schema: HieknSchema): ($self: any, callback: Function, failed: Function) => void;
+    protected nodeFilter(nodeData: HieknNetChartDataNode): boolean;
+    protected nodeStyleFunction(options: HieknNetChartNodeSetting): (node: Tgc2ChartNode) => void;
+    protected updateStyle(): void;
+    protected static buildFilter(schema: HieknSchema, options: HieknNetChartFilterSetting): {
+        key: string;
+        label: string;
+        selected: number[];
+        options: {
+            value: number;
+            label: string;
+        }[];
+    }[];
+    protected static dealGraphData(data: any, schema: HieknSchema): any;
+    protected static getHieknTypeUnionMapValue(value: HieknTypeUnionStringNE, type?: string): HieknTypeUnionStringNE;
+    protected static linkContentsFunction(linkData: Tgc2DataLink): string;
+    protected static orderRelation(data: any): {
+        k: string;
+        v: any;
+    }[];
+    protected abstract buildLoaderParams(options: HieknNetChartLoaderSetting): {
+        queryData: any;
+        formData: any;
+        url: string;
+    };
+    protected abstract buildPrivateSetting(schema: HieknSchema): void;
+}
+
+declare class HieknSDKPath extends HieknSDKNetChart {
+    tgc2Stats: Tgc2Stats;
+    tgc2Connects: Tgc2Connects;
+    protected buildPrivateSetting(schema: HieknSchema): void;
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting): {
+        queryData: any;
+        formData: any;
+        url: string;
+    };
+}
+
+class HieknSDKPath extends HieknSDKNetChart {
+
+    tgc2Stats: Tgc2Stats;
+    tgc2Connects: Tgc2Connects;
+
+    protected buildPrivateSetting(schema: HieknSchema) {
+        const initSettings = {
+            success: (data: any) => {
                 if (data.relationList && data.relationList.length) {
-                    var arr = HieknSDKNetChart.orderRelation(data.relationList);
-                    var start = arr[2] ? arr[2].k : arr[0].k;
-                    var end = arr[1].k;
-                    _this.load({ id: new Date().getTime(), start: { 'id': start }, end: { 'id': end } });
+                    const arr = HieknSDKNetChart.orderRelation(data.relationList);
+                    const start = arr[2] ? arr[2].k : arr[0].k;
+                    const end = arr[1].k;
+                    this.load({id: new Date().getTime(), start: {'id': start}, end: {'id': end}});
                 }
             }
         };
         $.extend(true, this.initSettings, initSettings);
-        var filters = [{
-                key: 'distance',
-                label: '设定分析步长',
-                selected: this.options.selectedDistance || 3,
-                options: [3, 4, 5, 6]
-            }].concat(this.defaultTgc2Options.filter.filters);
-        var defaultTgc2Options = {
+        const filters = [{
+            key: 'distance',
+            label: '设定分析步长',
+            selected: this.options.selectedDistance || 3,
+            options: [3, 4, 5, 6]
+        }].concat(this.defaultTgc2Options.filter.filters);
+        const defaultTgc2Options = {
             stats: {
                 enable: true,
                 editable: true,
@@ -802,55 +1041,66 @@ var HieknSDKPath = /** @class */ (function (_super) {
         this.tgc2 = new Tgc2Path(this.tgc2Settings);
         this.tgc2Stats = new Tgc2Stats(this.tgc2, this.tgc2Settings.stats);
         this.tgc2Connects = new Tgc2Connects(this.tgc2, this.tgc2Settings.connects);
-    };
-    HieknSDKPath.prototype.buildLoaderParams = function (options) {
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
-        formData.start = this.tgc2.startInfo.start.id;
-        formData.end = this.tgc2.startInfo.end.id;
+    }
+
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting) {
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
+        formData.start = (<Tgc2PathStartInfo>this.tgc2.startInfo).start.id;
+        formData.end = (<Tgc2PathStartInfo>this.tgc2.startInfo).end.id;
         formData.isShortest = true;
         formData.connectsCompute = true;
         formData.statsCompute = true;
         if (this.tgc2Filter) {
-            var filters = this.tgc2Filter.getFilterOptions();
+            const filters = this.tgc2Filter.getFilterOptions();
             $.extend(true, formData, filters);
         }
         if (this.tgc2Stats) {
             formData.statsConfig = this.tgc2Stats.getStatsConfig();
         }
-        return { queryData: queryData, formData: formData, url: 'path' };
-    };
-    return HieknSDKPath;
-}(HieknSDKNetChart));
-var HieknSDKRelation = /** @class */ (function (_super) {
-    __extends(HieknSDKRelation, _super);
-    function HieknSDKRelation() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return {queryData: queryData, formData: formData, url: 'path'};
     }
-    HieknSDKRelation.prototype.buildPrivateSetting = function (schema) {
-        var _this = this;
-        var initSettings = {
-            success: function (data) {
+}
+
+declare class HieknSDKRelation extends HieknSDKNetChart {
+    tgc2Stats: Tgc2Stats;
+    tgc2Connects: Tgc2Connects;
+    protected buildPrivateSetting(schema: HieknSchema): void;
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting): {
+        queryData: any;
+        formData: any;
+        url: string;
+    };
+}
+
+class HieknSDKRelation extends HieknSDKNetChart {
+
+    tgc2Stats: Tgc2Stats;
+    tgc2Connects: Tgc2Connects;
+
+    protected buildPrivateSetting(schema: HieknSchema) {
+        const initSettings = {
+            success: (data: any) => {
                 if (data.relationList && data.relationList.length) {
-                    var arr = HieknSDKNetChart.orderRelation(data.relationList);
-                    var nodes = [];
-                    for (var i in arr) {
+                    const arr = HieknSDKNetChart.orderRelation(data.relationList);
+                    let nodes = [];
+                    for (const i in arr) {
                         if (parseInt(i) < 3) {
-                            nodes.push({ id: arr[i].k });
+                            nodes.push({id: arr[i].k});
                         }
                     }
-                    _this.load({ id: new Date().getTime(), nodes: nodes });
+                    this.load({id: new Date().getTime(), nodes: nodes});
                 }
             }
         };
         $.extend(true, this.initSettings, initSettings);
-        var filters = [{
-                key: 'distance',
-                label: '设定分析步长',
-                selected: this.options.selectedDistance || 3,
-                options: [3, 4, 5, 6]
-            }].concat(this.defaultTgc2Options.filter.filters);
-        var defaultTgc2Options = {
+        const filters = [{
+            key: 'distance',
+            label: '设定分析步长',
+            selected: this.options.selectedDistance || 3,
+            options: [3, 4, 5, 6]
+        }].concat(this.defaultTgc2Options.filter.filters);
+        const defaultTgc2Options = {
             stats: {
                 enable: true,
                 editable: true,
@@ -879,42 +1129,56 @@ var HieknSDKRelation = /** @class */ (function (_super) {
         this.tgc2 = new Tgc2Relation(this.tgc2Settings);
         this.tgc2Stats = new Tgc2Stats(this.tgc2, this.tgc2Settings.stats);
         this.tgc2Connects = new Tgc2Connects(this.tgc2, this.tgc2Settings.connects);
-    };
-    HieknSDKRelation.prototype.buildLoaderParams = function (options) {
-        var ids = _.map(this.tgc2.startInfo.nodes, 'id');
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
+    }
+
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting) {
+        const ids = _.map((<Tgc2RelationStartInfo>this.tgc2.startInfo).nodes, 'id');
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
         formData.ids = ids;
         formData.isShortest = true;
         formData.connectsCompute = true;
         formData.statsCompute = true;
         if (this.tgc2Filter) {
-            var filters = this.tgc2Filter.getFilterOptions();
+            const filters = this.tgc2Filter.getFilterOptions();
             $.extend(true, formData, filters);
         }
         if (this.tgc2Stats) {
             formData.statsConfig = this.tgc2Stats.getStatsConfig();
         }
-        return { queryData: queryData, formData: formData, url: 'relation' };
-    };
-    return HieknSDKRelation;
-}(HieknSDKNetChart));
-var HieknSDKTiming = /** @class */ (function (_super) {
-    __extends(HieknSDKTiming, _super);
-    function HieknSDKTiming() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return {queryData: queryData, formData: formData, url: 'relation'};
     }
-    HieknSDKTiming.prototype.buildPrivateSetting = function (schema) {
-        var _this = this;
-        var initSettings = {
-            success: function (data) {
+}
+
+declare class HieknSDKTiming extends HieknSDKNetChart {
+    isTiming: true;
+    tgc2Prompt: Tgc2Prompt;
+    tgc2TimeChart: Tgc2TimeChart;
+    tgc2Event: Tgc2Event;
+    protected buildPrivateSetting(schema: HieknSchema): void;
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting): {
+        queryData: any;
+        formData: any;
+        url: string;
+    };
+}
+
+class HieknSDKTiming extends HieknSDKNetChart {
+    isTiming: true;
+    tgc2Prompt: Tgc2Prompt;
+    tgc2TimeChart: Tgc2TimeChart;
+    tgc2Event: Tgc2Event;
+
+    protected buildPrivateSetting(schema: HieknSchema) {
+        const initSettings = {
+            success: (data: any) => {
                 if (data.entityList && data.entityList.length) {
-                    _this.load(data.entityList[0]);
+                    this.load(data.entityList[0]);
                 }
             }
         };
         $.extend(true, this.initSettings, initSettings);
-        var defaultTgc2Options = {
+        const defaultTgc2Options = {
             autoResize: true,
             prompt: {
                 enable: true,
@@ -945,77 +1209,99 @@ var HieknSDKTiming = /** @class */ (function (_super) {
                 format: 'yyyy-mm-dd'
             });
             this.tgc2TimeChart.$settingModal.find('.input-daterange').find('input').prop('type', 'text');
+        } catch (e) {
         }
-        catch (e) {
-        }
-    };
-    HieknSDKTiming.prototype.buildLoaderParams = function (options) {
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
+    }
+
+    protected buildLoaderParams(options: HieknNetChartLoaderSetting) {
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
         formData.id = this.tgc2.startInfo.id;
         formData.isRelationMerge = true;
         if (this.tgc2Filter) {
-            var filters = this.tgc2Filter.getFilterOptions();
+            const filters = this.tgc2Filter.getFilterOptions();
             $.extend(true, formData, filters);
         }
         if (this.tgc2TimeChart) {
-            var settings = this.tgc2TimeChart.getSettings();
+            const settings = this.tgc2TimeChart.getSettings();
             delete settings.type;
             $.extend(true, formData, settings);
         }
-        return { queryData: queryData, formData: formData, url: 'graph/timing' };
+        return {queryData: queryData, formData: formData, url: 'graph/timing'};
+    }
+}
+
+interface HieknStatConfigSetting {
+    type: string;
+    seriesName?: { [key: string]: string };
+    chartSettings?: any;
+    changeXY?: boolean;
+}
+
+interface HieknStatSetting extends HieknBaseSetting {
+    container?: string;
+    formDataUpdater?: (formData: any) => any;
+    config?: HieknStatConfigSetting;
+    kgName?: string;
+    chartColor?: string[];
+}
+
+abstract class HieknSDKStat {
+    $container: JQuery;
+    chart: any;
+    options: HieknStatSetting;
+    stat: any;
+    defaults: HieknStatSetting = {
+        chartColor: HieknSDKUtils.color
     };
-    return HieknSDKTiming;
-}(HieknSDKNetChart));
-var HieknSDKStat = /** @class */ (function () {
-    function HieknSDKStat(options) {
-        this.defaults = {
-            chartColor: HieknSDKUtils.color
-        };
+
+    constructor(options: HieknStatSetting) {
         this.options = $.extend(true, {}, this.defaults, options);
         this.init();
     }
-    HieknSDKStat.prototype.init = function () {
+
+    protected init() {
         this.$container = $(this.options.container);
         this.bindEvent();
-    };
-    HieknSDKStat.prototype.bindEvent = function () {
-        var _this = this;
-        $(window).on('resize', function () {
-            _this.chart && _this.chart.resize();
+    }
+
+    protected bindEvent() {
+        $(window).on('resize', () => {
+            this.chart && this.chart.resize();
         });
-    };
-    HieknSDKStat.prototype.load = function () {
-        var _this = this;
-        var queryData = this.options.queryData || {};
-        var formData = this.options.formData || {};
+    }
+
+    protected abstract drawChart(): void;
+
+    load() {
+        let queryData = this.options.queryData || {};
+        let formData = this.options.formData || {};
         if (this.options.formDataUpdater) {
             formData = this.options.formDataUpdater(formData);
         }
-        var $container = this.$container.empty();
-        var newOptions = {
+        let $container = this.$container.empty();
+        let newOptions = {
             url: HieknSDKUtils.buildUrl(this.options.baseUrl + 'stat/data', queryData),
             type: 'POST',
             data: formData,
-            success: function (data, textStatus, jqXHR) {
-                _this.stat = data[0];
-                _this.drawChart();
+            success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
+                this.stat = data[0];
+                this.drawChart();
             },
             that: $container[0]
         };
         newOptions = $.extend(true, {}, this.options, newOptions);
         HieknSDKUtils.ajax(newOptions);
-    };
-    return HieknSDKStat;
-}());
-var HieknSDKStatLineBar = /** @class */ (function (_super) {
-    __extends(HieknSDKStatLineBar, _super);
-    function HieknSDKStatLineBar() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
-    HieknSDKStatLineBar.prototype.drawChart = function () {
-        var type = this.options.config.type;
-        var defaultXAxis = {
+}
+declare class HieknSDKStatLineBar extends HieknSDKStat {
+    protected drawChart(): void;
+}
+
+class HieknSDKStatLineBar extends HieknSDKStat {
+    protected drawChart() {
+        const type = this.options.config.type;
+        const defaultXAxis = {
             type: 'category',
             axisLine: {
                 show: false
@@ -1028,52 +1314,47 @@ var HieknSDKStatLineBar = /** @class */ (function (_super) {
                 show: true
             }
         };
-        var defaultSeries = {
+        const defaultSeries = {
             name: '',
             type: type,
             symbol: 'circle',
             symbolSize: 10
         };
-        var d = this.stat;
-        var stat = this.options.config;
-        var legend = [];
-        for (var _i = 0, _a = d.series; _i < _a.length; _i++) {
-            var s = _a[_i];
+        const d = this.stat;
+        const stat = this.options.config;
+        const legend = [];
+        for (const s of d.series) {
             if (stat.seriesName) {
                 s.name = stat.seriesName[s.name] || s.name;
                 legend.push(s.name);
             }
         }
-        var idx = 0;
-        var xAxisArr = [];
-        for (var _b = 0, _c = d.xAxis; _b < _c.length; _b++) {
-            var xAxis = _c[_b];
+        let idx = 0;
+        const xAxisArr = [];
+        for (const xAxis of d.xAxis) {
             if (stat.chartSettings && stat.chartSettings.xAxis) {
                 if (stat.chartSettings.xAxis instanceof Array) {
                     $.extend(true, defaultXAxis, stat.chartSettings.xAxis[idx]);
-                }
-                else {
+                } else {
                     $.extend(true, defaultXAxis, stat.chartSettings.xAxis);
                 }
             }
             xAxisArr.push($.extend(true, {}, defaultXAxis, xAxis));
         }
         idx = 0;
-        var seriesArr = [];
-        for (var _d = 0, _e = d.series; _d < _e.length; _d++) {
-            var series = _e[_d];
+        const seriesArr = [];
+        for (const series of d.series) {
             if (stat.chartSettings && stat.chartSettings.series) {
                 if (stat.chartSettings.series instanceof Array) {
                     $.extend(true, defaultSeries, stat.chartSettings.series[idx]);
-                }
-                else {
+                } else {
                     $.extend(true, defaultSeries, stat.chartSettings.series);
                 }
             }
             if (series.name == '') {
                 delete series.name;
             }
-            var s = $.extend(true, {}, defaultSeries, series);
+            const s = $.extend(true, {}, defaultSeries, series);
             if (stat.seriesName && stat.seriesName[s.name]) {
                 s.name = stat.seriesName[s.name] || s.name;
             }
@@ -1081,7 +1362,7 @@ var HieknSDKStatLineBar = /** @class */ (function (_super) {
             idx++;
         }
         this.chart = echarts.init(this.$container[0]);
-        var defaultOption = {
+        let defaultOption: any = {
             color: this.options.chartColor,
             tooltip: {
                 position: 'top',
@@ -1116,51 +1397,46 @@ var HieknSDKStatLineBar = /** @class */ (function (_super) {
             ]
         };
         if (stat.seriesName && !$.isEmptyObject(stat.seriesName)) {
-            defaultOption.tooltip.formatter = function (param) {
-                var str = '';
-                for (var _i = 0, param_1 = param; _i < param_1.length; _i++) {
-                    var item = param_1[_i];
+            defaultOption.tooltip.formatter = (param: any) => {
+                let str = '';
+                for (const item of param) {
                     str += item.seriesName + ':' + item.data + '<br>';
                 }
                 return str;
-            };
+            }
         }
-        var option = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
-        }
-        else {
+        } else {
             option = defaultOption;
         }
         if (stat.changeXY) {
             option.xAxis = option.yAxis;
             option.yAxis = xAxisArr;
-        }
-        else {
+        } else {
             option.xAxis = xAxisArr;
         }
         option.series = seriesArr;
         this.chart.setOption(option);
-    };
-    return HieknSDKStatLineBar;
-}(HieknSDKStat));
-var HieknSDKStatPie = /** @class */ (function (_super) {
-    __extends(HieknSDKStatPie, _super);
-    function HieknSDKStatPie() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
-    HieknSDKStatPie.prototype.drawChart = function () {
-        var d = this.stat;
-        var stat = this.options.config;
-        var legend = [];
-        for (var _i = 0, _a = d.series; _i < _a.length; _i++) {
-            var s = _a[_i];
+}
+declare class HieknSDKStatPie extends HieknSDKStat {
+    protected drawChart(): void;
+}
+
+class HieknSDKStatPie extends HieknSDKStat {
+    protected drawChart() {
+        const d = this.stat;
+        const stat = this.options.config;
+        const legend = [];
+        for (const s of d.series) {
             if (stat.seriesName) {
                 s.name = stat.seriesName[s.name] || s.name;
                 legend.push(s.name);
             }
         }
-        var defaultSeries = {
+        const defaultSeries = {
             name: '',
             type: 'pie',
             radius: '75%',
@@ -1174,15 +1450,14 @@ var HieknSDKStatPie = /** @class */ (function (_super) {
                 }
             }
         };
-        var series = {};
+        let series = {};
         if (stat.chartSettings && stat.chartSettings.series) {
             series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
-        }
-        else {
+        } else {
             series = defaultSeries;
         }
         this.chart = echarts.init(this.$container[0]);
-        var defaultOption = {
+        const defaultOption = {
             color: this.options.chartColor,
             tooltip: {
                 trigger: 'item',
@@ -1194,35 +1469,60 @@ var HieknSDKStatPie = /** @class */ (function (_super) {
                 data: legend
             }
         };
-        var option = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
-        }
-        else {
+        } else {
             option = defaultOption;
         }
         option.series = [series];
         this.chart.setOption(option);
-    };
-    return HieknSDKStatPie;
-}(HieknSDKStat));
-var HieknSDKStatWordCloud = /** @class */ (function (_super) {
-    __extends(HieknSDKStatWordCloud, _super);
-    function HieknSDKStatWordCloud() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
-    HieknSDKStatWordCloud.prototype.drawChart = function () {
-        var _this = this;
-        var d = this.stat;
-        var stat = this.options.config;
-        var data = [];
-        for (var _i = 0, _a = d.series; _i < _a.length; _i++) {
-            var series_1 = _a[_i];
-            if (series_1.name) {
-                data.push(series_1);
+}
+/// <reference types="jquery" />
+interface HieknStatConfigSetting {
+    type: string;
+    seriesName?: {
+        [key: string]: string;
+    };
+    chartSettings?: any;
+    changeXY?: boolean;
+}
+interface HieknStatSetting extends HieknBaseSetting {
+    container?: string;
+    formDataUpdater?: (formData: any) => any;
+    config?: HieknStatConfigSetting;
+    kgName?: string;
+    chartColor?: string[];
+}
+declare abstract class HieknSDKStat {
+    $container: JQuery;
+    chart: any;
+    options: HieknStatSetting;
+    stat: any;
+    defaults: HieknStatSetting;
+    constructor(options: HieknStatSetting);
+    protected init(): void;
+    protected bindEvent(): void;
+    protected abstract drawChart(): void;
+    load(): void;
+}
+
+declare class HieknSDKStatWordCloud extends HieknSDKStat {
+    protected drawChart(): void;
+}
+
+class HieknSDKStatWordCloud extends HieknSDKStat {
+    protected drawChart() {
+        const d = this.stat;
+        const stat = this.options.config;
+        const data = [];
+        for (const series of d.series) {
+            if (series.name) {
+                data.push(series);
             }
         }
-        var defaultSeries = {
+        const defaultSeries = {
             type: 'wordCloud',
             sizeRange: [12, 50],
             rotationRange: [-45, 90],
@@ -1233,8 +1533,8 @@ var HieknSDKStatWordCloud = /** @class */ (function (_super) {
             },
             textStyle: {
                 normal: {
-                    color: function () {
-                        return _this.options.chartColor[Math.floor(Math.random() * _this.options.chartColor.length)];
+                    color: () => {
+                        return this.options.chartColor[Math.floor(Math.random() * this.options.chartColor.length)];
                     }
                 },
                 emphasis: {
@@ -1244,36 +1544,53 @@ var HieknSDKStatWordCloud = /** @class */ (function (_super) {
             },
             data: data
         };
-        var series = {};
+        let series = {};
         if (stat.chartSettings && stat.chartSettings.series) {
             series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
-        }
-        else {
+        } else {
             series = defaultSeries;
         }
         this.chart = echarts.init(this.$container[0]);
-        var defaultOption = {};
-        var option = {};
+        const defaultOption = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
-        }
-        else {
+        } else {
             option = defaultOption;
         }
         option.series = [series];
         this.chart.setOption(option);
-    };
-    return HieknSDKStatWordCloud;
-}(HieknSDKStat));
-var HieknSDKAssociation = /** @class */ (function () {
-    function HieknSDKAssociation() {
     }
-    HieknSDKAssociation.load = function (options) {
+}
+interface HieknAssociationSetting extends HieknAjaxSetting {
+    kgName?: string;
+}
+declare class HieknSDKAssociation {
+    static defaults: {
+        formData: {
+            pageSize: number;
+        };
+    };
+    static load(options: HieknAssociationSetting): void;
+}
+
+interface HieknAssociationSetting extends HieknAjaxSetting {
+    kgName?: string;
+}
+
+class HieknSDKAssociation {
+    static defaults = {
+        formData: {
+            pageSize: 6
+        }
+    };
+
+    static load(options: HieknAssociationSetting) {
         options = $.extend(true, {}, HieknSDKAssociation.defaults, options);
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
         formData.kgName = options.kgName;
-        var newOptions = {
+        let newOptions = {
             url: HieknSDKUtils.buildUrl(options.baseUrl + 'association', queryData),
             type: 'POST',
             data: formData,
@@ -1281,25 +1598,87 @@ var HieknSDKAssociation = /** @class */ (function () {
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKUtils.ajax(newOptions);
     };
-    ;
-    HieknSDKAssociation.defaults = {
-        formData: {
-            pageSize: 6
-        }
-    };
-    return HieknSDKAssociation;
-}());
-var HieknSDKConceptGraph = /** @class */ (function () {
-    function HieknSDKConceptGraph(options) {
-        var _this = this;
-        this.options = {};
-        var defaultPromptSettings = {
+}
+declare type HieknConceptGraphStartInfo = {
+    id: HieknIdType;
+    kgType: number;
+};
+interface HieknConceptGraphSetting extends HieknBaseSetting {
+    kgName?: string;
+    emphasesColor?: string;
+    emphasesLightColor?: string;
+    instanceEnable?: boolean;
+    infoboxSetting?: HieknNetChartInfoboxSetting;
+    lightColor?: string;
+    primaryColor?: string;
+    primaryLightColor?: string;
+    promptSettings?: HieknPromptSetting;
+    selector?: string;
+    startInfo?: HieknConceptGraphStartInfo;
+    tgc2Settings?: HieknTgc2Setting;
+}
+interface HieknConceptGraphDataNode extends Tgc2DataNode {
+    kgType?: number;
+}
+interface HieknConceptGraphDataLink extends Tgc2DataLink {
+    attName?: string;
+}
+declare class HieknSDKConceptGraph {
+    promptSettings: HieknPromptSetting;
+    graphInfobox: HieknSDKInfobox;
+    options: HieknConceptGraphSetting;
+    tgc2: Tgc2Graph;
+    tgc2Prompt: Tgc2Prompt;
+    tgc2Page: Tgc2Page;
+    constructor(options: HieknConceptGraphSetting);
+    private buildInfobox(infoboxOptions);
+    private contentsFunction(data, node, callback);
+    private init();
+    load(node: HieknConceptGraphStartInfo): void;
+    loader(instance: Tgc2Graph, callback: Function, onFailed: Function): void;
+    private nodeStyleFunction(node);
+}
+
+type HieknConceptGraphStartInfo = { id: HieknIdType, kgType: number };
+
+interface HieknConceptGraphSetting extends HieknBaseSetting {
+    kgName?: string;
+    emphasesColor?: string;
+    emphasesLightColor?: string;
+    instanceEnable?: boolean;
+    infoboxSetting?: HieknNetChartInfoboxSetting;
+    lightColor?: string;
+    primaryColor?: string;
+    primaryLightColor?: string;
+    promptSettings?: HieknPromptSetting;
+    selector?: string;
+    startInfo?: HieknConceptGraphStartInfo;
+    tgc2Settings?: HieknTgc2Setting;
+}
+
+interface HieknConceptGraphDataNode extends Tgc2DataNode {
+    kgType?: number;
+}
+interface HieknConceptGraphDataLink extends Tgc2DataLink {
+    attName?: string;
+}
+
+class HieknSDKConceptGraph {
+    promptSettings: HieknPromptSetting;
+    graphInfobox: HieknSDKInfobox;
+    options: HieknConceptGraphSetting = {};
+    tgc2: Tgc2Graph;
+    tgc2Prompt: Tgc2Prompt;
+    tgc2Page: Tgc2Page;
+
+    constructor(options: HieknConceptGraphSetting) {
+        const defaultPromptSettings = {
             baseUrl: options.baseUrl,
             queryData: options.queryData,
             kgName: options.kgName
         };
         this.promptSettings = $.extend(true, defaultPromptSettings, options.promptSettings);
-        var defaultOptions = {
+        const defaultOptions = {
             lightColor: '#fff',
             primaryColor: '#00b38a',
             primaryLightColor: 'rgba(0,179,138,0.3)',
@@ -1321,16 +1700,16 @@ var HieknSDKConceptGraph = /** @class */ (function () {
                                 enabled: false,
                                 fillColor: ''
                             },
-                            nodeStyleFunction: function (node) {
-                                _this.nodeStyleFunction(node);
+                            nodeStyleFunction: (node: Tgc2ChartNode) => {
+                                this.nodeStyleFunction(node);
                             },
                             nodeHovered: {
                                 shadowBlur: 0,
                                 shadowColor: 'rgba(0, 0, 0, 0)'
                             },
-                            linkStyleFunction: function (link) {
+                            linkStyleFunction: (link: Tgc2ChartLink) => {
                                 if (link.hovered) {
-                                    link.label = link.data.attName;
+                                    link.label = (<HieknConceptGraphDataLink>link.data).attName;
                                 }
                                 link.toDecoration = 'arrow';
                                 link.fillColor = '#ddd';
@@ -1356,18 +1735,18 @@ var HieknSDKConceptGraph = /** @class */ (function () {
                     },
                     pageSize: 20
                 },
-                loader: function (instance, callback, onFailed) {
-                    _this.loader(instance, callback, onFailed);
+                loader: (instance: Tgc2Graph, callback: Function, onFailed: Function) => {
+                    this.loader(instance, callback, onFailed);
                 }
             }
         };
         this.options = $.extend(true, {}, defaultOptions, options);
-        var infobox = this.options.infoboxSetting;
+        let infobox = this.options.infoboxSetting;
         if (infobox && infobox.enable) {
             this.graphInfobox = this.buildInfobox(infobox);
             this.graphInfobox.initEvent($(this.options.selector));
-            this.options.tgc2Settings.netChart.settings.nodeMenu.contentsFunction = function (data, node, callback) {
-                return _this.contentsFunction(data, node, callback);
+            this.options.tgc2Settings.netChart.settings.nodeMenu.contentsFunction = (data: any, node: any, callback: Function) => {
+                return this.contentsFunction(data, node, callback)
             };
         }
         this.options.tgc2Settings.selector = this.options.tgc2Settings.selector || this.options.selector;
@@ -1376,8 +1755,9 @@ var HieknSDKConceptGraph = /** @class */ (function () {
             this.load(options.startInfo);
         }
     }
-    HieknSDKConceptGraph.prototype.buildInfobox = function (infoboxOptions) {
-        var options = {
+
+    private buildInfobox(infoboxOptions: HieknInfoboxSetting) {
+        let options = {
             baseUrl: this.options.baseUrl,
             dataFilter: this.options.dataFilter,
             queryData: this.options.queryData,
@@ -1386,18 +1766,16 @@ var HieknSDKConceptGraph = /** @class */ (function () {
         };
         $.extend(true, options, infoboxOptions);
         return new HieknSDKInfobox(options);
-    };
-    HieknSDKConceptGraph.prototype.contentsFunction = function (data, node, callback) {
-        var _this = this;
+    }
+
+    private contentsFunction(data: any, node: any, callback: Function): string {
         if (node.detail) {
             callback(node.detail);
-        }
-        else {
-            this.graphInfobox.load(data.id, function (data) {
+        } else {
+            this.graphInfobox.load(data.id, (data: any) => {
                 if (data) {
-                    data = _this.graphInfobox.buildInfobox(data)[0].outerHTML;
-                }
-                else {
+                    data = this.graphInfobox.buildInfobox(data)[0].outerHTML;
+                } else {
                     data = '没有知识卡片信息';
                 }
                 node.detail = data;
@@ -1405,8 +1783,9 @@ var HieknSDKConceptGraph = /** @class */ (function () {
             });
         }
         return null;
-    };
-    HieknSDKConceptGraph.prototype.init = function () {
+    }
+
+    private init() {
         this.tgc2 = new Tgc2Graph(this.options.tgc2Settings);
         this.tgc2Prompt = new Tgc2Prompt(this.tgc2, this.options.tgc2Settings.prompt);
         this.tgc2Page = new Tgc2Page(this.tgc2, this.options.tgc2Settings.page);
@@ -1424,19 +1803,19 @@ var HieknSDKConceptGraph = /** @class */ (function () {
         $(this.options.tgc2Settings.selector).append('<div class="tgc2-info-bottom">' +
             '<div class="info-bottom"><span>中心节点：</span><span name="name" style="color:' + this.options.emphasesColor + '"></span></div>' +
             '</div>');
-    };
-    HieknSDKConceptGraph.prototype.load = function (node) {
-        var _this = this;
+    }
+
+    load(node: HieknConceptGraphStartInfo) {
         this.tgc2.load(node);
-        setTimeout(function () {
-            _this.tgc2.resize();
+        setTimeout(() => {
+            this.tgc2.resize();
         }, 300);
-    };
-    HieknSDKConceptGraph.prototype.loader = function (instance, callback, onFailed) {
-        var _this = this;
-        var node = this.tgc2.startInfo;
-        var page = this.tgc2Page.page;
-        var queryData = this.options.queryData || {};
+    }
+
+    loader(instance: Tgc2Graph, callback: Function, onFailed: Function) {
+        const node = <HieknConceptGraphStartInfo>this.tgc2.startInfo;
+        const page = this.tgc2Page.page;
+        const queryData = this.options.queryData || {};
         queryData.type = node.kgType || 0;
         queryData.pageNo = page.pageNo;
         queryData.pageSize = page.pageSize;
@@ -1447,13 +1826,12 @@ var HieknSDKConceptGraph = /** @class */ (function () {
             type: 'GET',
             dataFilter: this.options.dataFilter,
             that: $(this.options.tgc2Settings.selector)[0],
-            success: function (data) {
+            success: (data: any) => {
                 data = data[0];
                 if (data.entityList && data.entityList.length) {
-                    for (var _i = 0, _a = data.entityList; _i < _a.length; _i++) {
-                        var d = _a[_i];
+                    for (const d of data.entityList) {
                         if (d.id == node.id) {
-                            $(_this.options.tgc2Settings.selector).find('.tgc2-info-bottom').find('[name="name"]').text(d.name);
+                            $(this.options.tgc2Settings.selector).find('.tgc2-info-bottom').find('[name="name"]').text(d.name);
                         }
                     }
                 }
@@ -1464,20 +1842,21 @@ var HieknSDKConceptGraph = /** @class */ (function () {
                 callback(data);
                 instance.netChart.resetLayout();
             },
-            error: function () {
+            error: () => {
                 onFailed && onFailed();
-                instance.netChart.replaceData({ nodes: [], links: [] });
+                instance.netChart.replaceData({nodes: [], links: []});
             }
         });
-    };
-    HieknSDKConceptGraph.prototype.nodeStyleFunction = function (node) {
-        var data = node.data;
-        var centerNode = this.tgc2.startInfo;
+    }
+
+    private nodeStyleFunction(node: Tgc2ChartNode) {
+        const data = <HieknConceptGraphDataNode>node.data;
+        const centerNode = this.tgc2.startInfo;
         node.label = data.name;
         node.labelStyle.textStyle.font = '18px Microsoft Yahei';
         node.radius = 15;
         node.imageCropping = 'fit';
-        var isCenter = (node.id == centerNode.id);
+        const isCenter = (node.id == centerNode.id);
         if (data.kgType == 0) {
             node.lineWidth = 10;
             node.lineColor = this.options.primaryLightColor;
@@ -1487,8 +1866,7 @@ var HieknSDKConceptGraph = /** @class */ (function () {
                 node.fillColor = this.options.emphasesColor;
                 node.lineColor = this.options.emphasesLightColor;
             }
-        }
-        else {
+        } else {
             node.lineWidth = 2;
             node.lineColor = this.options.primaryColor;
             node.fillColor = this.options.lightColor;
@@ -1501,64 +1879,193 @@ var HieknSDKConceptGraph = /** @class */ (function () {
         if (node.hovered) {
             node.radius = node.radius * 1.25;
         }
+    }
+}
+/// <reference types="jquery" />
+interface HieknConceptTreeInsSearchSetting extends HieknAjaxSetting {
+    paramName?: string;
+}
+interface HieknConceptTreeInsSetting extends HieknAjaxSetting {
+    enable?: boolean;
+    onClick?: Function;
+    searchSettings?: HieknConceptTreeInsSearchSetting;
+}
+interface HieknConceptTreeSetting extends HieknBaseSetting {
+    kgName?: string;
+    container?: string;
+    getAsyncUrl?: Function;
+    idKey?: string;
+    initId?: number;
+    nameKey?: string;
+    onNodeClick?: Function;
+    nodeHoverTools?: {
+        infoboxSetting?: HieknNetChartInfoboxSetting;
+        graphSetting?: {
+            enable?: boolean;
+            instanceEnable?: boolean;
+            infoboxSetting?: HieknNetChartInfoboxSetting;
+            conceptGraphSettings?: HieknConceptGraphSetting;
+        };
     };
-    return HieknSDKConceptGraph;
-}());
-var HieknSDKConceptTree = /** @class */ (function () {
-    function HieknSDKConceptTree(options) {
-        var _this = this;
-        this.isFirst = true;
-        this.startAsync = false;
-        this.treeDbClick = false;
-        this.defaults = {
-            getAsyncUrl: function () {
-                var queryData = {};
-                queryData.kgName = _this.options.kgName;
-                if (_this.options.readAll) {
-                    queryData.id = _this.getLastSelectedNodeId() || 0;
-                }
-                else {
-                    queryData.id = _this.getLastSelectedNodeId() || _this.options.initId;
-                }
-                queryData.onlySubTree = _this.isFirst ? 0 : 1;
-                $.extend(true, queryData, _this.options.queryData);
-                return HieknSDKUtils.buildUrl(_this.options.baseUrl + 'concept', queryData);
+    instance?: HieknConceptTreeInsSetting;
+    namespace?: string;
+    pIdKey?: string;
+    readAll?: boolean;
+    hiddenIds?: {
+        self?: number[];
+        rec?: number[];
+    };
+}
+declare class HieknSDKConceptTree {
+    $container: JQuery;
+    $graphContainer: JQuery;
+    $instanceContainer: JQuery;
+    treeId: string;
+    clickTimeout: number;
+    isFirst: boolean;
+    lastSelectedNode: any;
+    startAsync: boolean;
+    treeDbClick: boolean;
+    instanceSearchSettings: any;
+    zTreeSettings: any;
+    zTree: any;
+    treeInfobox: HieknSDKInfobox;
+    tgc2ConceptGraph: HieknSDKConceptGraph;
+    instanceSearch: any;
+    options: HieknConceptTreeSetting;
+    defaults: HieknConceptTreeSetting;
+    constructor(options: HieknConceptTreeSetting);
+    private init();
+    addHoverDom(treeId: string, treeNode: any): void;
+    beforeAsync(treeId: string, treeNode: any): boolean;
+    private bindInstanceEvent();
+    private buildInfobox(infoboxOptions);
+    /**
+     * TODO to replace modal
+     * */
+    private buildGraph();
+    private dataFilter(treeId, parentNode, data);
+    private drawInstanceList(instances, append);
+    private expandNodes(nodeId);
+    private getAsyncUrl();
+    getLastSelectedNodeId(): any;
+    getLastSelectedInstance(): any;
+    private loadGraph(id);
+    reloadInstance(): void;
+    private loadInstanceService();
+    onAsyncSuccess(event: Event, treeId: string, treeNode: any): void;
+    onClick(event: Event, treeId: string, treeNode: any): void;
+    onNodeButtonClick($button: JQuery, treeNode: any): void;
+    onNodeClick(node: any): void;
+    /**
+     * TODO to replace tooltipster, modal
+     * */
+    onNodeHover($container: JQuery, treeNode: any): boolean;
+    removeHoverDom(treeId: string, treeNode: any): void;
+    private select(selector);
+    private updateZTreeSettings();
+}
+
+interface HieknConceptTreeInsSearchSetting extends HieknAjaxSetting {
+    paramName?: string
+}
+
+interface HieknConceptTreeInsSetting extends HieknAjaxSetting {
+    enable?: boolean;
+    onClick?: Function;
+    searchSettings?: HieknConceptTreeInsSearchSetting;
+}
+
+interface HieknConceptTreeSetting extends HieknBaseSetting {
+    kgName?: string;
+    container?: string;
+    getAsyncUrl?: Function;
+    idKey?: string;
+    initId?: number;
+    nameKey?: string;
+    onNodeClick?: Function;
+    nodeHoverTools?: {
+        infoboxSetting?: HieknNetChartInfoboxSetting,
+        graphSetting?: {
+            enable?: boolean;
+            instanceEnable?: boolean;
+            infoboxSetting?: HieknNetChartInfoboxSetting;
+            conceptGraphSettings?: HieknConceptGraphSetting
+        }
+    },
+    instance?: HieknConceptTreeInsSetting,
+    namespace?: string,
+    pIdKey?: string,
+    readAll?: boolean,
+    hiddenIds?: { self?: number[], rec?: number[] }
+}
+class HieknSDKConceptTree {
+    $container: JQuery;
+    $graphContainer: JQuery;
+    $instanceContainer: JQuery;
+    treeId: string;
+    clickTimeout: number;
+    isFirst = true;
+    lastSelectedNode: any;
+    startAsync = false;
+    treeDbClick = false;
+    instanceSearchSettings: any;
+    zTreeSettings: any;
+    zTree: any;
+    treeInfobox: HieknSDKInfobox;
+    tgc2ConceptGraph: HieknSDKConceptGraph;
+    instanceSearch: any;
+    options: HieknConceptTreeSetting;
+    defaults: HieknConceptTreeSetting = {
+        getAsyncUrl: () => {
+            let queryData: any = {};
+            queryData.kgName = this.options.kgName;
+            if (this.options.readAll) {
+                queryData.id = this.getLastSelectedNodeId() || 0;
+            } else {
+                queryData.id = this.getLastSelectedNodeId() || this.options.initId;
+            }
+            queryData.onlySubTree = this.isFirst ? 0 : 1;
+            $.extend(true, queryData, this.options.queryData);
+            return HieknSDKUtils.buildUrl(this.options.baseUrl + 'concept', queryData);
+        },
+        idKey: 'id',
+        initId: 0,
+        nameKey: 'name',
+        onNodeClick: $.noop,
+        nodeHoverTools: {
+            infoboxSetting: {
+                enable: false
             },
-            idKey: 'id',
-            initId: 0,
-            nameKey: 'name',
-            onNodeClick: $.noop,
-            nodeHoverTools: {
+            graphSetting: {
+                enable: false,
+                instanceEnable: false,
                 infoboxSetting: {
                     enable: false
-                },
-                graphSetting: {
-                    enable: false,
-                    instanceEnable: false,
-                    infoboxSetting: {
-                        enable: false
-                    }
                 }
-            },
-            instance: {
-                enable: false,
-                onClick: $.noop
-            },
-            namespace: 'hiekn-concept-tree',
-            pIdKey: 'parentId',
-            readAll: false,
-            hiddenIds: { self: [], rec: [] }
-        };
+            }
+        },
+        instance: {
+            enable: false,
+            onClick: $.noop
+        },
+        namespace: 'hiekn-concept-tree',
+        pIdKey: 'parentId',
+        readAll: false,
+        hiddenIds: {self: [], rec: []}
+    };
+
+    constructor(options: HieknConceptTreeSetting) {
         this.options = $.extend(true, {}, this.defaults, options);
         this.init();
     }
-    HieknSDKConceptTree.prototype.init = function () {
-        var _this = this;
+
+    private init() {
         this.$container = $(this.options.container);
         this.treeId = HieknSDKUtils.randomId(this.options.namespace + '-');
         this.$container.addClass('hiekn-concept-tree').append('<ul class="ztree" id="' + this.treeId + '"></ul>');
         this.zTreeSettings = this.updateZTreeSettings();
-        this.zTree = $.fn.zTree.init(this.$container.find('.ztree'), this.zTreeSettings);
+        this.zTree = (<any>$.fn).zTree.init(this.$container.find('.ztree'), this.zTreeSettings);
         if (this.options.nodeHoverTools.graphSetting.enable) {
             this.buildGraph();
         }
@@ -1566,33 +2073,33 @@ var HieknSDKConceptTree = /** @class */ (function () {
             this.treeInfobox = this.buildInfobox(this.options.nodeHoverTools.infoboxSetting);
         }
         if (this.options.instance.enable) {
-            var id = HieknSDKUtils.randomId(this.options.namespace + '-prompt-');
+            const id = HieknSDKUtils.randomId(this.options.namespace + '-prompt-');
             this.$instanceContainer = $('<div class="hiekn-instance-container"><div class="hiekn-instance-prompt" id="' + id + '"></div><div class="hiekn-instance-list"></div></div>');
             this.$container.append(this.$instanceContainer);
             this.instanceSearchSettings = {
                 container: '#' + id,
                 promptEnable: false,
                 placeholder: '实例搜索',
-                onSearch: function (kw) {
-                    var options = {
+                onSearch: (kw: string) => {
+                    let options: HieknConceptTreeInsSearchSetting = {
                         paramName: 'kw',
-                        url: _this.options.baseUrl + 'prompt',
+                        url: this.options.baseUrl + 'prompt',
                         type: 'POST',
                         formData: {
-                            kgName: _this.options.kgName
+                            kgName: this.options.kgName
                         }
                     };
-                    $.extend(true, options, _this.options.instance.searchSettings);
+                    $.extend(true, options, this.options.instance.searchSettings);
                     options.formData[options.paramName] = kw;
-                    var newOptions = {
+                    let newOptions = {
                         url: HieknSDKUtils.buildUrl(options.url, options.queryData),
-                        dataFilter: options.dataFilter || _this.options.dataFilter,
+                        dataFilter: options.dataFilter || this.options.dataFilter,
                         data: options.formData,
-                        success: function (data, textStatus, jqXHR) {
+                        success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                             if (data) {
-                                var $container = _this.select('.instance-loader-container');
-                                $container.attr({ 'data-more': '0', 'data-page': '1' });
-                                _this.drawInstanceList(data, false);
+                                const $container = this.select('.instance-loader-container');
+                                $container.attr({'data-more': '0', 'data-page': '1'});
+                                this.drawInstanceList(data, false);
                                 options.success && options.success(data, textStatus, jqXHR);
                             }
                         }
@@ -1604,50 +2111,54 @@ var HieknSDKConceptTree = /** @class */ (function () {
             this.instanceSearch = new hieknPrompt(this.instanceSearchSettings);
             this.bindInstanceEvent();
         }
-    };
-    HieknSDKConceptTree.prototype.addHoverDom = function (treeId, treeNode) {
-        var sObj = this.select('#' + treeNode.tId + '_span');
+    }
+
+    addHoverDom(treeId: string, treeNode: any) {
+        const sObj = this.select('#' + treeNode.tId + '_span');
         if (this.select('#button-container_' + treeNode.tId).length > 0) {
             return;
         }
-        var $container = $('<span class="button-container" id="button-container_' + treeNode.tId + '" ></span>');
+        const $container = $('<span class="button-container" id="button-container_' + treeNode.tId + '" ></span>');
         sObj.after($container);
         this.onNodeHover($container, treeNode);
-    };
-    HieknSDKConceptTree.prototype.beforeAsync = function (treeId, treeNode) {
+    }
+
+    beforeAsync(treeId: string, treeNode: any) {
         if (treeNode) {
             this.startAsync = true;
             this.lastSelectedNode = treeNode;
         }
         return true;
-    };
-    HieknSDKConceptTree.prototype.bindInstanceEvent = function () {
-        var _this = this;
-        this.select('.hiekn-instance-list').on('scroll', function (event) {
+    }
+
+    private bindInstanceEvent() {
+        this.select('.hiekn-instance-list').on('scroll', (event: Event) => {
             if ($(event.target).height() + $(event.target).scrollTop() > $(event.target)[0].scrollHeight - 50) {
-                _this.loadInstanceService();
+                this.loadInstanceService();
             }
         });
-        this.select('.hiekn-instance-list').on('click', 'li[data-id]', function (event) {
-            var node = $(event.currentTarget).data('data');
+        this.select('.hiekn-instance-list').on('click', 'li[data-id]', (event: Event) => {
+            const node = $(event.currentTarget).data('data');
             $(event.currentTarget).addClass('active').siblings('.active').removeClass('active');
-            _this.options.instance.onClick(node);
+            this.options.instance.onClick(node);
         });
-    };
-    HieknSDKConceptTree.prototype.buildInfobox = function (infoboxOptions) {
-        var options = {
+    }
+
+    private buildInfobox(infoboxOptions: HieknInfoboxSetting) {
+        let options = {
             baseUrl: this.options.baseUrl,
             dataFilter: this.options.dataFilter,
             kgName: this.options.kgName
         };
         $.extend(true, options, infoboxOptions);
         return new HieknSDKInfobox(options);
-    };
+    }
+
     /**
      * TODO to replace modal
      * */
-    HieknSDKConceptTree.prototype.buildGraph = function () {
-        var selector = HieknSDKUtils.randomId(this.options.namespace + '-tgc2-');
+    private buildGraph() {
+        const selector = HieknSDKUtils.randomId(this.options.namespace + '-tgc2-');
         this.$graphContainer = $('<div class="modal fade hiekn-concept-tree-graph-modal" id="' + selector + '-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">' +
             '<div class="modal-dialog modal-lg">' +
             '<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">' +
@@ -1655,7 +2166,7 @@ var HieknSDKConceptTree = /** @class */ (function () {
             '</button>' +
             '<h4 class="modal-title"><span name="title"></span></h4></div><div class="modal-body"><div class="' + selector + '"></div></div></div></div></div>');
         $('body').append(this.$graphContainer);
-        var settings = {
+        let settings: HieknConceptGraphSetting = {
             selector: '.' + selector,
             baseUrl: this.options.baseUrl,
             dataFilter: this.options.dataFilter,
@@ -1668,8 +2179,9 @@ var HieknSDKConceptTree = /** @class */ (function () {
         };
         $.extend(true, settings, this.options.nodeHoverTools.graphSetting.conceptGraphSettings);
         this.tgc2ConceptGraph = new HieknConceptGraphService(settings);
-    };
-    HieknSDKConceptTree.prototype.dataFilter = function (treeId, parentNode, data) {
+    }
+
+    private dataFilter(treeId: string, parentNode: any, data: any) {
         if (this.options.dataFilter) {
             data = this.options.dataFilter(data, undefined);
         }
@@ -1678,9 +2190,9 @@ var HieknSDKConceptTree = /** @class */ (function () {
                 return null;
             }
             data = data.data.rsData;
-            var len = data.length;
-            var result = [];
-            for (var i = 0; i < len; i++) {
+            const len = data.length;
+            let result = [];
+            for (let i = 0; i < len; i++) {
                 !this.options.readAll && (data[i].isParent = true);
                 if (_.indexOf(this.options.hiddenIds.self, data[i][this.options.idKey]) < 0
                     && _.indexOf(this.options.hiddenIds.rec, data[i][this.options.idKey]) < 0
@@ -1695,69 +2207,71 @@ var HieknSDKConceptTree = /** @class */ (function () {
             }
             if (result.length == 0) {
                 parentNode.isParent = false;
-            }
-            else {
+            } else {
                 return result;
             }
-        }
-        else {
+        } else {
             HieknSDKUtils.error(data.msg);
         }
         return null;
-    };
-    HieknSDKConceptTree.prototype.drawInstanceList = function (instances, append) {
-        var $container = this.$instanceContainer.find('.hiekn-instance-list ul');
-        var html = $('<ul></ul>');
+    }
+
+    private drawInstanceList(instances: any[], append: boolean) {
+        const $container = this.$instanceContainer.find('.hiekn-instance-list ul');
+        let html = $('<ul></ul>');
         if (instances.length) {
-            for (var _i = 0, instances_1 = instances; _i < instances_1.length; _i++) {
-                var instance = instances_1[_i];
+            for (const instance of instances) {
                 html.append($('<li data-id="' + instance.id + '" title="' + instance.name + '">' + instance.name + '</li>').data('data', instance));
             }
-        }
-        else if (!append) {
+        } else if (!append) {
             html.append('<li>没有找到相关实例</li>');
         }
         if (append) {
             $container.append(html.children());
-        }
-        else {
+        } else {
             $container.empty().append(html.children());
         }
-    };
-    HieknSDKConceptTree.prototype.expandNodes = function (nodeId) {
-        var node = this.zTree.getNodeByParam(this.options.idKey, nodeId);
+    }
+
+    private expandNodes(nodeId: number) {
+        const node = this.zTree.getNodeByParam(this.options.idKey, nodeId);
         if (node) {
             this.zTree.expandNode(node, true, false, true, false);
-            var parentNode = node.getParentNode();
+            const parentNode = node.getParentNode();
             parentNode && this.expandNodes(parentNode[this.options.idKey]);
         }
-    };
-    HieknSDKConceptTree.prototype.getAsyncUrl = function () {
+    }
+
+    private getAsyncUrl() {
         return typeof this.options.getAsyncUrl == 'string' ? this.options.getAsyncUrl : this.options.getAsyncUrl(this);
-    };
-    HieknSDKConceptTree.prototype.getLastSelectedNodeId = function () {
+    }
+
+    getLastSelectedNodeId() {
         return this.lastSelectedNode ? this.lastSelectedNode[this.options.idKey] : null;
-    };
-    HieknSDKConceptTree.prototype.getLastSelectedInstance = function () {
+    }
+
+    getLastSelectedInstance() {
         return this.select('.hiekn-instance-list li[data-id].active').data('data');
-    };
-    HieknSDKConceptTree.prototype.loadGraph = function (id) {
+    }
+
+    private loadGraph(id: number) {
         this.tgc2ConceptGraph.load({
             id: id,
             kgType: 0
         });
-    };
-    HieknSDKConceptTree.prototype.reloadInstance = function () {
+    }
+
+    reloadInstance() {
         this.select('.hiekn-instance-list').html('<ul></ul><div class="instance-loader-container" data-more="1" data-page="1"></div>');
         this.loadInstanceService();
-    };
-    HieknSDKConceptTree.prototype.loadInstanceService = function () {
-        var _this = this;
-        var $container = this.select('.instance-loader-container');
+    }
+
+    private loadInstanceService() {
+        const $container = this.select('.instance-loader-container');
         if ($container.attr('data-more') != '0') {
             if ($container.data('inLoading') != 1) {
                 $container.data('inLoading', 1);
-                var options_1 = {
+                let options: HieknConceptTreeInsSetting = {
                     queryData: {
                         conceptId: this.getLastSelectedNodeId() || this.options.initId,
                         readAll: 0,
@@ -1766,42 +2280,42 @@ var HieknSDKConceptTree = /** @class */ (function () {
                         kgName: this.options.kgName
                     }
                 };
-                $.extend(true, options_1, this.options.instance);
-                var newOptions = {
-                    url: HieknSDKUtils.buildUrl(options_1.url, options_1.queryData),
-                    dataFilter: options_1.dataFilter || this.options.dataFilter,
-                    success: function (data, textStatus, jqXHR, orgData, params) {
-                        var d = data;
+                $.extend(true, options, this.options.instance);
+                let newOptions = {
+                    url: HieknSDKUtils.buildUrl(options.url, options.queryData),
+                    dataFilter: options.dataFilter || this.options.dataFilter,
+                    success: (data: any, textStatus: string, jqXHR: JQueryXHR, orgData: any, params: any) => {
+                        let d = data;
                         if (d.length <= params.pageSize) {
-                            $container.attr({ 'data-more': 0 });
+                            $container.attr({'data-more': 0});
                         }
                         if (d.length > params.pageSize) {
                             d.pop();
                         }
-                        _this.drawInstanceList(d, params.pageNo != 1);
-                        $container.attr({ 'data-page': parseInt(params.pageNo, 10) + 1 });
-                        options_1.success && options_1.success(data, textStatus, jqXHR);
+                        this.drawInstanceList(d, params.pageNo != 1);
+                        $container.attr({'data-page': parseInt(params.pageNo, 10) + 1});
+                        options.success && options.success(data, textStatus, jqXHR);
                     },
-                    complete: function (jqXHR, textStatus) {
+                    complete: (jqXHR: JQueryXHR, textStatus: string) => {
                         $container.data('inLoading', 0);
-                        var $ic = _this.select('.hiekn-instance-list');
+                        const $ic = this.select('.hiekn-instance-list');
                         if ($ic.children('ul').height() < $ic.height()) {
-                            _this.loadInstanceService();
+                            this.loadInstanceService();
                         }
-                        options_1.complete && options_1.complete(jqXHR, textStatus);
+                        options.complete && options.complete(jqXHR, textStatus);
                     },
                     that: $container[0]
                 };
-                newOptions = $.extend(true, {}, options_1, newOptions);
+                newOptions = $.extend(true, {}, options, newOptions);
                 HieknSDKUtils.ajax(newOptions);
             }
-        }
-        else {
+        } else {
             console.log('no more instance');
         }
-    };
-    HieknSDKConceptTree.prototype.onAsyncSuccess = function (event, treeId, treeNode) {
-        var node = treeNode;
+    }
+
+    onAsyncSuccess(event: Event, treeId: string, treeNode: any) {
+        let node = treeNode;
         if (node) {
             this.onNodeClick(node);
         }
@@ -1809,8 +2323,7 @@ var HieknSDKConceptTree = /** @class */ (function () {
             node.isParent = false;
             this.zTree.updateNode(node);
             HieknSDKUtils.info('当前概念没有子概念');
-        }
-        else if (!node) {
+        } else if (!node) {
             this.expandNodes(this.getLastSelectedNodeId() || this.options.initId);
             if (!this.getLastSelectedNodeId()) {
                 node = this.zTree.getNodeByParam(this.options.idKey, this.options.initId);
@@ -1818,41 +2331,43 @@ var HieknSDKConceptTree = /** @class */ (function () {
                 this.onNodeClick(node);
             }
         }
-        var root = this.zTree.getNodeByParam(this.options.idKey, this.options.initId);
+        const root = this.zTree.getNodeByParam(this.options.idKey, this.options.initId);
         this.addHoverDom(treeId, root);
         this.isFirst = false;
         this.startAsync = false;
-    };
-    HieknSDKConceptTree.prototype.onClick = function (event, treeId, treeNode) {
-        var _this = this;
+    }
+
+    onClick(event: Event, treeId: string, treeNode: any) {
         this.clickTimeout && clearTimeout(this.clickTimeout);
-        this.clickTimeout = setTimeout(function () {
-            _this.lastSelectedNode = treeNode;
-            _this.onNodeClick(treeNode);
-            _this.treeDbClick = false;
+        this.clickTimeout = setTimeout(() => {
+            this.lastSelectedNode = treeNode;
+            this.onNodeClick(treeNode);
+            this.treeDbClick = false;
         }, 500);
-    };
-    HieknSDKConceptTree.prototype.onNodeButtonClick = function ($button, treeNode) {
+    }
+
+    onNodeButtonClick($button: JQuery, treeNode: any) {
         this.select('.tree-button-active').removeClass('tree-button-active');
         this.zTree.selectNode(treeNode);
         $button.addClass('tree-button-active');
         this.lastSelectedNode = treeNode;
-    };
-    HieknSDKConceptTree.prototype.onNodeClick = function (node) {
+    }
+
+    onNodeClick(node: any) {
         if (this.options.instance.enable) {
             this.reloadInstance();
         }
         this.options.onNodeClick(node);
-    };
+    }
+
     /**
      * TODO to replace tooltipster, modal
      * */
-    HieknSDKConceptTree.prototype.onNodeHover = function ($container, treeNode) {
-        var _this = this;
-        for (var key in this.options.nodeHoverTools) {
-            var value = this.options.nodeHoverTools[key];
+    onNodeHover($container: JQuery, treeNode: any) {
+        for (const key in this.options.nodeHoverTools) {
+            const value = this.options.nodeHoverTools[key];
             if (key == 'graph' && value.enable) {
-                var $graphBtn = $('<span class="button" title="图谱可视化">' +
+                const $graphBtn = $('<span class="button" title="图谱可视化">' +
                     '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="12" height="12">' +
                     '<path d="M892.790083 1009.647551c-58.355904 31.366176-131.161266 9.611215-162.610663-48.591301-24.342972-' +
                     '45.045432-16.764962-98.703426 14.947153-135.21462L698.862198 739.012706c-23.246413 7.764034-48.157246 11' +
@@ -1869,14 +2384,13 @@ var HieknSDKConceptTree = /** @class */ (function () {
                     '</svg>' +
                     '</span>');
                 $container.append($graphBtn);
-                $graphBtn.on('click', function (event) {
-                    _this.$graphContainer.modal('show');
-                    _this.loadGraph(treeNode[_this.options.idKey]);
+                $graphBtn.on('click', (event: Event) => {
+                    (<any>this.$graphContainer).modal('show');
+                    this.loadGraph(treeNode[this.options.idKey]);
                     event.stopPropagation();
                 });
-            }
-            else if (key == 'infobox' && value.enable) {
-                var $infoboxBtn = $('<span class="button" title="知识卡片">' +
+            } else if (key == 'infobox' && value.enable) {
+                const $infoboxBtn = $('<span class="button" title="知识卡片">' +
                     '<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="12" height="12">' +
                     '<path d="M638.596211 191.936191q30.628116 0 54.62014 13.272183t41.347956 32.66999 26.544367 41.85842' +
                     '5 9.188435 39.81655l0 576.829511q0 29.607178-11.740778 53.088734t-30.628116 39.81655-42.368893 25.5' +
@@ -1895,66 +2409,63 @@ var HieknSDKConceptTree = /** @class */ (function () {
                     '</svg>' +
                     '</span>');
                 $container.append($infoboxBtn);
-                $infoboxBtn.tooltipster({
+                (<any>$infoboxBtn).tooltipster({
                     side: ['bottom'],
                     theme: 'tooltipster-shadow',
                     distance: 16,
                     interactive: true,
                     trigger: 'click',
                     content: 'Loading...',
-                    functionBefore: function (instance, helper) {
-                        var $origin = $(helper.origin);
+                    functionBefore: (instance: any, helper: any) => {
+                        const $origin = $(helper.origin);
                         if ($origin.data('loaded') !== true) {
-                            var id = treeNode[_this.options.idKey];
-                            _this.treeInfobox.load(id, function (data) {
+                            const id = treeNode[this.options.idKey];
+                            this.treeInfobox.load(id, (data: any) => {
                                 if (data) {
-                                    var $container_1 = _this.treeInfobox.buildInfobox(data);
-                                    instance.content($container_1);
-                                    _this.treeInfobox.initEvent($container_1);
-                                }
-                                else {
+                                    const $container = this.treeInfobox.buildInfobox(data);
+                                    instance.content($container);
+                                    this.treeInfobox.initEvent($container);
+                                } else {
                                     instance.content('没有当前概念的知识卡片信息');
                                 }
                                 $origin.data('loaded', true);
-                            }, function () {
+                            }, () => {
                                 instance.content('read data failed');
                             });
                         }
                     }
                 });
-                $infoboxBtn.on('click', function (event) {
+                $infoboxBtn.on('click', (event: Event) => {
                     event.stopPropagation();
                 });
-            }
-            else if (value instanceof Function) {
+            } else if (value instanceof Function) {
                 value($container, treeNode);
             }
         }
         return true;
     };
-    ;
-    HieknSDKConceptTree.prototype.removeHoverDom = function (treeId, treeNode) {
+
+    removeHoverDom(treeId: string, treeNode: any) {
         if (treeNode.level > 0) {
-            var $container = this.select('#button-container_' + treeNode.tId);
+            const $container = this.select('#button-container_' + treeNode.tId);
             $container.children().off('click');
             $container.remove();
         }
     };
-    ;
-    HieknSDKConceptTree.prototype.select = function (selector) {
+
+    private select(selector: string) {
         return $(this.options.container).find(selector);
     };
-    ;
-    HieknSDKConceptTree.prototype.updateZTreeSettings = function () {
-        var _this = this;
+
+    private updateZTreeSettings() {
         return {
             async: {
                 enable: true,
-                url: function () {
-                    return _this.getAsyncUrl();
+                url: () => {
+                    return this.getAsyncUrl();
                 },
-                dataFilter: function (treeId, parentNode, data) {
-                    return _this.dataFilter(treeId, parentNode, data);
+                dataFilter: (treeId: string, parentNode: any, data: any) => {
+                    return this.dataFilter(treeId, parentNode, data);
                 },
                 type: 'get'
             },
@@ -1962,29 +2473,29 @@ var HieknSDKConceptTree = /** @class */ (function () {
                 showLine: false,
                 showIcon: false,
                 expandSpeed: 'fast',
-                dblClickExpand: function (treeId, treeNode) {
+                dblClickExpand: (treeId: string, treeNode: any) => {
                     return treeNode.level > 0;
                 },
                 selectedMulti: false,
-                addHoverDom: function (treeId, treeNode) {
-                    _this.addHoverDom(treeId, treeNode);
+                addHoverDom: (treeId: string, treeNode: any) => {
+                    this.addHoverDom(treeId, treeNode);
                 },
-                removeHoverDom: function (treeId, treeNode) {
-                    _this.removeHoverDom(treeId, treeNode);
+                removeHoverDom: (treeId: string, treeNode: any) => {
+                    this.removeHoverDom(treeId, treeNode);
                 }
             },
             callback: {
-                beforeAsync: function (treeId, treeNode) {
-                    return _this.beforeAsync(treeId, treeNode);
+                beforeAsync: (treeId: string, treeNode: any) => {
+                    return this.beforeAsync(treeId, treeNode);
                 },
-                onAsyncSuccess: function (event, treeId, treeNode) {
-                    return _this.onAsyncSuccess(event, treeId, treeNode);
+                onAsyncSuccess: (event: Event, treeId: string, treeNode: any) => {
+                    return this.onAsyncSuccess(event, treeId, treeNode);
                 },
-                onClick: function (event, treeId, treeNode) {
-                    return _this.onClick(event, treeId, treeNode);
+                onClick: (event: Event, treeId: string, treeNode: any) => {
+                    return this.onClick(event, treeId, treeNode);
                 },
-                onDblClick: function () {
-                    _this.treeDbClick = true;
+                onDblClick: () => {
+                    this.treeDbClick = true;
                 }
             },
             data: {
@@ -1998,17 +2509,43 @@ var HieknSDKConceptTree = /** @class */ (function () {
                 }
             }
         };
-    };
-    return HieknSDKConceptTree;
-}());
-var HieknSDKDisambiguate = /** @class */ (function () {
-    function HieknSDKDisambiguate() {
     }
-    HieknSDKDisambiguate.load = function (options) {
+}
+/// <reference path="../../assets/zoomcharts.d.ts" />
+/// <reference path="../../assets/tgc2.d.ts" />
+declare const hieknjs: any;
+declare const moment: any;
+
+/// <reference path="../../assets/zoomcharts.d.ts" />
+/// <reference path="../../assets/tgc2.d.ts" />
+
+declare const hieknjs: any;
+declare const moment: any;
+
+interface HieknDisambiguateSetting extends HieknAjaxSetting {
+}
+declare class HieknSDKDisambiguate {
+    static defaults: HieknDisambiguateSetting;
+    static load(options: HieknDisambiguateSetting): void;
+}
+
+interface HieknDisambiguateSetting extends HieknAjaxSetting {
+}
+
+class HieknSDKDisambiguate {
+    static defaults: HieknDisambiguateSetting = {
+        queryData:{
+            useConcept: true,
+            useEntity: true,
+            useAttr: true
+        }
+    };
+
+    static load(options: HieknDisambiguateSetting) {
         options = $.extend(true, {}, HieknSDKDisambiguate.defaults, options);
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
-        var newOptions = {
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
+        let newOptions = {
             url: HieknSDKUtils.buildUrl(options.baseUrl + 'disambiguate', queryData),
             type: 'GET',
             data: formData,
@@ -2016,64 +2553,101 @@ var HieknSDKDisambiguate = /** @class */ (function () {
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKUtils.ajax(newOptions);
     };
-    ;
-    HieknSDKDisambiguate.defaults = {
-        queryData: {
-            useConcept: true,
-            useEntity: true,
-            useAttr: true
-        }
+}
+/// <reference types="jquery" />
+interface HieknInfoboxSetting extends HieknBaseSetting {
+    kgName?: string;
+    autoLen?: boolean;
+    atts?: {
+        visible: number[];
+        hidden: number[];
     };
-    return HieknSDKDisambiguate;
-}());
-var HieknSDKInfobox = /** @class */ (function () {
-    function HieknSDKInfobox(options) {
-        this.callback = $.noop;
-        this.defaults = {
-            atts: { visible: [], hidden: [] },
-            enableLink: false,
-            autoLen: true,
-            onLoad: $.noop,
-            onFailed: $.noop
-        };
+    enableLink?: boolean;
+    imagePrefix?: string;
+    onLoad?: Function;
+    onFailed?: Function;
+    selector?: string;
+    changeInfobox?: Function;
+}
+declare class HieknSDKInfobox {
+    callback: Function;
+    defaults: HieknInfoboxSetting;
+    options: HieknInfoboxSetting;
+    constructor(options: HieknInfoboxSetting);
+    private changeInfobox(id);
+    initEvent($container: JQuery): void;
+    private buildEntity(entity, buildLink);
+    private buildExtra(extra);
+    load(id: HieknIdType, callback: Function, onFailed?: Function): void;
+    buildInfobox(data: any): JQuery;
+    buildTabInfobox(data: any): JQuery;
+}
+
+interface HieknInfoboxSetting extends HieknBaseSetting {
+    kgName?: string;
+    autoLen?: boolean;
+    atts?: { visible: number[], hidden: number[] };
+    enableLink?: boolean;
+    imagePrefix?: string;
+    onLoad?: Function;
+    onFailed?: Function;
+    selector?: string;
+    changeInfobox?: Function;
+}
+
+class HieknSDKInfobox {
+    callback: Function = $.noop;
+    defaults: HieknInfoboxSetting = {
+        atts: {visible: [], hidden: []},
+        enableLink: false,
+        autoLen: true,
+        onLoad: $.noop,
+        onFailed: $.noop
+    };
+    options: HieknInfoboxSetting;
+
+    constructor(options: HieknInfoboxSetting) {
         this.options = $.extend(true, {}, this.defaults, options);
     }
-    HieknSDKInfobox.prototype.changeInfobox = function (id) {
+
+    private changeInfobox(id: HieknIdType) {
         this.load(id, this.callback);
     };
-    ;
-    HieknSDKInfobox.prototype.initEvent = function ($container) {
-        var _this = this;
-        $container.on('click', '.hiekn-infobox-link', function (event) {
-            var id = $(event.currentTarget).attr('data-id');
-            _this.options.changeInfobox ? _this.options.changeInfobox(id, _this) : _this.changeInfobox(id);
+
+    initEvent($container: JQuery) {
+        $container.on('click', '.hiekn-infobox-link', (event: Event) => {
+            const id = $(event.currentTarget).attr('data-id');
+            this.options.changeInfobox ? this.options.changeInfobox(id, this) : this.changeInfobox(id);
         });
-        $container.on('click', '.hiekn-infobox-info-detail a', function (event) {
+
+        $container.on('click', '.hiekn-infobox-info-detail a', (event: Event) => {
             $(event.currentTarget).closest('.hiekn-infobox-info-detail').toggleClass('on');
         });
-    };
-    HieknSDKInfobox.prototype.buildEntity = function (entity, buildLink) {
-        var meaningTag = entity.meaningTag ? '(' + entity.meaningTag + ')' : '';
-        var html = '<span class="hiekn-infobox-name">' + entity.name + '<span class="hiekn-infobox-meaningTag">' + meaningTag + '</span></span>';
+    }
+
+    private buildEntity(entity: any, buildLink: boolean) {
+        const meaningTag = entity.meaningTag ? '(' + entity.meaningTag + ')' : '';
+        const html = '<span class="hiekn-infobox-name">' + entity.name + '<span class="hiekn-infobox-meaningTag">' + meaningTag + '</span></span>';
         if (buildLink && this.options.enableLink) {
             return '<a href="javascript:void(0)" class="hiekn-infobox-link" data-id="' + entity.id + '">' + html + '</a>';
         }
         return html;
-    };
-    HieknSDKInfobox.prototype.buildExtra = function (extra) {
-        var detail = extra.v || '-';
+    }
+
+    private buildExtra(extra: HieknKV) {
+        let detail = extra.v || '-';
         if (this.options.autoLen) {
-            var max = typeof this.options.autoLen == 'number' ? this.options.autoLen : 80;
+            const max = typeof this.options.autoLen == 'number' ? this.options.autoLen : 80;
             if (extra.v.length > max) {
                 detail = '<span class="hiekn-infobox-info-detail-short">' + extra.v.substring(0, max) + '<a href="javascript:void(0)">查看全部&gt;&gt;</a></span><span class="hiekn-infobox-info-detail-long">' + extra.v + '<a href="javascript:void(0)">收起&lt;&lt;</a></span>';
             }
         }
         return '<tr><td class="hiekn-infobox-info-label">' + extra.k + '</td><td class="hiekn-infobox-info-detail">' + detail + '</td></tr>';
-    };
-    HieknSDKInfobox.prototype.load = function (id, callback, onFailed) {
-        var _this = this;
-        var queryData = this.options.queryData || {};
-        var formData = this.options.formData || {};
+    }
+
+    load(id: HieknIdType, callback: Function, onFailed?: Function) {
+        const queryData = this.options.queryData || {};
+        const formData = this.options.formData || {};
         formData.id = id;
         formData.kgName = this.options.kgName;
         HieknSDKUtils.ajax({
@@ -2081,79 +2655,74 @@ var HieknSDKInfobox = /** @class */ (function () {
             type: 'POST',
             data: formData,
             dataFilter: this.options.dataFilter,
-            success: function (data) {
+            success: (data: any) => {
                 data = data[0];
                 if (data) {
                     if (callback) {
-                        _this.callback = callback;
+                        this.callback = callback;
                         callback(data);
-                    }
-                    else if (_this.options.selector) {
-                        var $container = _this.buildInfobox(data);
-                        $(_this.options.selector).html($container[0].outerHTML);
-                        _this.initEvent($container);
-                    }
-                    else {
+                    } else if (this.options.selector) {
+                        const $container = this.buildInfobox(data);
+                        $(this.options.selector).html($container[0].outerHTML);
+                        this.initEvent($container);
+                    } else {
                         console.error('selector or callback can not be null');
                     }
-                    _this.options.onLoad(data);
-                }
-                else {
+                    this.options.onLoad(data);
+                } else {
                     if (!onFailed || !onFailed(data)) {
-                        _this.options.onFailed(data);
+                        this.options.onFailed(data);
                     }
                 }
             },
-            error: function (jqXHR) {
+            error: (jqXHR: JQueryXHR) => {
                 if (!onFailed || !onFailed(null)) {
-                    _this.options.onFailed(null);
+                    this.options.onFailed(null);
                 }
             }
         });
     };
-    ;
-    HieknSDKInfobox.prototype.buildInfobox = function (data) {
-        var $infoxbox = $('<div class="hiekn-infobox"></div>');
+
+    buildInfobox(data: any) {
+        const $infoxbox = $('<div class="hiekn-infobox"></div>');
         if (data.self) {
             $infoxbox.append('<div class="hiekn-infobox-head"></div><div class="hiekn-infobox-body"></div>');
-            var baseEntity = this.buildEntity(data.self, false);
+            const baseEntity = this.buildEntity(data.self, false);
             $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-title">' + baseEntity + '</div>');
             if (data.self.img) {
-                var imgUlrl = data.self.img;
+                let imgUlrl = data.self.img;
                 if (data.self.img.indexOf('http') != 0) {
                     imgUlrl = HieknSDKUtils.qiniuImg(this.options.imagePrefix + data.self.img);
                 }
                 $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-img"><img src="' + imgUlrl + '" alt=""></div>');
             }
             if (data.self.extra) {
-                var html = '';
-                var visible = this.options.atts.visible || [];
-                var hidden = this.options.atts.hidden || [];
-                for (var i in data.self.extra) {
+                let html = '';
+                const visible = this.options.atts.visible || [];
+                const hidden = this.options.atts.hidden || [];
+                for (const i in data.self.extra) {
                     if (data.self.extra.hasOwnProperty(i)) {
-                        var extra = data.self.extra[i];
+                        const extra = data.self.extra[i];
                         if ((visible.length && _.indexOf(visible, extra.k) >= 0) || (hidden.length && _.indexOf(hidden, extra.k) < 0) || (!visible.length && !hidden.length)) {
                             html += this.buildExtra(extra);
                         }
                     }
                 }
                 if (data.atts) {
-                    for (var m in data.atts) {
+                    for (const m in data.atts) {
                         if (data.atts.hasOwnProperty(m)) {
-                            var att = data.atts[m];
-                            var lis = '';
-                            for (var j in att.v) {
+                            const att = data.atts[m];
+                            let lis = '';
+                            for (const j in att.v) {
                                 if (att.v.hasOwnProperty(j)) {
                                     lis += '<li>' + this.buildEntity(att.v[j], true) + '</li>';
                                 }
                             }
                             if (visible.length && _.indexOf(visible, att.k) >= 0) {
                                 html += '<tr><td class="hiekn-infobox-info-label">' + att.k + '</td><td class="hiekn-infobox-info-detail">' + lis + '</td></tr>';
-                            }
-                            else if (hidden.length && _.indexOf(hidden, att.k) < 0) {
+                            } else if (hidden.length && _.indexOf(hidden, att.k) < 0) {
                                 html += '<tr><td class="hiekn-infobox-info-label">' + att.k + '</td><td class="hiekn-infobox-info-detail">' + lis + '</td></tr>';
-                            }
-                            else if (!visible.length && !hidden.length) {
+                            } else if (!visible.length && !hidden.length) {
                                 html += '<tr><td class="hiekn-infobox-info-label">' + att.k + '</td><td class="hiekn-infobox-info-detail">' + lis + '</td></tr>';
                             }
                         }
@@ -2163,196 +2732,244 @@ var HieknSDKInfobox = /** @class */ (function () {
             }
             if (data.pars) {
                 $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-pars"><label class="hiekn-infobox-label">所属：</label><ul></ul></div>');
-                for (var k in data.pars) {
+                for (const k in data.pars) {
                     if (data.pars.hasOwnProperty(k)) {
                         $infoxbox.find('.hiekn-infobox-pars ul').append('<li>' + this.buildEntity(data.pars[k], true) + '</li>');
                     }
                 }
             }
             if (data.sons) {
-                var html = '';
-                for (var l in data.sons) {
+                let html = '';
+                for (const l in data.sons) {
                     if (data.sons.hasOwnProperty(l)) {
                         html += '<li>' + this.buildEntity(data.sons[l], true) + '</li>';
                     }
                 }
                 $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-pars"><label class="hiekn-infobox-label">相关：</label><ul>' + html + '</ul></div>');
             }
-        }
-        else {
+        } else {
             $infoxbox.append('InfoBox读取错误');
         }
         return $infoxbox;
-    };
-    HieknSDKInfobox.prototype.buildTabInfobox = function (data) {
-        var $infoxbox = $('<div class="hiekn-infobox hiekn-infobox-tab"></div>');
+    }
+
+    buildTabInfobox(data: any) {
+        const $infoxbox = $('<div class="hiekn-infobox hiekn-infobox-tab"></div>');
         if (data.self) {
             $infoxbox.append('<div class="hiekn-infobox-head"></div><div class="hiekn-infobox-body"><ul class="nav nav-tabs" role="tablist"></ul><div class="tab-content"></div></div>');
             $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-title">' + this.buildEntity(data.self, false) + '</div>');
-            var visible = this.options.atts.visible || [];
-            var hidden = this.options.atts.hidden || [];
+            const visible = this.options.atts.visible || [];
+            const hidden = this.options.atts.hidden || [];
             if (data.self.extra) {
-                var html = '';
-                for (var i in data.self.extra) {
+                let html = '';
+                for (const i in data.self.extra) {
                     if (data.self.extra.hasOwnProperty(i)) {
-                        var extra = data.self.extra[i];
+                        const extra = data.self.extra[i];
                         if ((visible.length && _.indexOf(visible, extra.k) >= 0) || (hidden.length && _.indexOf(hidden, extra.k) < 0) || (!visible.length && !hidden.length)) {
                             html += this.buildExtra(extra);
                         }
                     }
                 }
-                var id = 'hiekn-infobox-' + new Date().getTime() + '-' + data.self.id;
+                const id = 'hiekn-infobox-' + new Date().getTime() + '-' + data.self.id;
                 $infoxbox.find('.hiekn-infobox-body>.nav-tabs').append('<li role="presentation" class="active"><a href="#' + id + '" role="tab" data-toggle="tab" aria-expanded="true">基本信息</a></li>');
                 $infoxbox.find('.hiekn-infobox-body>.tab-content').append('<div role="tabpanel" class="tab-pane-detail tab-pane active" id="' + id + '"><table><tbody>' + html + '</tbody></table></div>');
             }
             if (data.pars) {
                 $infoxbox.find('.hiekn-infobox-head').append('<div class="hiekn-infobox-pars"><label class="hiekn-infobox-label">所属：</label><ul></ul></div>');
-                for (var k in data.pars) {
+                for (const k in data.pars) {
                     if (data.pars.hasOwnProperty(k)) {
                         $infoxbox.find('.hiekn-infobox-pars ul').append('<li>' + this.buildEntity(data.pars[k], true) + '</li>');
                     }
                 }
             }
             if (data.sons) {
-                var html = '';
-                for (var l in data.sons) {
+                let html = '';
+                for (const l in data.sons) {
                     if (data.sons.hasOwnProperty(l)) {
                         html += '<li>' + this.buildEntity(data.sons[l], true) + '</li>';
                     }
                 }
-                var id = 'hiekn-infobox-' + new Date().getTime() + '-sons-' + data.self.id;
+                const id = 'hiekn-infobox-' + new Date().getTime() + '-sons-' + data.self.id;
                 $infoxbox.find('.hiekn-infobox-body>.nav-tabs').append('<li role="presentation"><a href="#' + id + '" role="tab" data-toggle="tab" aria-expanded="true">子节点</a></li>');
                 $infoxbox.find('.hiekn-infobox-body>.tab-content').append('<div role="tabpanel" class="tab-pane-sons tab-pane" id="' + id + '"><ul>' + html + '</ul></div>');
             }
             if (data.atts) {
-                for (var m in data.atts) {
+                for (const m in data.atts) {
                     if (data.atts.hasOwnProperty(m)) {
-                        var att = data.atts[m];
-                        var html = '';
-                        for (var j in att.v) {
+                        const att = data.atts[m];
+                        let html = '';
+                        for (const j in att.v) {
                             if (att.v.hasOwnProperty(j)) {
                                 html += '<li>' + this.buildEntity(att.v[j], true) + '</li>';
                             }
                         }
                         if ((visible.length && _.indexOf(visible, att.k) >= 0) || (hidden.length && _.indexOf(hidden, att.k) < 0) || (!visible.length && !hidden.length)) {
-                            var id = 'hiekn-infobox-' + new Date().getTime() + '-att-' + m + '-' + data.self.id;
+                            const id = 'hiekn-infobox-' + new Date().getTime() + '-att-' + m + '-' + data.self.id;
                             $infoxbox.find('.hiekn-infobox-body>.nav-tabs').append('<li role="presentation"><a href="#' + id + '" role="tab" data-toggle="tab" aria-expanded="true">' + att.k + '</a></li>');
                             $infoxbox.find('.hiekn-infobox-body>.tab-content').append('<div role="tabpanel" class="tab-pane-sons tab-pane" id="' + id + '"><ul>' + html + '</ul></div>');
                         }
                     }
                 }
             }
-        }
-        else {
+        } else {
             $infoxbox.append('InfoBox读取错误');
         }
         return $infoxbox;
+    }
+}
+/// <reference types="jquery" />
+interface HieknPromptSetting extends HieknBaseSetting {
+    kgName?: string;
+    beforeDrawPrompt?: Function;
+    container?: string;
+    ready?: Function;
+    group?: boolean;
+    replaceSearch?: boolean;
+    onSearch?: Function;
+    promptType?: 0 | 1;
+    schemaSetting?: HieknSchemaSetting;
+}
+interface HieknPromptRequestSetting extends HieknPromptSetting {
+    paramName?: string;
+    url?: string;
+    type?: 'GET' | 'POST';
+}
+declare class HieknSDKPrompt {
+    defaults: HieknPromptSetting;
+    instance: any;
+    options: HieknPromptSetting;
+    constructor(options: HieknPromptSetting);
+    private init();
+    static drawPromptItem(schema: HieknSchema): (data: any, pre: string) => string;
+    static drawPromptKnowledgeItem(): (data: any, pre: string) => string;
+    drawPromptItems(schema: HieknSchema): (data: any, pre: string) => JQuery;
+    static onPromptStart(options: HieknPromptRequestSetting): (pre: string, $self: any) => void;
+    static onPrompt(options: HieknPromptSetting): (pre: string, $self: any) => void;
+    static onPromptKnowledge(options: HieknPromptSetting): (pre: string, $self: any) => void;
+}
+
+interface HieknPromptSetting extends HieknBaseSetting {
+    kgName?: string;
+    beforeDrawPrompt?: Function;
+    container?: string;
+    ready?: Function;
+    group?: boolean;
+    replaceSearch?: boolean;
+    onSearch?: Function;
+    promptType?: 0 | 1;
+    schemaSetting?: HieknSchemaSetting;
+}
+
+interface HieknPromptRequestSetting extends HieknPromptSetting {
+    paramName?: string;
+    url?: string;
+    type?: 'GET' | 'POST';
+}
+
+class HieknSDKPrompt {
+    defaults: HieknPromptSetting = {
+        ready: $.noop,
+        group: false,
+        replaceSearch: false,
+        onSearch: $.noop,
+        promptType: 0
     };
-    return HieknSDKInfobox;
-}());
-var HieknSDKPrompt = /** @class */ (function () {
-    function HieknSDKPrompt(options) {
-        this.defaults = {
-            ready: $.noop,
-            group: false,
-            replaceSearch: false,
-            onSearch: $.noop,
-            promptType: 0
-        };
+    instance: any;
+    options: HieknPromptSetting;
+
+    constructor(options: HieknPromptSetting) {
         this.options = $.extend(true, {}, this.defaults, options);
         this.init();
     }
-    HieknSDKPrompt.prototype.init = function () {
-        var _this = this;
-        var schemaSetting = $.extend(true, { kgName: this.options.kgName }, this.options, this.options.schemaSetting);
-        schemaSetting.success = (function (schema) {
-            var promptSettings;
-            if (_this.options.promptType === 0) {
+
+    private init() {
+        let schemaSetting: HieknSchemaSetting = $.extend(true, {kgName: this.options.kgName}, this.options, this.options.schemaSetting);
+        schemaSetting.success = ((schema: HieknSchema) => {
+            let promptSettings: any;
+            if (this.options.promptType === 0) {
                 promptSettings = {
                     drawPromptItem: HieknSDKPrompt.drawPromptItem(schema),
-                    onPrompt: HieknSDKPrompt.onPrompt(_this.options)
+                    onPrompt: HieknSDKPrompt.onPrompt(this.options)
                 };
-            }
-            else {
+            } else {
                 promptSettings = {
                     drawPromptItem: HieknSDKPrompt.drawPromptKnowledgeItem(),
-                    onPrompt: HieknSDKPrompt.onPromptKnowledge(_this.options)
+                    onPrompt: HieknSDKPrompt.onPromptKnowledge(this.options)
                 };
             }
-            if (_this.options.group) {
-                promptSettings.drawPromptItems = _this.drawPromptItems(schema);
+            if (this.options.group) {
+                promptSettings.drawPromptItems = this.drawPromptItems(schema);
             }
-            if (_this.options.replaceSearch) {
-                promptSettings.beforeSearch = function (selectedItem, $container) {
+            if (this.options.replaceSearch) {
+                promptSettings.beforeSearch = (selectedItem: any, $container: JQuery) => {
                     if (selectedItem) {
                         $container.find('input[type=text]').val(selectedItem.name);
                     }
                 };
             }
-            $.extend(true, promptSettings, _this.options);
-            _this.instance = new hieknPrompt(promptSettings);
-            _this.options.ready(_this.instance);
+            $.extend(true, promptSettings, this.options);
+            this.instance = new hieknPrompt(promptSettings);
+            this.options.ready(this.instance);
         });
         HieknSDKSchema.load(schemaSetting);
-    };
-    HieknSDKPrompt.drawPromptItem = function (schema) {
-        var typeObj = {};
-        for (var _i = 0, _a = schema.types; _i < _a.length; _i++) {
-            var type = _a[_i];
+    }
+
+    static drawPromptItem(schema: HieknSchema) {
+        let typeObj = {};
+        for (const type of schema.types) {
             typeObj[type.k] = type.v;
         }
-        return function (data, pre) {
-            var title = data.name;
+        return (data: any, pre: string) => {
+            let title = data.name;
             if (data.meaningTag) {
                 title = title + ' ( ' + data.meaningTag + ' )';
             }
-            var line = '<span class="prompt-tip-title">' + title.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
+            let line = '<span class="prompt-tip-title">' + title.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
             line = '<span class="prompt-tip-type prompt-tip-' + data.classId + '">' + (data.className || typeObj[data.classId] || '') + '</span>' + line;
             return line;
-        };
-    };
-    HieknSDKPrompt.drawPromptKnowledgeItem = function () {
-        var typeObj = {
+        }
+    }
+
+    static drawPromptKnowledgeItem() {
+        let typeObj = {
             0: '概念',
             1: '实例'
         };
-        return function (data, pre) {
-            var line = '<span class="prompt-tip-title">' + data.name.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
+        return (data: any, pre: string) => {
+            let line = '<span class="prompt-tip-title">' + data.name.replace(new RegExp('(' + pre + ')', 'gi'), '<span class="highlight">' + '$1' + '</span>') + '</span>';
             line = '<span class="prompt-tip-type prompt-tip-' + data.kgType + '">' + (typeObj[data.kgType] || '') + '</span>' + line;
             return line;
-        };
-    };
-    HieknSDKPrompt.prototype.drawPromptItems = function (schema) {
-        var _this = this;
-        var typeObj = {};
-        for (var _i = 0, _a = schema.types; _i < _a.length; _i++) {
-            var type = _a[_i];
+        }
+    }
+
+    drawPromptItems(schema: HieknSchema) {
+        let typeObj = {};
+        for (const type of schema.types) {
             typeObj[type.k] = type.v;
         }
-        return function (data, pre) {
-            var $container = $('<div></div>');
-            for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
-                var v = data_1[_i];
-                var text = _this.instance.options.drawPromptItem(v, pre);
-                var title = _this.instance.options.drawItemTitle(v);
-                var cls = 'prompt-item-' + v.classId;
-                var $li = $('<li title="' + title + '" class="' + cls + '">' + text + '</li>').data('data', v);
-                var ex = $container.find('.' + cls);
+        return (data: any, pre: string) => {
+            const $container = $('<div></div>');
+            for (const v of data) {
+                const text = this.instance.options.drawPromptItem(v, pre);
+                const title = this.instance.options.drawItemTitle(v);
+                const cls = 'prompt-item-' + v.classId;
+                const $li = $('<li title="' + title + '" class="' + cls + '">' + text + '</li>').data('data', v);
+                const ex = $container.find('.' + cls);
                 if (ex.length) {
                     $(ex[ex.length - 1]).after($li);
                     $li.find('.prompt-tip-type').empty();
-                }
-                else {
+                } else {
                     $container.append($li);
                 }
             }
             return $container.children();
-        };
-    };
-    HieknSDKPrompt.onPromptStart = function (options) {
-        return function (pre, $self) {
-            var queryData = options.queryData || {};
-            var formData = options.formData || {};
+        }
+    }
+
+    static onPromptStart(options: HieknPromptRequestSetting) {
+        return (pre: string, $self: any) => {
+            const queryData = options.queryData || {};
+            let formData = options.formData || {};
             formData[options.paramName] = pre;
             formData.kgName = options.kgName;
             HieknSDKUtils.ajax({
@@ -2360,58 +2977,87 @@ var HieknSDKPrompt = /** @class */ (function () {
                 type: options.type,
                 data: formData,
                 dataFilter: options.dataFilter,
-                success: function (data) {
+                success: (data: any) => {
                     if ($self.prompt == formData[options.paramName]) {
-                        var d = data;
+                        let d = data;
                         options.beforeDrawPrompt && (d = options.beforeDrawPrompt(d, pre));
                         $self.startDrawPromptItems(d, pre);
                     }
                 }
             });
-        };
-    };
-    HieknSDKPrompt.onPrompt = function (options) {
-        var reqOptions = options;
+        }
+    }
+
+    static onPrompt(options: HieknPromptSetting) {
+        let reqOptions: HieknPromptRequestSetting = options;
         reqOptions.paramName = 'kw';
         reqOptions.url = options.baseUrl + 'prompt';
         reqOptions.type = 'POST';
         return HieknSDKPrompt.onPromptStart(reqOptions);
-    };
-    HieknSDKPrompt.onPromptKnowledge = function (options) {
-        var reqOptions = options;
+    }
+
+    static onPromptKnowledge(options: HieknPromptSetting) {
+        let reqOptions: HieknPromptRequestSetting = options;
         reqOptions.paramName = 'text';
         reqOptions.url = options.baseUrl + 'prompt/knowledge';
         reqOptions.type = 'GET';
         return HieknSDKPrompt.onPromptStart(options);
-    };
-    return HieknSDKPrompt;
-}());
-var HieknSDKResource = /** @class */ (function () {
-    function HieknSDKResource(options) {
+    }
+}
+
+interface HieknResourceSetting extends HieknBaseSetting {
+    beforeLoad?: Function;
+    container?: string;
+    config: HieknTableConfigSetting;
+    onLoad?: Function;
+}
+declare class HieknSDKResource {
+    options: HieknResourceSetting;
+    tableService: HieknSDKTable;
+    query: any;
+    constructor(options: HieknResourceSetting);
+    private getQuery();
+    private init();
+    private load(pageNo, instance);
+    loadData(pageNo: number): void;
+}
+
+interface HieknResourceSetting extends HieknBaseSetting {
+    beforeLoad?: Function,
+    container?: string,
+    config: HieknTableConfigSetting,
+    onLoad?: Function
+}
+
+class HieknSDKResource {
+    options: HieknResourceSetting;
+    tableService: HieknSDKTable;
+    query: any;
+
+    constructor(options: HieknResourceSetting) {
         this.options = options;
         this.init();
     }
-    HieknSDKResource.prototype.getQuery = function () {
-        var must = [];
-        var filter = this.tableService.getFilterOptions();
-        for (var key in filter) {
-            var should = [];
-            var value = filter[key];
-            var filterConfig = _.find(this.options.config.filter, ['key', key]);
+
+    private getQuery() {
+        let must = [];
+        const filter = this.tableService.getFilterOptions();
+        for (const key in filter) {
+            let should = [];
+            const value = filter[key];
+            const filterConfig = _.find(this.options.config.filter, ['key', key]);
             if (filterConfig.type == 'year' || filterConfig.type == 'month') {
-                for (var _i = 0, value_1 = value; _i < value_1.length; _i++) {
-                    var year = value_1[_i];
-                    var from = '';
-                    var to = '';
+                for (const year of value) {
+                    let from = '';
+                    let to = '';
                     if (filterConfig.type == 'year') {
                         from = moment(year + '-01-01').format(filterConfig.format || 'YYYY-MM-DD');
                         to = moment((parseInt(year, 10) + 1) + '-01-01').format(filterConfig.format || 'YYYY-MM-DD');
-                    }
-                    else {
+                    } else {
                         from = moment(year + '-01').format(filterConfig.format || 'YYYY-MM');
                         to = moment((parseInt(year, 10) + 1) + '-01').format(filterConfig.format || 'YYYY-MM');
                     }
-                    var obj = {};
+                    let obj = {};
                     obj[key] = {
                         from: from,
                         to: to,
@@ -2422,9 +3068,8 @@ var HieknSDKResource = /** @class */ (function () {
                         range: obj
                     });
                 }
-            }
-            else {
-                var obj = {};
+            } else {
+                let obj = {};
                 obj[key] = value;
                 should.push({
                     terms: obj
@@ -2437,11 +3082,11 @@ var HieknSDKResource = /** @class */ (function () {
                 }
             });
         }
-        var kw = this.tableService.getFilterKw();
+        const kw = this.tableService.getFilterKw();
         if (kw) {
-            var should = [];
-            var fields = this.options.config.fieldsKw || this.options.config.fieldsTable || this.options.config.fields;
-            var obj = {
+            let should = [];
+            const fields = this.options.config.fieldsKw || this.options.config.fieldsTable || this.options.config.fields;
+            let obj = {
                 query: kw,
                 fields: fields
             };
@@ -2460,88 +3105,124 @@ var HieknSDKResource = /** @class */ (function () {
                 must: must
             }
         };
-    };
-    HieknSDKResource.prototype.init = function () {
-        var _this = this;
-        var config = {
+    }
+
+    private init() {
+        const config = {
             config: this.options.config,
             container: this.options.container,
-            load: function (pageNo, instance) {
-                _this.load(pageNo, instance);
+            load: (pageNo: number, instance: HieknSDKTable) => {
+                this.load(pageNo, instance);
             }
         };
         this.tableService = new HieknSDKTable(config);
-    };
-    HieknSDKResource.prototype.load = function (pageNo, instance) {
-        var _this = this;
+    }
+
+    private load(pageNo: number, instance: HieknSDKTable) {
         this.query = this.getQuery();
         this.options.beforeLoad && this.options.beforeLoad(this);
-        var config = this.options.config;
-        var queryData = this.options.queryData || {};
-        var formData = this.options.formData || {};
+        const config = this.options.config;
+        const queryData = this.options.queryData || {};
+        let formData = this.options.formData || {};
         formData.databases = config.databases;
         formData.tables = config.tables;
         formData.fields = config.fields;
         formData.query = JSON.stringify(this.query);
         formData.pageNo = pageNo;
         formData.pageSize = formData.pageSize || 15;
-        var $container = instance.getTableContainer();
+        const $container = instance.getTableContainer();
         $container.empty();
-        var newOptions = {
+        let newOptions = {
             url: HieknSDKUtils.buildUrl(this.options.baseUrl + 'search', queryData),
             type: 'POST',
             data: formData,
             dataFilter: this.options.dataFilter,
-            success: function (rsData, textStatus, jqXHR, data, params) {
+            success: (rsData: any, textStatus: string, jqXHR: JQueryXHR, data: any, params: any) => {
                 if (data) {
                     instance.drawPage(data.rsCount, params.pageNo, params.pageSize);
                     instance.drawData(data.rsData);
-                }
-                else {
+                } else {
                     instance.drawPage(0, params.pageNo, params.pageSize);
                 }
-                _this.options.onLoad && _this.options.onLoad(data, _this);
+                this.options.onLoad && this.options.onLoad(data, this);
             },
-            error: function (data, textStatus, jqXHR, errorThrown, params) {
+            error: (data: any,textStatus: string, jqXHR: JQueryXHR, errorThrown: string, params: any) => {
                 instance.drawPage(0, params.pageNo, params.pageSize);
             },
             that: $container[0]
         };
         HieknSDKUtils.ajax(newOptions);
-    };
-    HieknSDKResource.prototype.loadData = function (pageNo) {
+    }
+
+    loadData(pageNo: number) {
         this.tableService.loadData(pageNo);
-    };
-    return HieknSDKResource;
-}());
-var HieknSDKResources = /** @class */ (function () {
-    function HieknSDKResources(options) {
-        this.resourcesService = [];
+    }
+}
+/// <reference types="jquery" />
+interface HieknResourcesSetting extends HieknBaseSetting {
+    beforeLoad?: Function;
+    container: string;
+    configs: HieknTableConfigSetting[];
+    namespace?: string;
+    onLoad?: Function;
+}
+declare class HieknSDKResources {
+    resourcesService: HieknSDKResource[];
+    options: HieknResourcesSetting;
+    $container: JQuery;
+    $headContainer: JQuery;
+    $bodyContainer: JQuery;
+    constructor(options: HieknResourcesSetting);
+    private bindEvent();
+    private init(namespace?);
+    loadData(pageNo: number): void;
+    select(selector: string): JQuery;
+    updateTabVisibility(): void;
+}
+
+interface HieknResourcesSetting extends HieknBaseSetting {
+    beforeLoad?: Function;
+    container: string;
+    configs: HieknTableConfigSetting[];
+    namespace?: string;
+    onLoad?: Function;
+}
+
+class HieknSDKResources {
+    resourcesService: HieknSDKResource[] = [];
+    options: HieknResourcesSetting;
+    $container: JQuery;
+    $headContainer: JQuery;
+    $bodyContainer: JQuery;
+
+    constructor(options: HieknResourcesSetting) {
         this.options = options;
         this.init(this.options.namespace);
     }
-    HieknSDKResources.prototype.bindEvent = function () {
-        var _this = this;
-        this.$headContainer.find('.hiekn-resource-nav-more').on('click', function () {
-            _this.$headContainer.find('.hiekn-resource-nav-more-container').toggleClass('hide');
+
+    private bindEvent() {
+        this.$headContainer.find('.hiekn-resource-nav-more').on('click', () => {
+            this.$headContainer.find('.hiekn-resource-nav-more-container').toggleClass('hide');
         });
-        this.$headContainer.on('shown.bs.tab', 'a[data-toggle="tab"]', function () {
-            var href = $(_this).attr('href');
-            _this.$headContainer.find('.hiekn-resource-nav a[href="' + href + '"]').parent().addClass('active').siblings().removeClass('active');
-            _this.$headContainer.find('.hiekn-resource-nav-hide-tabs a[href="' + href + '"]').parent().addClass('active').siblings().removeClass('active');
+
+        this.$headContainer.on('shown.bs.tab', 'a[data-toggle="tab"]', () => {
+            const href = $(this).attr('href');
+            this.$headContainer.find('.hiekn-resource-nav a[href="' + href + '"]').parent().addClass('active').siblings().removeClass('active');
+            this.$headContainer.find('.hiekn-resource-nav-hide-tabs a[href="' + href + '"]').parent().addClass('active').siblings().removeClass('active');
         });
-        $('body').on('click', function (event) {
+
+        $('body').on('click', (event) => {
             if (!$(event.target).closest('.hiekn-resource-nav-more-container,.hiekn-resource-nav-more').length) {
-                _this.$headContainer.find('.hiekn-resource-nav-more-container').addClass('hide');
+                this.$headContainer.find('.hiekn-resource-nav-more-container').addClass('hide');
             }
         });
-        $(window).on('resize', function () {
-            _this.updateTabVisibility();
+
+        $(window).on('resize', () => {
+            this.updateTabVisibility();
         });
-    };
-    HieknSDKResources.prototype.init = function (namespace) {
-        var _this = this;
-        if (namespace === void 0) { namespace = 'hiekn-resource'; }
+    }
+
+    private init(namespace = 'hiekn-resource') {
         this.$container = $(this.options.container);
         this.$headContainer = $('<div class="hiekn-resource-nav-container">' +
             '<ul class="hiekn-resource-nav nav nav-tabs" role="tablist"></ul>' +
@@ -2553,26 +3234,26 @@ var HieknSDKResources = /** @class */ (function () {
         this.$bodyContainer = $('<div class="hiekn-resource-container tab-content"></div>');
         this.$container.append(this.$headContainer);
         this.$container.append(this.$bodyContainer);
-        var $navContainer = this.select('.hiekn-resource-nav-container ul.hiekn-resource-nav');
-        var $navHideContainer = this.select('.hiekn-resource-nav-container ul.hiekn-resource-nav-hide-tabs');
-        var allW = 0;
-        for (var i in this.options.configs) {
-            var cls = i == '0' ? 'active' : '';
-            var id = namespace + '-tab-' + i + '-' + new Date().getTime();
-            var $resourceContainer = $('<div role="tabpanel" class="tab-pane ' + cls + '" id="' + id + '"></div>');
+        const $navContainer = this.select('.hiekn-resource-nav-container ul.hiekn-resource-nav');
+        const $navHideContainer = this.select('.hiekn-resource-nav-container ul.hiekn-resource-nav-hide-tabs');
+        let allW = 0;
+        for (const i in this.options.configs) {
+            const cls = i == '0' ? 'active' : '';
+            const id = namespace + '-tab-' + i + '-' + new Date().getTime();
+            const $resourceContainer = $('<div role="tabpanel" class="tab-pane ' + cls + '" id="' + id + '"></div>');
             this.$bodyContainer.append($resourceContainer);
-            var config = $.extend(true, {}, this.options);
+            let config = $.extend(true, {}, this.options);
             config.config = this.options.configs[i];
             config.container = $resourceContainer;
-            config.onLoad = function (data, instance) {
-                var id = instance.tableService.$container.attr('id');
-                _this.$headContainer.find('a[href="#' + id + '"] .res-count').text(data.rsCount || 0);
-                _this.options.onLoad && _this.options.onLoad(data, instance);
+            config.onLoad = (data: any, instance: HieknSDKResource) => {
+                const id = instance.tableService.$container.attr('id');
+                this.$headContainer.find('a[href="#' + id + '"] .res-count').text(data.rsCount || 0);
+                this.options.onLoad && this.options.onLoad(data, instance);
             };
             delete config.namespace;
             delete config.configs;
             this.resourcesService.push(new HieknSDKResource(config));
-            var tab = '<li role="presentation" class="' + cls + '">' +
+            const tab = '<li role="presentation" class="' + cls + '">' +
                 '<a href="#' + id + '" aria-controls="" role="tab" data-toggle="tab">' +
                 '<span class="res-name" title="' + config.config.name + '">' + config.config.name + '</span>' +
                 '<span class="res-count"></span>' +
@@ -2584,77 +3265,128 @@ var HieknSDKResources = /** @class */ (function () {
         $navContainer.css('width', allW);
         this.updateTabVisibility();
         this.bindEvent();
-    };
-    HieknSDKResources.prototype.loadData = function (pageNo) {
-        for (var _i = 0, _a = this.resourcesService; _i < _a.length; _i++) {
-            var resourcesService = _a[_i];
+    }
+
+    loadData(pageNo: number) {
+        for (const resourcesService of this.resourcesService) {
             resourcesService.loadData(pageNo);
         }
-    };
-    HieknSDKResources.prototype.select = function (selector) {
+    }
+
+    select(selector: string) {
         return this.$container.find(selector);
-    };
-    HieknSDKResources.prototype.updateTabVisibility = function () {
-        var $container = this.$headContainer;
-        var cw = $container.width();
-        var $navContainer = $container.find('.nav');
-        var tw = $navContainer.width();
-        var $nm = $container.find('.hiekn-resource-nav-more');
+    }
+
+    updateTabVisibility() {
+        const $container = this.$headContainer;
+        const cw = $container.width();
+        const $navContainer = $container.find('.nav');
+        const tw = $navContainer.width();
+        const $nm = $container.find('.hiekn-resource-nav-more');
         if (cw < tw) {
             $nm.removeClass('hide');
-        }
-        else {
+        } else {
             $nm.addClass('hide');
             $container.find('.hiekn-resource-nav-more-container').addClass('hide');
         }
-        var w = 0;
-        var nmw = $nm.outerWidth();
-        var $hideTabs = $container.find('.hiekn-resource-nav-hide-tabs>li');
+        let w = 0;
+        const nmw = $nm.outerWidth();
+        const $hideTabs = $container.find('.hiekn-resource-nav-hide-tabs>li');
         $navContainer.find('li').each(function (i, v) {
             $(v).removeClass('hide');
             w += $(v).width();
             if (w >= cw - nmw) {
                 $(v).addClass('hide');
                 $($hideTabs.get(i)).removeClass('hide');
-            }
-            else {
+            } else {
                 $($hideTabs.get(i)).addClass('hide');
             }
         });
-    };
-    return HieknSDKResources;
-}());
-var HieknSDKSchema = /** @class */ (function () {
-    function HieknSDKSchema() {
     }
-    HieknSDKSchema.load = function (options) {
-        var queryData = options.queryData || {};
-        var formData = $.extend(true, { kgName: options.kgName }, options.formData);
-        var newOptions = {
+}
+interface HieknSchemaAtts {
+    k: number;
+    v: string;
+    type: 0 | 1;
+}
+interface HieknSchemaTypes {
+    k: number;
+    v: string;
+}
+interface HieknSchema {
+    atts: HieknSchemaAtts[];
+    types: HieknSchemaTypes[];
+}
+interface HieknSchemaSetting extends HieknAjaxSetting {
+    kgName?: string;
+}
+declare class HieknSDKSchema {
+    static load(options: HieknSchemaSetting): void;
+}
+
+interface HieknSchemaAtts {
+    k: number;
+    v: string;
+    type: 0 | 1;
+}
+
+interface HieknSchemaTypes {
+    k: number;
+    v: string;
+}
+
+interface HieknSchema {
+    atts: HieknSchemaAtts[];
+    types: HieknSchemaTypes[];
+}
+
+interface HieknSchemaSetting extends HieknAjaxSetting {
+    kgName?: string
+}
+
+class HieknSDKSchema {
+    static load(options: HieknSchemaSetting) {
+        let queryData = options.queryData || {};
+        let formData = $.extend(true, {kgName: options.kgName}, options.formData);
+        let newOptions = {
             url: HieknSDKUtils.buildUrl(options.baseUrl + 'schema', queryData),
             type: 'POST',
             data: formData,
-            beforeSend: function () {
+            beforeSend: () => {
                 options.that && $(options.that).find('.ajax-loading').html(HieknSDKUtils.loadingHTML);
             },
-            success: function (data, textStatus, jqXHR) {
+            success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                 options.success(data[0], textStatus, jqXHR);
             }
         };
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKUtils.ajax(newOptions);
     };
-    ;
-    return HieknSDKSchema;
-}());
-var HieknSDKSegment = /** @class */ (function () {
-    function HieknSDKSegment() {
-    }
-    HieknSDKSegment.load = function (options) {
+}
+interface HieknSegmentSetting extends HieknAjaxSetting {
+}
+declare class HieknSDKSegment {
+    static defaults: HieknSegmentSetting;
+    static load(options: HieknSegmentSetting): void;
+}
+
+interface HieknSegmentSetting extends HieknAjaxSetting {
+}
+
+class HieknSDKSegment {
+    static defaults: HieknSegmentSetting = {
+        queryData:{
+            useConcept: true,
+            useEntity: true,
+            useAttr: true
+        }
+    };
+
+    static load(options: HieknSegmentSetting) {
         options = $.extend(true, HieknSDKSegment.defaults, options);
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
-        var newOptions = {
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
+        let newOptions = {
             url: HieknSDKUtils.buildUrl(options.baseUrl + 'segment', queryData),
             type: 'GET',
             data: formData,
@@ -2662,43 +3394,142 @@ var HieknSDKSegment = /** @class */ (function () {
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKUtils.ajax(newOptions);
     };
-    ;
-    HieknSDKSegment.defaults = {
-        queryData: {
-            useConcept: true,
-            useEntity: true,
-            useAttr: true
-        }
-    };
-    return HieknSDKSegment;
-}());
-var HieknSDKTable = /** @class */ (function () {
-    function HieknSDKTable(options) {
+}
+/// <reference types="jquery" />
+declare type HieknTableRendererFunction = (value: any, data: any) => string;
+declare type HieknTableRendererType = 'date' | 'link' | 'year' | 'dateTime' | 'json' | 'string' | HieknTableRendererFunction;
+declare type HieknTableRendererComplex = {
+    type: HieknTableRendererType;
+    array?: boolean;
+    fields?: string[];
+    name?: string;
+};
+declare type HieknTableRenderer = {
+    [key: string]: HieknTableRendererType | HieknTableRendererComplex;
+};
+declare type HieknTableFilterType = 'year' | 'month' | 'day';
+declare type HieknTableFilterOption = string | {
+    key: string;
+    value: string;
+} | HieknKVType;
+interface HieknTableFilter {
+    key: string;
+    label?: string;
+    type?: HieknTableFilterType;
+    format?: string;
+    options: HieknTableFilterOption[];
+}
+interface HieknTableConfigSetting {
+    name: string;
+    databases: string[];
+    tables: string[];
+    fields: string[];
+    fieldsName?: string[];
+    fieldsTable?: string[];
+    fieldsTableName?: string[];
+    fieldsDetail?: string[];
+    fieldsDetailName?: string[];
+    fieldsKw?: string[];
+    drawDetail?: boolean;
+    fieldsRenderer?: HieknTableRenderer;
+    filter?: HieknTableFilter[];
+}
+interface HieknTableSetting extends HieknBaseSetting {
+    container: string;
+    config: HieknTableConfigSetting;
+    load: Function;
+}
+declare class HieknSDKTable {
+    $container: JQuery;
+    data: any;
+    options: HieknTableSetting;
+    constructor(options: HieknTableSetting);
+    private buildFilter();
+    private bindFilterEvent();
+    private bindTableEvent();
+    private static dealContent(d, len?);
+    drawData(data: any): void;
+    drawPage(count: number, pageNo: number, pageSize: number): void;
+    getFilterKw(): any;
+    getFilterOptions(): {};
+    getTableContainer(): JQuery;
+    private static getValues(value);
+    private init();
+    loadData(pageNo: number): void;
+    private static rendererDate(v);
+    private static rendererDateTime(v);
+    private static rendererFields(d, k, fieldsLink, fieldsRenderer, short);
+    private static rendererLink(v, name?, cls?);
+    private static rendererValue(type, value, fieldsRenderer, short, data);
+    private static rendererYear(v);
+    private select(selector);
+}
+
+type HieknTableRendererFunction = (value: any, data: any) => string;
+type HieknTableRendererType = 'date' | 'link' | 'year' | 'dateTime' | 'json' | 'string' | HieknTableRendererFunction;
+type HieknTableRendererComplex = { type: HieknTableRendererType, array?: boolean, fields?: string[], name?: string };
+type HieknTableRenderer = { [key: string]: HieknTableRendererType | HieknTableRendererComplex };
+type HieknTableFilterType = 'year' | 'month' | 'day';
+type HieknTableFilterOption = string | { key: string, value: string } | HieknKVType;
+
+interface HieknTableFilter {
+    key: string;
+    label?: string;
+    type?: HieknTableFilterType;
+    format?: string;
+    options: HieknTableFilterOption[];
+}
+
+interface HieknTableConfigSetting {
+    name: string;
+    databases: string[];
+    tables: string[];
+    fields: string[];
+    fieldsName?: string[];
+    fieldsTable?: string[];
+    fieldsTableName?: string[];
+    fieldsDetail?: string[];
+    fieldsDetailName?: string[];
+    fieldsKw?: string[];
+    drawDetail?: boolean;
+    fieldsRenderer?: HieknTableRenderer;
+    filter?: HieknTableFilter[];
+}
+
+interface HieknTableSetting extends HieknBaseSetting {
+    container: string;
+    config: HieknTableConfigSetting;
+    load: Function
+}
+
+class HieknSDKTable {
+    $container: JQuery;
+    data: any;
+    options: HieknTableSetting;
+
+    constructor(options: HieknTableSetting) {
         this.options = options;
         this.init();
     }
-    HieknSDKTable.prototype.buildFilter = function () {
-        var filterHtml = '';
-        var filters = this.options.config.filter;
-        for (var _i = 0, filters_1 = filters; _i < filters_1.length; _i++) {
-            var filter = filters_1[_i];
-            var label = filter.label || filter.key;
-            var filterOptions = '';
-            for (var _a = 0, _b = filter.options; _a < _b.length; _a++) {
-                var item = _b[_a];
+
+    private buildFilter() {
+        let filterHtml = '';
+        const filters = this.options.config.filter;
+        for (const filter of filters) {
+            const label = filter.label || filter.key;
+            let filterOptions = '';
+            for (const item of filter.options) {
                 if (item instanceof Object) {
-                    if (item.key !== undefined && item.value !== undefined) {
-                        var option = item;
+                    if ((<any>item).key !== undefined && (<any>item).value !== undefined) {
+                        let option = <{ key: string, value: string }>item;
                         filterOptions += '<span option-value="' + option.value + '" option-key="' + option.key + '">' + option.key + '</span>';
-                    }
-                    else {
-                        var option = item;
-                        for (var key in option) {
+                    } else {
+                        let option = <{ [key: string]: string }>item;
+                        for (const key in option) {
                             filterOptions += '<span option-value="' + option[key] + '" option-key="' + key + '">' + option[key] + '</span>';
                         }
                     }
-                }
-                else {
+                } else {
                     filterOptions += '<span option-value="' + item + '" option-key="' + filter.key + '">' + item + '</span>';
                 }
             }
@@ -2722,121 +3553,116 @@ var HieknSDKTable = /** @class */ (function () {
             '</div>' +
             '</div>';
         this.select('.hiekn-table-filter').html(filterHtml);
-    };
-    HieknSDKTable.prototype.bindFilterEvent = function () {
-        var _this = this;
-        this.select('.hiekn-table-filter').on('click', 'span[option-value]', function (event) {
-            var $item = $(event.currentTarget);
-            var key = $item.attr('option-key');
-            var value = $item.attr('option-value');
+    }
+
+    private bindFilterEvent() {
+        this.select('.hiekn-table-filter').on('click', 'span[option-value]', (event: Event) => {
+            const $item = $(event.currentTarget);
+            const key = $item.attr('option-key');
+            const value = $item.attr('option-value');
             if ($item.closest('.hiekn-table-filter-item').hasClass('multi')) {
                 $item.toggleClass('active');
-            }
-            else {
+            } else {
                 if (!$item.hasClass('active')) {
                     $item.addClass('active').siblings('.active').removeClass('active');
-                }
-                else {
+                } else {
                     $item.removeClass('active');
                 }
-                _this.loadData(1);
+                this.loadData(1);
             }
         });
-        this.select('.hiekn-table-filter').on('click', '.hiekn-table-filter-more', function (event) {
-            var $item = $(event.currentTarget);
+        this.select('.hiekn-table-filter').on('click', '.hiekn-table-filter-more', (event: Event) => {
+            const $item = $(event.currentTarget);
             $item.closest('.hiekn-table-filter-item').addClass('expend');
         });
-        this.select('.hiekn-table-filter').on('click', '.hiekn-table-filter-less', function (event) {
-            var $item = $(event.currentTarget);
+        this.select('.hiekn-table-filter').on('click', '.hiekn-table-filter-less', (event: Event) => {
+            const $item = $(event.currentTarget);
             $item.closest('.hiekn-table-filter-item').removeClass('expend');
         });
-        this.select('.hiekn-table-filter').on('click', '.hiekn-table-filter-multi', function (event) {
-            var $item = $(event.currentTarget);
+        this.select('.hiekn-table-filter').on('click', '.hiekn-table-filter-multi', (event: Event) => {
+            const $item = $(event.currentTarget);
             $item.closest('.hiekn-table-filter-item').addClass('multi');
         });
-        this.select('.hiekn-table-filter').on('click', '.hiekn-table-btn-confirm', function (event) {
-            var $item = $(event.currentTarget);
+        this.select('.hiekn-table-filter').on('click', '.hiekn-table-btn-confirm', (event: Event) => {
+            const $item = $(event.currentTarget);
             $item.closest('.hiekn-table-filter-item').removeClass('multi');
-            _this.loadData(1);
+            this.loadData(1);
         });
-        this.select('.hiekn-table-filter').on('click', '.hiekn-table-btn-cancel', function (event) {
-            var $item = $(event.currentTarget);
+        this.select('.hiekn-table-filter').on('click', '.hiekn-table-btn-cancel', (event: Event) => {
+            const $item = $(event.currentTarget);
             $item.closest('.hiekn-table-filter-item').removeClass('multi');
         });
-        this.select('.hiekn-table-search-kw-container').on('keydown', 'input', function (event) {
-            var key = window.event ? event.keyCode : event.which;
+        this.select('.hiekn-table-search-kw-container').on('keydown', 'input', (event: Event) => {
+            const key = window.event ? (<KeyboardEvent>event).keyCode : (<KeyboardEvent>event).which;
             if (key == 13) {
-                _this.loadData(1);
+                this.loadData(1);
             }
         });
-    };
-    HieknSDKTable.prototype.bindTableEvent = function () {
-        this.select('.hiekn-table-content').on('click', '.hiekn-table-data-angle', function (event) {
+    }
+
+    private bindTableEvent() {
+        this.select('.hiekn-table-content').on('click', '.hiekn-table-data-angle', (event: Event) => {
             $(event.currentTarget).toggleClass('on').closest('tr').next('tr.hiekn-table-detail-line').toggleClass('hide');
         });
-    };
-    HieknSDKTable.dealContent = function (d, len) {
-        if (len === void 0) { len = 80; }
+    }
+
+    private static dealContent(d: string, len = 80) {
         if (d) {
-            var text = $('<div>' + d + '</div>').text();
+            let text = $('<div>' + d + '</div>').text();
             if (text.length > len) {
                 return text.substring(0, len) + '...';
-            }
-            else {
+            } else {
                 return text;
             }
-        }
-        else {
+        } else {
             return '';
         }
-    };
-    HieknSDKTable.prototype.drawData = function (data) {
-        var config = this.options.config;
+    }
+
+    drawData(data: any) {
+        const config = this.options.config;
         this.data = data;
-        var ths = '<thead><tr>';
-        var trs = '<tbody>';
-        var fields = config.fieldsTable || config.fields;
-        var fieldsName = config.fieldsTableName ? config.fieldsTableName : (config.fieldsName ? config.fieldsName : fields);
-        var drawDetail = config.drawDetail || config.fieldsDetail || config.fieldsTable;
-        var fieldsDetail = config.fieldsDetail || config.fields;
-        var fieldsNameDetail = config.fieldsDetailName ? config.fieldsDetailName : (config.fieldsName ? config.fieldsName : fields);
-        var fieldsRenderer = config.fieldsRenderer || {};
-        var fieldsLink = {};
+        let ths = '<thead><tr>';
+        let trs = '<tbody>';
+        const fields = config.fieldsTable || config.fields;
+        const fieldsName = config.fieldsTableName ? config.fieldsTableName : (config.fieldsName ? config.fieldsName : fields);
+        const drawDetail = config.drawDetail || config.fieldsDetail || config.fieldsTable;
+        const fieldsDetail = config.fieldsDetail || config.fields;
+        const fieldsNameDetail = config.fieldsDetailName ? config.fieldsDetailName : (config.fieldsName ? config.fieldsName : fields);
+        const fieldsRenderer = config.fieldsRenderer || {};
+        let fieldsLink: HieknKVType = {};
         if (drawDetail) {
             ths += '<th></th>';
         }
-        for (var fidx in fields) {
-            var renderer = fieldsRenderer[fields[fidx]];
-            if (renderer && renderer instanceof Object && renderer.type == 'link' && renderer.fields) {
-                for (var _i = 0, _a = renderer.fields; _i < _a.length; _i++) {
-                    var f = _a[_i];
+        for (const fidx in fields) {
+            const renderer = fieldsRenderer[fields[fidx]];
+            if (renderer && renderer instanceof Object && (<HieknTableRendererComplex>renderer).type == 'link' && (<HieknTableRendererComplex>renderer).fields) {
+                for (const f of (<HieknTableRendererComplex>renderer).fields) {
                     fieldsLink[f] = fields[fidx];
                 }
                 continue;
             }
             ths += '<th>' + fieldsName[fidx] + '</th>';
         }
-        for (var _b = 0, data_2 = data; _b < data_2.length; _b++) {
-            var d = data_2[_b];
-            var tr = '<tr>';
+        for (const d of data) {
+            let tr = '<tr>';
             if (drawDetail) {
                 tr += '<td class="hiekn-table-data-angle"><svg height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg></td>';
             }
-            var len = 0;
-            for (var _c = 0, fields_1 = fields; _c < fields_1.length; _c++) {
-                var k = fields_1[_c];
+            let len = 0;
+            for (const k of fields) {
                 len++;
-                if (!fieldsRenderer[k] || !fieldsRenderer[k].fields) {
+                if (!fieldsRenderer[k] || !(<HieknTableRendererComplex>fieldsRenderer[k]).fields) {
                     tr += '<td>' + HieknSDKTable.rendererFields(d, k, fieldsLink, fieldsRenderer, true) + '</td>';
                 }
             }
             tr += '</tr>';
             trs += tr;
             if (drawDetail) {
-                var trDetail = '<tr class="hiekn-table-detail-line hide"><td colspan="' + (len + 1) + '">';
-                for (var i in fieldsDetail) {
-                    var k = fieldsDetail[i];
-                    if (!fieldsRenderer[k] || !fieldsRenderer[k].fields) {
+                let trDetail = '<tr class="hiekn-table-detail-line hide"><td colspan="' + (len + 1) + '">';
+                for (const i in fieldsDetail) {
+                    const k = fieldsDetail[i];
+                    if (!fieldsRenderer[k] || !(<HieknTableRendererComplex>fieldsRenderer[k]).fields) {
                         trDetail += '<div class="hiekn-table-detail-' + k + '"><label>' + fieldsNameDetail[i] + ':</label>' + HieknSDKTable.rendererFields(d, k, fieldsLink, fieldsRenderer, false) + '</div>';
                     }
                 }
@@ -2847,73 +3673,73 @@ var HieknSDKTable = /** @class */ (function () {
         trs += '</body>';
         ths += '</tr></thead>';
         this.select('.hiekn-table-content').html('<table class="hiekn-table-normal">' + ths + trs + '</table>');
-    };
-    HieknSDKTable.prototype.drawPage = function (count, pageNo, pageSize) {
-        var _this = this;
-        var options = {
+    }
+
+    drawPage(count: number, pageNo: number, pageSize: number) {
+        const options = {
             totalItem: count,
             pageSize: pageSize,
             current: pageNo,
             selector: this.select('.pagination'),
-            callback: function (data, pageNo) {
-                _this.loadData(pageNo);
+            callback: (data: any, pageNo: number) => {
+                this.loadData(pageNo);
             }
         };
         HieknSDKUtils.drawPagination(options);
     };
-    ;
-    HieknSDKTable.prototype.getFilterKw = function () {
+
+    getFilterKw() {
         return this.select('.hiekn-table-search-kw-container').find('input').val();
-    };
-    HieknSDKTable.prototype.getFilterOptions = function () {
-        var filterOptions = {};
-        this.select('.hiekn-table-filter-item').each(function (i, v) {
-            var key = '';
-            var $items = $(v).find('span[option-value].active');
+    }
+
+    getFilterOptions() {
+        let filterOptions = {};
+        this.select('.hiekn-table-filter-item').each((i: number, v: HTMLElement) => {
+            let key = '';
+            const $items = $(v).find('span[option-value].active');
             if ($items.length) {
-                var hasAll_1 = false;
-                var value_2 = [];
-                $items.each(function (j, e) {
-                    var ov = $(e).attr('option-value');
+                let hasAll = false;
+                let value: string[] = [];
+                $items.each((j: number, e: HTMLElement) => {
+                    const ov = $(e).attr('option-value');
                     if (!ov) {
-                        hasAll_1 = true;
-                    }
-                    else {
+                        hasAll = true;
+                    } else {
                         key = $(e).attr('option-key');
-                        value_2.push(ov);
+                        value.push(ov);
                     }
                 });
-                if (!hasAll_1) {
-                    filterOptions[key] = value_2;
+                if (!hasAll) {
+                    filterOptions[key] = value;
                 }
             }
         });
         return filterOptions;
-    };
-    HieknSDKTable.prototype.getTableContainer = function () {
+    }
+
+    getTableContainer() {
         return this.select('.hiekn-table-content');
-    };
-    HieknSDKTable.getValues = function (value) {
-        var values = [];
+    }
+
+    private static getValues(value: any) {
+        let values = [];
         if (value instanceof Array) {
             values = value;
-        }
-        else if (typeof value == 'string') {
+        } else if (typeof value == 'string') {
             if (value.indexOf('[') == 0) {
                 try {
                     values = JSON.parse(value);
-                }
-                catch (e) {
+                } catch (e) {
                     values = [value];
                 }
-            }
-            else {
+            } else {
                 values = value.split(',');
             }
         }
         return values;
-    };
-    HieknSDKTable.prototype.init = function () {
+    }
+
+    private init() {
         this.$container = $(this.options.container).addClass('hiekn-table');
         this.$container.append('<div class="hiekn-table-filter">' +
             '</div>' +
@@ -2926,92 +3752,96 @@ var HieknSDKTable = /** @class */ (function () {
         this.buildFilter();
         this.bindFilterEvent();
         this.bindTableEvent();
-    };
-    HieknSDKTable.prototype.loadData = function (pageNo) {
+    }
+
+    loadData(pageNo: number) {
         this.options.load(pageNo, this);
-    };
-    HieknSDKTable.rendererDate = function (v) {
+    }
+
+    private static rendererDate(v: string) {
         return moment(v).format('YYYYMMDD');
-    };
-    HieknSDKTable.rendererDateTime = function (v) {
+    }
+
+    private static rendererDateTime(v: string) {
         return moment(v).format('YYYY-MM-DD HH:mm:ss');
-    };
-    HieknSDKTable.rendererFields = function (d, k, fieldsLink, fieldsRenderer, short) {
-        var str = '';
+    }
+
+    private static rendererFields(d: any, k: string, fieldsLink: HieknKVType, fieldsRenderer: HieknTableRenderer, short: boolean) {
+        let str = '';
         if (d[k]) {
-            var values = HieknSDKTable.getValues(d[k]);
-            for (var _i = 0, values_1 = values; _i < values_1.length; _i++) {
-                var value = values_1[_i];
+            const values = HieknSDKTable.getValues(d[k]);
+            for (const value of values) {
                 if (!fieldsRenderer[k]) {
                     str += ',' + HieknSDKTable.rendererValue('string', value, undefined, short, d);
-                }
-                else {
-                    str += ',' + HieknSDKTable.rendererValue(fieldsRenderer[k].type || fieldsRenderer[k], value, fieldsRenderer[k], short, d);
+                } else {
+                    str += ',' + HieknSDKTable.rendererValue((<HieknTableRendererComplex>fieldsRenderer[k]).type || <HieknTableRendererType>fieldsRenderer[k], value, <HieknTableRendererComplex>fieldsRenderer[k], short, d);
                 }
             }
             str = str.substring(1);
         }
         if (fieldsLink[k]) {
-            var name_1 = d[k];
+            let name = d[k];
             if (!d[k]) {
-                name_1 = '链接';
+                name = '链接';
             }
-            str = HieknSDKTable.rendererLink(d[fieldsLink[k]], name_1);
+            str = HieknSDKTable.rendererLink(d[fieldsLink[k]], name);
         }
         return str;
-    };
-    HieknSDKTable.rendererLink = function (v, name, cls) {
-        if (name === void 0) { name = '查看'; }
-        if (cls === void 0) { cls = ''; }
+    }
+
+    private static rendererLink(v: string, name = '查看', cls = '') {
         return v ? '<a href="' + v + '" target="_blank" class="' + cls + '">' + name + '</a>' : '';
-    };
-    HieknSDKTable.rendererValue = function (type, value, fieldsRenderer, short, data) {
-        var str = '';
+    }
+
+    private static rendererValue(type: HieknTableRendererType, value: any, fieldsRenderer: HieknTableRendererComplex, short: boolean, data: any) {
+        let str = '';
         try {
             if (type == 'year') {
                 str = HieknSDKTable.rendererYear(value);
-            }
-            else if (type == 'date') {
+            } else if (type == 'date') {
                 str = HieknSDKTable.rendererDate(value);
-            }
-            else if (type == 'dateTime') {
+            } else if (type == 'dateTime') {
                 str = HieknSDKTable.rendererDateTime(value);
-            }
-            else if (type == 'json') {
+            } else if (type == 'json') {
                 str = JSON.stringify(value);
-            }
-            else if (type == 'link') {
+            } else if (type == 'link') {
                 str = HieknSDKTable.rendererLink(value, fieldsRenderer.name, 'hiekn-table-btn-link');
-            }
-            else if (type == 'string' && short) {
+            } else if (type == 'string' && short) {
                 str = HieknSDKTable.dealContent(value);
-            }
-            else if (type instanceof Function) {
+            } else if (type instanceof Function) {
                 str = type(value, data);
-            }
-            else {
+            } else {
                 str = HieknSDKUtils.safeHTML(value);
             }
-        }
-        catch (e) {
+        } catch (e) {
+
         }
         return str;
-    };
-    HieknSDKTable.rendererYear = function (v) {
-        return moment(v).format('YYYY');
-    };
-    HieknSDKTable.prototype.select = function (selector) {
-        return this.$container.find(selector);
-    };
-    return HieknSDKTable;
-}());
-var HieknSDKTagging = /** @class */ (function () {
-    function HieknSDKTagging() {
     }
-    HieknSDKTagging.load = function (options) {
-        var queryData = options.queryData || {};
-        var formData = options.formData || {};
-        var newOptions = {
+
+    private static rendererYear(v: string) {
+        return moment(v).format('YYYY');
+    }
+
+    private select(selector: string) {
+        return this.$container.find(selector);
+    }
+
+}
+interface HieknTaggingSetting extends HieknAjaxSetting {
+}
+declare class HieknSDKTagging {
+    static load(options: HieknTaggingSetting): void;
+}
+
+interface HieknTaggingSetting extends HieknAjaxSetting {
+}
+
+class HieknSDKTagging {
+    static load(options: HieknTaggingSetting) {
+        const queryData = options.queryData || {};
+        let formData = options.formData || {};
+        let newOptions = {
             url: HieknSDKUtils.buildUrl(options.baseUrl + 'tagging', queryData),
             type: 'GET',
             data: formData,
@@ -3019,91 +3849,80 @@ var HieknSDKTagging = /** @class */ (function () {
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKUtils.ajax(newOptions);
     };
-    ;
-    return HieknSDKTagging;
-}());
-var HieknSDKUtils = /** @class */ (function () {
-    function HieknSDKUtils() {
-    }
-    HieknSDKUtils.ajax = function (options) {
-        var error = options.error || $.noop;
-        var type = options.type;
-        switch (type) {
-            case 'GET':
-                type = 0;
-                break;
-            case 'POST':
-                type = 1;
-                break;
-        }
-        var newOptions = {
-            type: type,
-            dataFilter: options.dataFilter || HieknSDKUtils.dataFilter,
-            params: options.data,
-            success: function (data, textStatus, jqXHR, params) {
-                if (data && data.rsData) {
-                    options.success(data.rsData, textStatus, jqXHR, data, params);
-                }
-                else {
-                    error(data, textStatus, jqXHR, null, params);
-                }
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                error(null, textStatus, xhr, errorThrown);
-            },
-        };
-        newOptions = $.extend(true, {}, options, newOptions);
-        hieknjs.kgLoader(newOptions);
-    };
-    HieknSDKUtils.buildUrl = function (url, queryData) {
-        if (queryData && !$.isEmptyObject(queryData)) {
-            var link = url.indexOf('?') > 0 ? '&' : '?';
-            return url + link + $.param(queryData);
-        }
-        else {
-            return url;
-        }
-    };
-    HieknSDKUtils.dataFilter = function (data) {
-        return data;
-    };
-    HieknSDKUtils.drawPagination = function (options) {
-        $.extend(true, options, {
-            data: Math.ceil(options.totalItem / options.pageSize),
-            cur: options.current,
-            p: options.selector,
-            event: options.callback
-        });
-        hieknjs.gentPage(options);
-    };
-    HieknSDKUtils.error = function (msg) {
-        toastr.error(msg);
-    };
-    HieknSDKUtils.getVersion = function () {
-        return HieknSDKUtils.VERSION;
-    };
-    HieknSDKUtils.info = function (msg) {
-        toastr.info(msg);
-    };
-    HieknSDKUtils.qiniuImg = function (img) {
-        return img + '?_=' + Math.floor(new Date().getTime() / 3600000);
-    };
-    HieknSDKUtils.randomId = function (prefix, postfix, append) {
-        if (prefix === void 0) { prefix = ''; }
-        if (postfix === void 0) { postfix = ''; }
-        if (append === void 0) { append = ''; }
-        return prefix + (append ? append : new Date().getTime() + Math.ceil(Math.random() * 10000)) + postfix;
-    };
-    HieknSDKUtils.safeHTML = function (value) {
-        return hieknjs.safeHTML(value);
-    };
-    HieknSDKUtils.dealNull = function (data) {
-        return hieknjs.dealNull(data);
-    };
-    HieknSDKUtils.VERSION = '3.0.0';
-    HieknSDKUtils.regChinese = /^[\u4e00-\u9fa5]$/;
-    HieknSDKUtils.regEnglish = /^[a-zA-Z]$/;
-    HieknSDKUtils.colorBase = ['#7bc0e1',
+}
+/// <reference types="jquery" />
+declare type HieknIdType = number | string;
+declare type HieknKVType = {
+    [key: string]: string;
+};
+declare type JQueryAjaxSuccess = (data: any, textStatus: string, jqXHR: JQueryXHR) => any;
+declare type JQueryAjaxDataFilter = (data: any, ty: any) => any;
+interface HieknBaseSetting {
+    baseUrl?: string;
+    dataFilter?: JQueryAjaxDataFilter;
+    formData?: any;
+    queryData?: any;
+}
+interface HieknKV {
+    k: string;
+    v: string;
+}
+interface HieknAjaxSetting extends JQueryAjaxSettings {
+    baseUrl?: string;
+    formData?: any;
+    queryData?: any;
+    that?: HTMLElement;
+}
+declare class HieknSDKUtils {
+    static VERSION: string;
+    static regChinese: RegExp;
+    static regEnglish: RegExp;
+    static colorBase: string[];
+    static colorEx: string[];
+    static color: string[];
+    static loadingHTML: string;
+    static ajax(options: any): void;
+    static buildUrl(url: string, queryData: any): string;
+    static dataFilter(data: any): any;
+    static drawPagination(options: any): void;
+    static error(msg: string): void;
+    static getVersion(): string;
+    static info(msg: string): void;
+    static qiniuImg(img: string): string;
+    static randomId(prefix?: string, postfix?: string, append?: string): string;
+    static safeHTML(value: string): any;
+    static dealNull(data: any): any;
+}
+
+type HieknIdType = number | string;
+type HieknKVType = { [key: string]: string };
+type JQueryAjaxSuccess = (data: any, textStatus: string, jqXHR: JQueryXHR) => any;
+type JQueryAjaxDataFilter = (data: any, ty: any) => any;
+
+interface HieknBaseSetting {
+    baseUrl?: string;
+    dataFilter?: JQueryAjaxDataFilter;
+    formData?: any;
+    queryData?: any;
+}
+
+interface HieknKV {
+    k: string;
+    v: string;
+}
+
+interface HieknAjaxSetting extends JQueryAjaxSettings {
+    baseUrl?: string;
+    formData?: any;
+    queryData?: any;
+    that?: HTMLElement;
+}
+
+class HieknSDKUtils {
+    static VERSION = '3.0.0';
+    static regChinese = /^[\u4e00-\u9fa5]$/;
+    static regEnglish = /^[a-zA-Z]$/;
+    static colorBase = ['#7bc0e1',
         '#9ec683',
         '#fde14d',
         '#ab89f4',
@@ -3113,7 +3932,7 @@ var HieknSDKUtils = /** @class */ (function () {
         '#eaad84',
         '#abe8bf',
         '#7979fc'];
-    HieknSDKUtils.colorEx = ['#6db5d6',
+    static colorEx = ['#6db5d6',
         '#d0648a',
         '#c0d684',
         '#f2bac9',
@@ -3123,231 +3942,336 @@ var HieknSDKUtils = /** @class */ (function () {
         '#f4817c',
         '#94cdba',
         '#b2cede'];
-    HieknSDKUtils.color = HieknSDKUtils.colorBase.concat(HieknSDKUtils.colorEx);
-    HieknSDKUtils.loadingHTML = "<div class=\"schema-init\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 14 32 18\" width=\"32\" height=\"4\" preserveAspectRatio=\"none\">\n        <path opacity=\"0.8\" transform=\"translate(0 0)\" d=\"M2 14 V18 H6 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0\" repeatCount=\"indefinite\" keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        <path opacity=\"0.5\" transform=\"translate(0 0)\" d=\"M0 14 V18 H8 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0.1s\" repeatCount=\"indefinite\" keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        <path opacity=\"0.25\" transform=\"translate(0 0)\" d=\"M0 14 V18 H8 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0.2s\" repeatCount=\"indefinite\"\n         keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        </svg>\n        </div>";
-    return HieknSDKUtils;
-}());
-var HieknSDKService = /** @class */ (function () {
-    function HieknSDKService() {
+    static color = HieknSDKUtils.colorBase.concat(HieknSDKUtils.colorEx);
+    static loadingHTML = `<div class="schema-init">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 14 32 18" width="32" height="4" preserveAspectRatio="none">
+        <path opacity="0.8" transform="translate(0 0)" d="M2 14 V18 H6 V14z">
+        <animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="2s" begin="0" repeatCount="indefinite" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" /></path>
+        <path opacity="0.5" transform="translate(0 0)" d="M0 14 V18 H8 V14z">
+        <animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="2s" begin="0.1s" repeatCount="indefinite" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" /></path>
+        <path opacity="0.25" transform="translate(0 0)" d="M0 14 V18 H8 V14z">
+        <animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="2s" begin="0.2s" repeatCount="indefinite"
+         keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" /></path>
+        </svg>
+        </div>`;
+
+    static ajax(options: any) {
+        let error = options.error || $.noop;
+        let type = options.type;
+        switch (type) {
+            case 'GET':
+                type = 0;
+                break;
+            case 'POST':
+                type = 1;
+                break;
+        }
+        let newOptions = {
+            type: type,
+            dataFilter: options.dataFilter || HieknSDKUtils.dataFilter,
+            params: options.data,
+            success: (data: any, textStatus: string, jqXHR: JQueryXHR, params: any) => {
+                if (data && data.rsData) {
+                    options.success(data.rsData, textStatus, jqXHR, data, params);
+                } else {
+                    error(data, textStatus, jqXHR, null, params);
+                }
+            },
+            error: (xhr: JQueryXHR, textStatus: string, errorThrown: string) => {
+                error(null, textStatus, xhr, errorThrown);
+            },
+        };
+        newOptions = $.extend(true, {}, options, newOptions);
+        hieknjs.kgLoader(newOptions);
     }
-    HieknSDKService.prototype.schema = function (options, callback) {
-        var newOptions = $.extend(true, {}, options, {
+
+    static buildUrl(url: string, queryData: any) {
+        if (queryData && !$.isEmptyObject(queryData)) {
+            const link = url.indexOf('?') > 0 ? '&' : '?';
+            return url + link + $.param(queryData);
+        } else {
+            return url;
+        }
+    }
+
+    static dataFilter(data: any) {
+        return data;
+    }
+
+    static drawPagination(options: any) {
+        $.extend(true, options, {
+            data: Math.ceil(options.totalItem / options.pageSize),
+            cur: options.current,
+            p: options.selector,
+            event: options.callback
+        });
+        hieknjs.gentPage(options);
+    }
+
+    static error(msg: string) {
+        toastr.error(msg);
+    }
+
+    static getVersion(){
+        return HieknSDKUtils.VERSION;
+    }
+
+    static info(msg: string) {
+        toastr.info(msg);
+    }
+
+    static qiniuImg(img: string) {
+        return img + '?_=' + Math.floor(new Date().getTime() / 3600000);
+    }
+
+    static randomId(prefix = '', postfix = '', append = '') {
+        return prefix + (append ? append : new Date().getTime() + Math.ceil(Math.random() * 10000)) + postfix;
+    }
+
+    static safeHTML(value: string) {
+        return hieknjs.safeHTML(value)
+    }
+
+    static dealNull(data: any) {
+        return hieknjs.dealNull(data);
+    }
+}
+
+declare class HieknSDKService {
+    schema(options: any, callback: JQueryAjaxSuccess): void;
+    association(options: any, callback: JQueryAjaxSuccess): void;
+    tagging(options: any, callback: JQueryAjaxSuccess): void;
+    disambiguate(options: any, callback: JQueryAjaxSuccess): void;
+    segment(options: any, callback: JQueryAjaxSuccess): void;
+    static updateOptionsData(options: any): any;
+}
+declare class HieknNetChartUpdateService {
+    static updateOptions(options: any): any;
+}
+declare class HieknGraphService extends HieknSDKGraph {
+    protected beforeInit(options: HieknNetChartSetting): void;
+}
+declare class HieknTimingGraphService extends HieknSDKTiming {
+    protected beforeInit(options: HieknNetChartSetting): void;
+}
+declare class HieknPathService extends HieknSDKPath {
+    protected beforeInit(options: HieknNetChartSetting): void;
+}
+declare class HieknRelationService extends HieknSDKRelation {
+    protected beforeInit(options: HieknNetChartSetting): void;
+}
+declare class HieknInfoboxService extends HieknSDKInfobox {
+    constructor(options: any);
+}
+declare class HieknPromptService extends HieknSDKPrompt {
+    constructor(options: any);
+}
+declare class HieknConceptPromptService extends HieknSDKPrompt {
+    constructor(options: any);
+}
+declare class HieknConceptGraphService extends HieknSDKConceptGraph {
+    constructor(options: any);
+}
+declare class HieknTableService extends HieknSDKTable {
+    constructor(options: any);
+}
+declare class HieknResourceService extends HieknSDKResource {
+    constructor(options: any);
+}
+declare class HieknResourcesService extends HieknSDKResources {
+    constructor(options: any);
+}
+declare class HieknConceptTreeService extends HieknSDKConceptTree {
+    constructor(options: any);
+}
+declare class HieknStatService {
+    constructor(options: any);
+}
+
+class HieknSDKService {
+
+    schema(options: any, callback: JQueryAjaxSuccess) {
+        let newOptions:HieknSchemaSetting = $.extend(true, {}, options, {
             queryData: options.data || {},
             formData: options.data2 || {},
             success: callback
         });
         HieknSDKSchema.load(newOptions);
-    };
-    HieknSDKService.prototype.association = function (options, callback) {
-        var formData = $.extend(true, {}, options.data2 || {}, {
+    }
+
+    association(options: any, callback: JQueryAjaxSuccess) {
+        let formData = $.extend(true, {}, options.data2 || {}, {
             allowAtts: options.allowAtts,
             id: options.id,
             pageSize: options.pageSize
         });
-        var newOptions = {
+        let newOptions = {
             queryData: options.data || {},
             formData: formData,
             success: callback
         };
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKAssociation.load(newOptions);
-    };
-    HieknSDKService.prototype.tagging = function (options, callback) {
-        var queryData = $.extend(true, {}, options.data || {}, {
+    }
+
+    tagging(options: any, callback: JQueryAjaxSuccess) {
+        let queryData = $.extend(true, {}, options.data || {}, {
             kw: options.kw
         });
-        var newOptions = {
+        let newOptions = {
             queryData: queryData,
             formData: options.data2 || {},
             success: callback
         };
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKTagging.load(newOptions);
-    };
-    HieknSDKService.prototype.disambiguate = function (options, callback) {
-        var queryData = $.extend(true, {}, options.data || {}, {
+    }
+
+    disambiguate(options: any, callback: JQueryAjaxSuccess) {
+        let queryData = $.extend(true, {}, options.data || {}, {
             kw: options.kw
         });
-        var newOptions = {
+        let newOptions = {
             queryData: queryData,
             formData: options.data2 || {},
             success: callback
         };
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKDisambiguate.load(newOptions);
-    };
-    HieknSDKService.prototype.segment = function (options, callback) {
-        var queryData = $.extend(true, {}, options.data || {}, {
+    }
+
+    segment(options: any, callback: JQueryAjaxSuccess) {
+        let queryData = $.extend(true, {}, options.data || {}, {
             kw: options.kw
         });
-        var newOptions = {
+        let newOptions = {
             queryData: queryData,
             formData: options.data2 || {},
             success: callback
         };
         newOptions = $.extend(true, {}, options, newOptions);
         HieknSDKSegment.load(newOptions);
-    };
-    HieknSDKService.updateOptionsData = function (options) {
+    }
+
+    static updateOptionsData(options: any) {
         options.formData = options.formData || options.data2 || {};
         options.queryData = options.queryData || options.data || {};
         return options;
-    };
-    return HieknSDKService;
-}());
-var HieknNetChartUpdateService = /** @class */ (function () {
-    function HieknNetChartUpdateService() {
     }
-    HieknNetChartUpdateService.updateOptions = function (options) {
+}
+
+class HieknNetChartUpdateService {
+
+    static updateOptions(options: any) {
         options = HieknSDKService.updateOptionsData(options);
-        options.infoboxSetting = { enable: options.infobox };
+        options.infoboxSetting = {enable:options.infobox};
         options.enableAutoUpdateStyle != undefined && (options.autoUpdateStyle = options.enableAutoUpdateStyle);
         return options;
-    };
-    return HieknNetChartUpdateService;
-}());
-var HieknGraphService = /** @class */ (function (_super) {
-    __extends(HieknGraphService, _super);
-    function HieknGraphService() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
-    HieknGraphService.prototype.beforeInit = function (options) {
-        _super.prototype.beforeInit.call(this, HieknNetChartUpdateService.updateOptions(options));
-    };
-    return HieknGraphService;
-}(HieknSDKGraph));
-var HieknTimingGraphService = /** @class */ (function (_super) {
-    __extends(HieknTimingGraphService, _super);
-    function HieknTimingGraphService() {
-        return _super !== null && _super.apply(this, arguments) || this;
+}
+
+class HieknGraphService extends HieknSDKGraph {
+
+    protected beforeInit(options: HieknNetChartSetting) {
+        super.beforeInit(HieknNetChartUpdateService.updateOptions(options));
     }
-    HieknTimingGraphService.prototype.beforeInit = function (options) {
-        _super.prototype.beforeInit.call(this, HieknNetChartUpdateService.updateOptions(options));
-    };
-    return HieknTimingGraphService;
-}(HieknSDKTiming));
-var HieknPathService = /** @class */ (function (_super) {
-    __extends(HieknPathService, _super);
-    function HieknPathService() {
-        return _super !== null && _super.apply(this, arguments) || this;
+}
+
+class HieknTimingGraphService extends HieknSDKTiming {
+
+    protected beforeInit(options: HieknNetChartSetting) {
+        super.beforeInit(HieknNetChartUpdateService.updateOptions(options));
     }
-    HieknPathService.prototype.beforeInit = function (options) {
-        _super.prototype.beforeInit.call(this, HieknNetChartUpdateService.updateOptions(options));
-    };
-    return HieknPathService;
-}(HieknSDKPath));
-var HieknRelationService = /** @class */ (function (_super) {
-    __extends(HieknRelationService, _super);
-    function HieknRelationService() {
-        return _super !== null && _super.apply(this, arguments) || this;
+}
+
+class HieknPathService extends HieknSDKPath {
+
+    protected beforeInit(options: HieknNetChartSetting) {
+        super.beforeInit(HieknNetChartUpdateService.updateOptions(options));
     }
-    HieknRelationService.prototype.beforeInit = function (options) {
-        _super.prototype.beforeInit.call(this, HieknNetChartUpdateService.updateOptions(options));
-    };
-    return HieknRelationService;
-}(HieknSDKRelation));
-var HieknInfoboxService = /** @class */ (function (_super) {
-    __extends(HieknInfoboxService, _super);
-    function HieknInfoboxService(options) {
-        var _this = this;
+}
+
+class HieknRelationService extends HieknSDKRelation {
+
+    protected beforeInit(options: HieknNetChartSetting) {
+        super.beforeInit(HieknNetChartUpdateService.updateOptions(options));
+    }
+}
+
+class HieknInfoboxService extends HieknSDKInfobox {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
         options.changeInfobox = options.href;
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknInfoboxService;
-}(HieknSDKInfobox));
-var HieknPromptService = /** @class */ (function (_super) {
-    __extends(HieknPromptService, _super);
-    function HieknPromptService(options) {
-        var _this = this;
+}
+
+class HieknPromptService extends HieknSDKPrompt {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
         options.promptType = 0;
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknPromptService;
-}(HieknSDKPrompt));
-var HieknConceptPromptService = /** @class */ (function (_super) {
-    __extends(HieknConceptPromptService, _super);
-    function HieknConceptPromptService(options) {
-        var _this = this;
+}
+
+class HieknConceptPromptService extends HieknSDKPrompt {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
         options.promptType = 1;
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknConceptPromptService;
-}(HieknSDKPrompt));
-var HieknConceptGraphService = /** @class */ (function (_super) {
-    __extends(HieknConceptGraphService, _super);
-    function HieknConceptGraphService(options) {
-        var _this = this;
+}
+
+class HieknConceptGraphService extends HieknSDKConceptGraph {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknConceptGraphService;
-}(HieknSDKConceptGraph));
-var HieknTableService = /** @class */ (function (_super) {
-    __extends(HieknTableService, _super);
-    function HieknTableService(options) {
-        var _this = this;
+}
+
+class HieknTableService extends HieknSDKTable {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknTableService;
-}(HieknSDKTable));
-var HieknResourceService = /** @class */ (function (_super) {
-    __extends(HieknResourceService, _super);
-    function HieknResourceService(options) {
-        var _this = this;
+}
+
+class HieknResourceService extends HieknSDKResource {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknResourceService;
-}(HieknSDKResource));
-var HieknResourcesService = /** @class */ (function (_super) {
-    __extends(HieknResourcesService, _super);
-    function HieknResourcesService(options) {
-        var _this = this;
+}
+
+class HieknResourcesService extends HieknSDKResources {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknResourcesService;
-}(HieknSDKResources));
-var HieknConceptTreeService = /** @class */ (function (_super) {
-    __extends(HieknConceptTreeService, _super);
-    function HieknConceptTreeService(options) {
-        var _this = this;
+}
+
+class HieknConceptTreeService extends HieknSDKConceptTree {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
         options.nodeHoverTools.infoboxSetting = options.nodeHoverTools.infobox;
         options.nodeHoverTools.graphSetting = options.nodeHoverTools.graph;
         options.nodeHoverTools.graphSetting.infoboxSetting = options.nodeHoverTools.graphSetting.infobox;
-        _this = _super.call(this, options) || this;
-        return _this;
+        super(options);
     }
-    return HieknConceptTreeService;
-}(HieknSDKConceptTree));
-var HieknStatService = /** @class */ (function () {
-    function HieknStatService(options) {
+}
+
+class HieknStatService {
+    constructor(options: any) {
         options = HieknSDKService.updateOptionsData(options);
         $.extend(true, options.formData, options.config.querySettings);
         options.formDataUpdater = options.beforeLoad; //TODO
-        var type = options.config.type;
+        const type = options.config.type;
         if (type == 'pie') {
             return new HieknSDKStatPie(options);
-        }
-        else if (type == 'line' || type == 'bar') {
+        } else if (type == 'line' || type == 'bar') {
             return new HieknSDKStatLineBar(options);
-        }
-        else if (type == 'wordCloud') {
+        } else if (type == 'wordCloud') {
             return new HieknSDKStatWordCloud(options);
         }
     }
-    return HieknStatService;
-}());
-//# sourceMappingURL=hiekn-sdk.js.map
+}
