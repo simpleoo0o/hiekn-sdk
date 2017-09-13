@@ -2,7 +2,7 @@
      * @author: 
      *    jiangrun002
      * @version: 
-     *    v2.4.1
+     *    v3.0.0
      * @license:
      *    Copyright 2017, jiangrun. All rights reserved.
      */
@@ -31,17 +31,23 @@
 .tgc2.tgc2-concept-graph .tgc2-info-top li {
   line-height: 30px;
 }
-.tgc2.tgc2-concept-graph .tgc2-info-top li i {
+.tgc2.tgc2-concept-graph .tgc2-info-top li .legend-circle,
+.tgc2.tgc2-concept-graph .tgc2-info-top li .legend-circle-o {
   margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  border-radius: 50%;
+  vertical-align: -3px;
 }
-.tgc2.tgc2-concept-graph .tgc2-info-top .current i {
-  color: #faa01b;
+.tgc2.tgc2-concept-graph .tgc2-info-top .current .legend-circle {
+  background-color: #faa01b;
 }
-.tgc2.tgc2-concept-graph .tgc2-info-top .concept i {
-  color: #00b38a;
+.tgc2.tgc2-concept-graph .tgc2-info-top .concept .legend-circle {
+  background-color: #00b38a;
 }
-.tgc2.tgc2-concept-graph .tgc2-info-top .instance i {
-  color: #00b38a;
+.tgc2.tgc2-concept-graph .tgc2-info-top .instance .legend-circle-o {
+  border: 2px solid #00b38a;
 }
 
 /* define end */
@@ -297,6 +303,9 @@
   font-size: 12px;
   line-height: 22px;
   color: #999;
+}
+.hiekn-instance-container .hiekn-instance-list ul {
+  padding: 0;
 }
 .hiekn-instance-container .hiekn-instance-list li {
   height: 30px;
@@ -733,7 +742,7 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   background: #fcfdfc;
   border-top: 1px solid #ddd;
   margin-left: 90px;
-  padding: 10px 125px 8px 16px;
+  padding: 10px 132px 8px 16px;
   min-height: 50px;
 }
 .hiekn-table .hiekn-table-filter .hiekn-table-filter-item .hiekn-table-filter-item-content span {
@@ -752,6 +761,10 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   background: #d9f4ee;
   color: #00b38a;
   border-color: #00b38a;
+}
+.hiekn-table .hiekn-table-filter .hiekn-table-filter-item .hiekn-table-filter-item-content span:hover svg,
+.hiekn-table .hiekn-table-filter .hiekn-table-filter-item .hiekn-table-filter-item-content span.active svg {
+  fill: #00b38a;
 }
 .hiekn-table .hiekn-table-filter .hiekn-table-filter-item.hiekn-table-filter-item-kw .hiekn-table-filter-item-content {
   padding-right: 16px;
@@ -787,15 +800,19 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   position: absolute;
   top: 0;
   right: 0;
-  width: 125px;
+  width: 132px;
   line-height: 50px;
 }
 .hiekn-table .hiekn-table-filter .hiekn-table-filter-item .hiekn-table-more-container span {
   background: #fff;
   border-color: #ddd;
 }
+.hiekn-table .hiekn-table-filter .hiekn-table-filter-item .hiekn-table-more-container span svg {
+  fill: #666;
+  vertical-align: -3px;
+}
 .hiekn-table .hiekn-table-filter .hiekn-table-filter-item .hiekn-table-more-container .btn {
-  width: 52px;
+  width: 62px;
   height: 26px;
   min-height: 26px;
   min-width: 52px;
@@ -861,13 +878,19 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   min-width: 16px;
   cursor: pointer;
   text-align: center;
+  vertical-align: middle;
+  line-height: 1em;
+}
+.hiekn-table .hiekn-table-normal tbody td.hiekn-table-data-angle.on svg {
+  transform: rotate(0deg);
+}
+.hiekn-table .hiekn-table-normal tbody td.hiekn-table-data-angle svg {
+  fill: #666;
+  transform: rotate(-90deg);
   -webkit-transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   -moz-transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   -o-transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-}
-.hiekn-table .hiekn-table-normal tbody td.hiekn-table-data-angle.on {
-  transform: rotate(90deg);
 }
 .hiekn-table .hiekn-table-normal tbody td a {
   color: #00b38a;

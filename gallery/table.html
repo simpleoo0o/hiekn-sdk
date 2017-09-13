@@ -32,21 +32,25 @@
         var config = {};
         config.container = '#container';
         config.config = {
-            name: '标准资源',
-            databases: ['u260'],
-            tables: ['u260_data_def48ea5'],
-            fields: ['title', 'publishTime', 'keyword', 'from', 'url'],
-            fieldsName: ['标题', '发布时间', '关键词', '类型', '来源'],
-            fieldsRenderer: {publishTime: 'date', url: {type: 'link', array: true}},
+            name: "论文资源",
+            databases: ["u260"],
+            tables: ["u260_data_543b880d"],
+            fields: ["title", "ins2", "publishTime", "keyword", "from", "url"],
+            fieldsName: ["标题", "学校", "发布时间", "关键词", "类型", "来源"],
+            fieldsRenderer: {
+                publishTime: "year",
+                url: "link"
+            },
+            drawDetail: true,
             filter: [{
-                key: 'publishTime',
-                label: '发布时间',
-                type: 'year',
-                format: 'YYYYMMDD',
+                key: "publishTime",
+                label: "发布时间",
+                type: "year",
+                format: "YYYYMMDD",
                 options: [{
-                    key: '全部',
-                    value: ''
-                }, '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999']
+                    key: "全部",
+                    value: ""
+                }, "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "1999"]
             }]
         };
         config.load = function (pageNo, instance) {
@@ -55,7 +59,16 @@
             param.databases = res.databases;
             param.tables = res.tables;
             param.fields = res.fields;
-            param.query = '';
+            param.query = {
+                "bool": {
+                    "must": [{
+                        "bool": {
+                            "should": [{"terms": {"annotation_tag.id": ["1"]}}, {"terms": {"parent_annotation_tag.id": ["1"]}}],
+                            "minimum_should_match": 1
+                        }
+                    }]
+                }
+            };
             param.pageNo = pageNo;
             param.pageSize = 15;
             var $container = instance.select('.hiekn-table-content');
@@ -68,7 +81,7 @@
                     if (data) {
                         instance.drawPage(data.rsCount, params.pageNo, params.pageSize);
                         instance.drawData(data.rsData);
-                    }else{
+                    } else {
                         instance.drawPage(0, params.pageNo, params.pageSize);
                     }
                 },

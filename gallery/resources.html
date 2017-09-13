@@ -45,89 +45,93 @@
         config.container = '#container';
         config.configs = [
             {
-                id: 1,
-                name: '论文资源',
-                databases: ['u260'],
-                tables: ['u260_data_54353828'],
-                fields: ['title', 'ins', 'publishTime', 'keyword', 'from', 'url'],
-                fieldsName: ['标题', '学校', '发布时间', '关键词', '类型', '来源'],
-                fieldsRenderer: {publishTime: 'year', url: 'link'},
-                filter: [{
-                    key: 'publishTime',
-                    label: '发布时间',
-                    type: 'year',
-                    format: 'YYYYMMDD',
-                    options: [{
-                        key: '全部',
-                        value: ''
-                    }, '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999']
-                }],
-                img: 'images/res-1.svg'
-            },
-            {
-                id: 2,
-                name: '报纸资源',
-                databases: ['u260'],
-                tables: ['u260_data_5a71ebec'],
-                fields: ['title', 'ins', 'publishTime', 'keyword', 'url'],
-                fieldsName: ['标题', '报纸', '发布时间', '关键词', '来源'],
-                fieldsRenderer: {publishTime: 'date', url: {type: 'link', fields: ['title']}},
-                filter: [{
-                    key: 'publishTime',
-                    label: '发布时间',
-                    type: 'year',
-                    format: 'YYYYMMDD',
-                    options: [{
-                        key: '全部',
-                        value: ''
-                    }, '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999']
-                }],
-                img: 'images/res-2.svg'
-            },
-            {
-                id: 3,
-                name: '专利资源',
-                databases: ['u260'],
-                tables: ['u260_data_ab521704'],
-                fieldsTable: ['title', 'publishTime', 'application_num', 'holder', 'patent_classification', 'keyword'],
-                fieldsTableName: ['标题', '申请日期', '申请号', '申请人', '专利类型', '关键词', '来源'],
-                fields: ['title', 'publishTime', 'application_num',  'publication_num', 'holder', 'address', 'patent_classification', 'agency', 'agent', 'keyword', 'patent_abs'],
-                fieldsName: ['标题', '申请日期', '申请号', '公开号', '申请人', '地址', '专利类型', '代理机构', '代理人', '关键词', '摘要'],
+                name: "论文资源",
+                databases: ["u260"],
+                tables: ["u260_data_543b880d"],
+                fields: ["title", "ins", "publishTime", "keyword", "from", "url"],
+                fieldsName: ["标题", "学校", "发布时间", "关键词", "类型", "来源"],
                 fieldsRenderer: {
-                    publishTime: 'date',
-                    publication_date: 'date'
+                    publishTime: "year",
+                    url: "link"
                 },
                 filter: [{
-                    key: 'publishTime',
-                    label: '申请日期',
-                    type: 'year',
-                    format: 'YYYYMMDD',
+                    key: "publishTime",
+                    label: "发布时间",
+                    type: "year",
+                    format: "YYYYMMDD",
                     options: [{
-                        key: '全部',
-                        value: ''
-                    }, '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999']
-                }],
-                img: 'images/res-3.svg'
-            },
-            {
-                id: 4,
-                name: '标准资源',
-                databases: ['u260'],
-                tables: ['u260_data_def48ea5'],
-                fields: ['title', 'publishTime', 'keyword', 'from', 'url'],
-                fieldsName: ['标题', '发布时间', '关键词', '类型', '来源'],
-                fieldsRenderer: {publishTime: 'date', url: {type: 'link', name: '资源'}},
+                        key: "全部",
+                        value: ""
+                    }, "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "1999"]
+                }]
+            }, {
+                name: "报纸资源",
+                databases: ["u260"],
+                tables: ["u260_data_a120c72a"],
+                fields: ["title", "ins", "publishTime", "keyword", "url"],
+                fieldsName: ["标题", "报纸", "发布时间", "关键词", "来源"],
+                fieldsRenderer: {
+                    publishTime: "date",
+                    url: {
+                        type: "link",
+                        fields: ["title"]
+                    }
+                },
                 filter: [{
-                    key: 'publishTime',
-                    label: '发布时间',
-                    type: 'year',
-                    format: 'YYYYMMDD',
+                    key: "publishTime",
+                    label: "发布时间",
+                    type: "year",
+                    format: "YYYYMMDD",
                     options: [{
-                        key: '全部',
-                        value: ''
-                    }, '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999']
-                }],
-                img: 'images/res-4.svg'
+                        key: "全部",
+                        value: ""
+                    }, "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "1999"]
+                }]
+            }, {
+                name: "专利资源",
+                databases: ["u260"],
+                tables: ["u260_data_e24b287d"],
+                fieldsTable: ["title", "publishTime", "application_num", "holder", "patent_classification", "keyword"],
+                fieldsTableName: ["标题", "申请日期", "申请号", "申请人", "专利类型", "关键词", "来源"],
+                fields: ["title", "publishTime", "application_num", "publication_num", "holder", "address", "patent_classification", "agency", "agent", "keyword", "patent_abs"],
+                fieldsName: ["标题", "申请日期", "申请号", "公开号", "申请人", "地址", "专利类型", "代理机构", "代理人", "关键词", "摘要"],
+                fieldsRenderer: {
+                    publishTime: "date",
+                    publication_date: "date"
+                },
+                filter: [{
+                    key: "publishTime",
+                    label: "申请日期",
+                    type: "year",
+                    format: "YYYYMMDD",
+                    options: [{
+                        key: "全部",
+                        value: ""
+                    }, "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "1999"]
+                }]
+            }, {
+                name: "标准资源",
+                databases: ["u260"],
+                tables: ["u260_data_2d2bb77c"],
+                fields: ["title", "publishTime", "keyword", "from", "url"],
+                fieldsName: ["标题", "发布时间", "关键词", "类型", "来源"],
+                fieldsRenderer: {
+                    publishTime: "date",
+                    url: {
+                        type: "link",
+                        name: "资源"
+                    }
+                },
+                filter: [{
+                    key: "publishTime",
+                    label: "发布时间",
+                    type: "year",
+                    format: "YYYYMMDD",
+                    options: [{
+                        key: "全部",
+                        value: ""
+                    }, "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "1999"]
+                }]
             }
         ];
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';

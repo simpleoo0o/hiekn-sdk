@@ -51,29 +51,42 @@
         config.container = '#container';
         config.readAll = true;
         config.nodeHoverTools = {
-            infobox: {enable: true},
+            infobox: {enable: true, queryData:{a:2}, formData:{b:3}, onFailed: function (data) {
+                console.log(data);
+            }},
             graph: {
-                enable: true, instanceEnable: true, infobox: false, conceptGraphSettings: {
+                enable: true, instanceEnable: true, infobox: {enable:true,queryData:{a:3}, formData:{b:4}}, conceptGraphSettings: {
                     primaryColor: '#0098ff',
-                    primaryLightColor: 'rgba(0,150,255,0.3)'
+                    primaryLightColor: 'rgba(0,150,255,0.3)',
+                    queryData:{a:4}, formData:{b:5}
                 }
             }
         };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.data = {a:1};
+        config.data2 = {b:2};
         config.instance = {
             enable: true,
+            queryData:{a:5}, formData:{b:6},
             url: 'http://kg.hiekn.com:8888/plantdata_console/console/edit/instance/get/instances/conceptId',
             onClick: function (node) {
                 console.log(node);
             },
+            success:function (data) {
+              console.log('success',data);
+            },
             searchSettings: {
                 url: 'http://kg.hiekn.com:8888/plantdata_console/console/edit/general/get/prompt/fuzzy?type=110',
                 type: 0,
-                paramName: 'text'
+                paramName: 'text',
+                queryData:{a:6}, formData:{b:7},
+                success:function (data) {
+                    console.log(data);
+                }
             }
         };
         config.dataFilter = function (data) {
-            console.log(data);
+            console.log('globalDataFilter');
             return data;
         };
         config.initId = 9;

@@ -38,7 +38,12 @@ gulp.task('clean-js', function (cb) {
 
 gulp.task('concat-js', function () {
     return gulp.src([
-        src + '**/*.js'
+        src + 'ts/netchart/netchart.js',
+        src + 'ts/netchart/*.js',
+        src + 'ts/stat/stat.js',
+        src + 'ts/stat/*.js',
+        src + 'ts/*.js',
+        src + 'ts/upgrade/*.js'
     ]).pipe(concat(jsDevFile)).pipe(gulp.dest(dst));
 });
 
@@ -92,7 +97,8 @@ gulp.task('main-bower-file', ['clean-lib'], function () {
             'tgc2': {
                 'main': [
                     'dist/tgc2.min.css',
-                    'dist/tgc2.min.js'
+                    'dist/tgc2.min.js',
+                    'dist/tgc2.d.ts'
                 ]
             },
             'bootstrap-datepicker': {

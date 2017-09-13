@@ -1,6 +1,6 @@
 {
   "name": "hiekn-sdk",
-  "version": "2.4.1",
+  "version": "3.0.0",
   "description": "",
   "homepage": "",
   "repository": {
@@ -13,6 +13,10 @@
   },
   "license": "private",
   "devDependencies": {
+    "@types/echarts": "0.0.7",
+    "@types/jquery": "^2.0.48",
+    "@types/lodash": "^4.14.74",
+    "@types/toastr": "^2.1.35",
     "bower": "^1.8.0",
     "del": "^2.2.0",
     "gulp": "^3.9.1",

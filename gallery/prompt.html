@@ -39,7 +39,12 @@
         var config = {};
         config.kgName = 'kg_ct';
         config.container = '#container';
+        config.queryData = {a:1};
+        config.formData = {b:2};
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.schemaSetting = {
+            queryData: {a:3}
+        };
         config.onSearch = function (data, $container) {
             console.log(data);
             console.log($container);

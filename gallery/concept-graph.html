@@ -45,11 +45,18 @@
         var config = {};
         config.kgName = 'kg_ct';
         config.selector = '#container';
+        config.data = {a: 1};
+        config.formData = {b: 2};
         config.dataFilter = function (data) {
             console.log(data);
             return data;
         };
         config.instanceEnable = true;
+        config.infobox = {
+            enable: true,
+            queryData: {a1: 1},
+            formData: {b2: 2}
+        };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         config.startInfo = {'id': 11, kgType: 0};
         hieknjs.getSearchParm('init') !== '0' && initData(config);

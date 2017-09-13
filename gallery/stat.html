@@ -40,6 +40,7 @@
         $(config.container).empty();
         var service = new HieknStatService(config);
         service.load();
+        console.log(service);
     }
 
     $(function () {
@@ -103,6 +104,7 @@
         };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
         hieknjs.getSearchParm('init') !== '0' && initData(config);
+
     });
 </script>
 </body>
