@@ -24,7 +24,7 @@
   "dependencies": {
     "hiekn-prompt": "^0.3.0",
     "hieknjs": "^0.3.5",
-    "tgc2": "^2.2.4",
+    "tgc2": "^2.2.8",
     "echarts": "~3.5.4",
     "bootstrap-datepicker": "^1.6.4",
     "tooltipster": "^4.2.5",
