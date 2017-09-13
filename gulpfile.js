@@ -38,6 +38,7 @@ gulp.task('clean-js', function (cb) {
 
 gulp.task('concat-js', function () {
     return gulp.src([
+        src + 'ts/utils.js',
         src + 'ts/netchart/netchart.js',
         src + 'ts/netchart/*.js',
         src + 'ts/stat/stat.js',

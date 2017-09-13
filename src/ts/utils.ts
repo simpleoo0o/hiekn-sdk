@@ -23,7 +23,7 @@ interface HieknAjaxSetting extends JQueryAjaxSettings {
 }
 
 class HieknSDKUtils {
-
+    static VERSION = '3.0.0';
     static regChinese = /^[\u4e00-\u9fa5]$/;
     static regEnglish = /^[a-zA-Z]$/;
     static colorBase = ['#7bc0e1',
@@ -114,6 +114,10 @@ class HieknSDKUtils {
 
     static error(msg: string) {
         toastr.error(msg);
+    }
+
+    static getVersion(){
+        return HieknSDKUtils.VERSION;
     }
 
     static info(msg: string) {

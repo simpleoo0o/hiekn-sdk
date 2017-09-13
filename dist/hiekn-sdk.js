@@ -7,6 +7,112 @@
      *    Copyright 2017, jiangrun. All rights reserved.
      */
 
+var HieknSDKUtils = (function () {
+    function HieknSDKUtils() {
+    }
+    HieknSDKUtils.ajax = function (options) {
+        var error = options.error || $.noop;
+        var type = options.type;
+        switch (type) {
+            case 'GET':
+                type = 0;
+                break;
+            case 'POST':
+                type = 1;
+                break;
+        }
+        var newOptions = {
+            type: type,
+            dataFilter: options.dataFilter || HieknSDKUtils.dataFilter,
+            params: options.data,
+            success: function (data, textStatus, jqXHR, params) {
+                if (data && data.rsData) {
+                    options.success(data.rsData, textStatus, jqXHR, data, params);
+                }
+                else {
+                    error(data, textStatus, jqXHR, null, params);
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                error(null, textStatus, xhr, errorThrown);
+            },
+        };
+        newOptions = $.extend(true, {}, options, newOptions);
+        hieknjs.kgLoader(newOptions);
+    };
+    HieknSDKUtils.buildUrl = function (url, queryData) {
+        if (queryData && !$.isEmptyObject(queryData)) {
+            var link = url.indexOf('?') > 0 ? '&' : '?';
+            return url + link + $.param(queryData);
+        }
+        else {
+            return url;
+        }
+    };
+    HieknSDKUtils.dataFilter = function (data) {
+        return data;
+    };
+    HieknSDKUtils.drawPagination = function (options) {
+        $.extend(true, options, {
+            data: Math.ceil(options.totalItem / options.pageSize),
+            cur: options.current,
+            p: options.selector,
+            event: options.callback
+        });
+        hieknjs.gentPage(options);
+    };
+    HieknSDKUtils.error = function (msg) {
+        toastr.error(msg);
+    };
+    HieknSDKUtils.getVersion = function () {
+        return HieknSDKUtils.VERSION;
+    };
+    HieknSDKUtils.info = function (msg) {
+        toastr.info(msg);
+    };
+    HieknSDKUtils.qiniuImg = function (img) {
+        return img + '?_=' + Math.floor(new Date().getTime() / 3600000);
+    };
+    HieknSDKUtils.randomId = function (prefix, postfix, append) {
+        if (prefix === void 0) { prefix = ''; }
+        if (postfix === void 0) { postfix = ''; }
+        if (append === void 0) { append = ''; }
+        return prefix + (append ? append : new Date().getTime() + Math.ceil(Math.random() * 10000)) + postfix;
+    };
+    HieknSDKUtils.safeHTML = function (value) {
+        return hieknjs.safeHTML(value);
+    };
+    HieknSDKUtils.dealNull = function (data) {
+        return hieknjs.dealNull(data);
+    };
+    return HieknSDKUtils;
+}());
+HieknSDKUtils.VERSION = '3.0.0';
+HieknSDKUtils.regChinese = /^[\u4e00-\u9fa5]$/;
+HieknSDKUtils.regEnglish = /^[a-zA-Z]$/;
+HieknSDKUtils.colorBase = ['#7bc0e1',
+    '#9ec683',
+    '#fde14d',
+    '#ab89f4',
+    '#e26f63',
+    '#dca8c6',
+    '#596690',
+    '#eaad84',
+    '#abe8bf',
+    '#7979fc'];
+HieknSDKUtils.colorEx = ['#6db5d6',
+    '#d0648a',
+    '#c0d684',
+    '#f2bac9',
+    '#847d99',
+    '#baf2d8',
+    '#bfb3de',
+    '#f4817c',
+    '#94cdba',
+    '#b2cede'];
+HieknSDKUtils.color = HieknSDKUtils.colorBase.concat(HieknSDKUtils.colorEx);
+HieknSDKUtils.loadingHTML = "<div class=\"schema-init\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 14 32 18\" width=\"32\" height=\"4\" preserveAspectRatio=\"none\">\n        <path opacity=\"0.8\" transform=\"translate(0 0)\" d=\"M2 14 V18 H6 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0\" repeatCount=\"indefinite\" keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        <path opacity=\"0.5\" transform=\"translate(0 0)\" d=\"M0 14 V18 H8 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0.1s\" repeatCount=\"indefinite\" keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        <path opacity=\"0.25\" transform=\"translate(0 0)\" d=\"M0 14 V18 H8 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0.2s\" repeatCount=\"indefinite\"\n         keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        </svg>\n        </div>";
+//# sourceMappingURL=utils.js.map
 var HieknSDKNetChart = (function () {
     function HieknSDKNetChart(options) {
         this.isInit = false;
@@ -3115,108 +3221,6 @@ var HieknSDKTagging = (function () {
     return HieknSDKTagging;
 }());
 //# sourceMappingURL=tagging.js.map
-var HieknSDKUtils = (function () {
-    function HieknSDKUtils() {
-    }
-    HieknSDKUtils.ajax = function (options) {
-        var error = options.error || $.noop;
-        var type = options.type;
-        switch (type) {
-            case 'GET':
-                type = 0;
-                break;
-            case 'POST':
-                type = 1;
-                break;
-        }
-        var newOptions = {
-            type: type,
-            dataFilter: options.dataFilter || HieknSDKUtils.dataFilter,
-            params: options.data,
-            success: function (data, textStatus, jqXHR, params) {
-                if (data && data.rsData) {
-                    options.success(data.rsData, textStatus, jqXHR, data, params);
-                }
-                else {
-                    error(data, textStatus, jqXHR, null, params);
-                }
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                error(null, textStatus, xhr, errorThrown);
-            },
-        };
-        newOptions = $.extend(true, {}, options, newOptions);
-        hieknjs.kgLoader(newOptions);
-    };
-    HieknSDKUtils.buildUrl = function (url, queryData) {
-        if (queryData && !$.isEmptyObject(queryData)) {
-            var link = url.indexOf('?') > 0 ? '&' : '?';
-            return url + link + $.param(queryData);
-        }
-        else {
-            return url;
-        }
-    };
-    HieknSDKUtils.dataFilter = function (data) {
-        return data;
-    };
-    HieknSDKUtils.drawPagination = function (options) {
-        $.extend(true, options, {
-            data: Math.ceil(options.totalItem / options.pageSize),
-            cur: options.current,
-            p: options.selector,
-            event: options.callback
-        });
-        hieknjs.gentPage(options);
-    };
-    HieknSDKUtils.error = function (msg) {
-        toastr.error(msg);
-    };
-    HieknSDKUtils.info = function (msg) {
-        toastr.info(msg);
-    };
-    HieknSDKUtils.qiniuImg = function (img) {
-        return img + '?_=' + Math.floor(new Date().getTime() / 3600000);
-    };
-    HieknSDKUtils.randomId = function (prefix, postfix, append) {
-        if (prefix === void 0) { prefix = ''; }
-        if (postfix === void 0) { postfix = ''; }
-        if (append === void 0) { append = ''; }
-        return prefix + (append ? append : new Date().getTime() + Math.ceil(Math.random() * 10000)) + postfix;
-    };
-    HieknSDKUtils.safeHTML = function (value) {
-        return hieknjs.safeHTML(value);
-    };
-    HieknSDKUtils.dealNull = function (data) {
-        return hieknjs.dealNull(data);
-    };
-    return HieknSDKUtils;
-}());
-HieknSDKUtils.regChinese = /^[\u4e00-\u9fa5]$/;
-HieknSDKUtils.regEnglish = /^[a-zA-Z]$/;
-HieknSDKUtils.colorBase = ['#7bc0e1',
-    '#9ec683',
-    '#fde14d',
-    '#ab89f4',
-    '#e26f63',
-    '#dca8c6',
-    '#596690',
-    '#eaad84',
-    '#abe8bf',
-    '#7979fc'];
-HieknSDKUtils.colorEx = ['#6db5d6',
-    '#d0648a',
-    '#c0d684',
-    '#f2bac9',
-    '#847d99',
-    '#baf2d8',
-    '#bfb3de',
-    '#f4817c',
-    '#94cdba',
-    '#b2cede'];
-HieknSDKUtils.color = HieknSDKUtils.colorBase.concat(HieknSDKUtils.colorEx);
-HieknSDKUtils.loadingHTML = "<div class=\"schema-init\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 14 32 18\" width=\"32\" height=\"4\" preserveAspectRatio=\"none\">\n        <path opacity=\"0.8\" transform=\"translate(0 0)\" d=\"M2 14 V18 H6 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0\" repeatCount=\"indefinite\" keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        <path opacity=\"0.5\" transform=\"translate(0 0)\" d=\"M0 14 V18 H8 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0.1s\" repeatCount=\"indefinite\" keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        <path opacity=\"0.25\" transform=\"translate(0 0)\" d=\"M0 14 V18 H8 V14z\">\n        <animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0; 24 0; 0 0\" dur=\"2s\" begin=\"0.2s\" repeatCount=\"indefinite\"\n         keySplines=\"0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8\" calcMode=\"spline\" /></path>\n        </svg>\n        </div>";
-//# sourceMappingURL=utils.js.map
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
