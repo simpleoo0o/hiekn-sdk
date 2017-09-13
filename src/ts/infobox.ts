@@ -1,5 +1,5 @@
 interface HieknInfoboxSetting extends HieknBaseSetting {
-    kgName: string;
+    kgName?: string;
     autoLen?: boolean;
     atts?: { visible: number[], hidden: number[] };
     enable?: boolean;
@@ -14,7 +14,6 @@ interface HieknInfoboxSetting extends HieknBaseSetting {
 class HieknSDKInfobox {
     callback: Function = $.noop;
     defaults: HieknInfoboxSetting = {
-        kgName: null,
         atts: {visible: [], hidden: []},
         enableLink: false,
         autoLen: true,

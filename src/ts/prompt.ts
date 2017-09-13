@@ -1,5 +1,5 @@
 interface HieknPromptSetting extends HieknBaseSetting {
-    kgName: string;
+    kgName?: string;
     beforeDrawPrompt?: Function;
     container?: string;
     ready?: Function;
@@ -18,7 +18,6 @@ interface HieknPromptRequestSetting extends HieknPromptSetting {
 
 class HieknSDKPrompt {
     defaults: HieknPromptSetting = {
-        kgName: null,
         ready: $.noop,
         group: false,
         replaceSearch: false,
