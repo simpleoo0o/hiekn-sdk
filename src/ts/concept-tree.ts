@@ -17,11 +17,11 @@ interface HieknConceptTreeSetting extends HieknBaseSetting {
     nameKey?: string;
     onNodeClick?: Function;
     nodeHoverTools?: {
-        infobox?: HieknInfoboxSetting,
-        graph?: {
+        infoboxSetting?: HieknNetChartInfoboxSetting,
+        graphSetting?: {
             enable?: boolean;
             instanceEnable?: boolean;
-            infobox?: HieknInfoboxSetting;
+            infoboxSetting?: HieknNetChartInfoboxSetting;
             conceptGraphSettings?: HieknConceptGraphSetting
         }
     },
@@ -66,13 +66,13 @@ class HieknSDKConceptTree {
         nameKey: 'name',
         onNodeClick: $.noop,
         nodeHoverTools: {
-            infobox: {
+            infoboxSetting: {
                 enable: false
             },
-            graph: {
+            graphSetting: {
                 enable: false,
                 instanceEnable: false,
-                infobox: {
+                infoboxSetting: {
                     enable: false
                 }
             }
@@ -98,11 +98,11 @@ class HieknSDKConceptTree {
         this.$container.addClass('hiekn-concept-tree').append('<ul class="ztree" id="' + this.treeId + '"></ul>');
         this.zTreeSettings = this.updateZTreeSettings();
         this.zTree = (<any>$.fn).zTree.init(this.$container.find('.ztree'), this.zTreeSettings);
-        if (this.options.nodeHoverTools.graph.enable) {
+        if (this.options.nodeHoverTools.graphSetting.enable) {
             this.buildGraph();
         }
-        if (this.options.nodeHoverTools.infobox.enable) {
-            this.treeInfobox = this.buildInfobox(this.options.nodeHoverTools.infobox);
+        if (this.options.nodeHoverTools.infoboxSetting.enable) {
+            this.treeInfobox = this.buildInfobox(this.options.nodeHoverTools.infoboxSetting);
         }
         if (this.options.instance.enable) {
             const id = HieknSDKUtils.randomId(this.options.namespace + '-prompt-');
@@ -193,7 +193,9 @@ class HieknSDKConceptTree {
         const selector = HieknSDKUtils.randomId(this.options.namespace + '-tgc2-');
         this.$graphContainer = $('<div class="modal fade hiekn-concept-tree-graph-modal" id="' + selector + '-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">' +
             '<div class="modal-dialog modal-lg">' +
-            '<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><i class="fa fa-times-circle"></i></button>' +
+            '<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">' +
+            '<svg height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>' +
+            '</button>' +
             '<h4 class="modal-title"><span name="title"></span></h4></div><div class="modal-body"><div class="' + selector + '"></div></div></div></div></div>');
         $('body').append(this.$graphContainer);
         let settings: HieknConceptGraphSetting = {
@@ -201,13 +203,13 @@ class HieknSDKConceptTree {
             baseUrl: this.options.baseUrl,
             dataFilter: this.options.dataFilter,
             kgName: this.options.kgName,
-            infobox: this.options.nodeHoverTools.graph.infobox,
-            instanceEnable: this.options.nodeHoverTools.graph.instanceEnable,
+            infoboxSetting: this.options.nodeHoverTools.graphSetting.infoboxSetting,
+            instanceEnable: this.options.nodeHoverTools.graphSetting.instanceEnable,
             promptSettings: {
                 dataFilter: this.options.dataFilter
             }
         };
-        $.extend(true, settings, this.options.nodeHoverTools.graph.conceptGraphSettings);
+        $.extend(true, settings, this.options.nodeHoverTools.graphSetting.conceptGraphSettings);
         this.tgc2ConceptGraph = new HieknConceptGraphService(settings);
     }
 

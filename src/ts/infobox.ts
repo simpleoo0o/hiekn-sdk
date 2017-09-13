@@ -2,7 +2,6 @@ interface HieknInfoboxSetting extends HieknBaseSetting {
     kgName?: string;
     autoLen?: boolean;
     atts?: { visible: number[], hidden: number[] };
-    enable?: boolean;
     enableLink?: boolean;
     imagePrefix?: string;
     onLoad?: Function;

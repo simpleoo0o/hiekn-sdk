@@ -15,7 +15,7 @@ interface HieknSchema {
 }
 
 interface HieknSchemaSetting extends HieknAjaxSetting {
-    kgName: string
+    kgName?: string
 }
 
 class HieknSDKSchema {

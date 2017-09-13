@@ -55,12 +55,12 @@ var HieknSDKNetChart = (function () {
             selectedTypes: options.selectedTypes
         };
         this.infoboxSettings = {
-            enable: typeof (options.infobox) == 'boolean' ? options.infobox : true,
+            enable: true,
             selector: options.selector,
             imagePrefix: options.imagePrefix,
-            formData: { kgName: options.kgName }
+            kgName: options.kgName
         };
-        $.extend(true, this.infoboxSettings, this.baseSettings);
+        $.extend(true, this.infoboxSettings, this.baseSettings, options.infoboxSetting);
         this.loaderSettings = {
             selector: options.selector,
             formData: { kgName: options.kgName }
@@ -77,14 +77,9 @@ var HieknSDKNetChart = (function () {
             legendColor: null
         };
         this.promptSettings = {
-            formData: { kgName: options.kgName }
+            kgName: options.kgName
         };
         $.extend(true, this.promptSettings, this.baseSettings);
-        this.schemaSettings = {
-            preloadData: options.schema,
-            formData: { kgName: options.kgName },
-            that: $(options.selector)[0]
-        };
         this.initSettings = {
             formData: { kgName: options.kgName },
             that: $(options.selector)[0]
@@ -92,11 +87,15 @@ var HieknSDKNetChart = (function () {
         $.extend(true, this.initSettings, this.baseSettings);
         this.legendFilter = {};
         this.layoutStatus = options.layoutStatus;
-        if (this.schemaSettings.preloadData) {
-            this.init(options, this.schemaSettings.preloadData);
+        if (options.schema) {
+            this.init(options, options.schema);
         }
         else {
-            $.extend(true, this.schemaSettings, this.baseSettings);
+            this.schemaSettings = {
+                kgName: options.kgName,
+                that: $(options.selector)[0]
+            };
+            $.extend(true, this.schemaSettings, this.baseSettings, options.schemaSetting);
             this.schemaSettings.success = function (schema) {
                 _this.init(options, schema);
             };
@@ -108,7 +107,7 @@ var HieknSDKNetChart = (function () {
         var formData = options.formData || {};
         formData.isTiming = this.isTiming;
         HieknSDKUtils.ajax({
-            url: options.baseUrl + 'graph/init' + '?' + $.param(queryData),
+            url: HieknSDKUtils.buildUrl(options.baseUrl + 'graph/init', queryData),
             type: 'POST',
             data: formData,
             dataFilter: options.dataFilter,
@@ -355,7 +354,7 @@ var HieknSDKNetChart = (function () {
         return function ($self, callback, failed) {
             var params = _this.buildLoaderParams(options);
             HieknSDKUtils.ajax({
-                url: options.baseUrl + params.url + '?' + $.param(params.queryData),
+                url: HieknSDKUtils.buildUrl(options.baseUrl + params.url, params.queryData),
                 type: 'POST',
                 data: params.formData,
                 dataFilter: options.dataFilter,
@@ -1442,7 +1441,7 @@ var HieknSDKConceptGraph = (function () {
             }
         };
         this.options = $.extend(true, {}, defaultOptions, options);
-        var infobox = this.options.infobox;
+        var infobox = this.options.infoboxSetting;
         if (infobox && infobox.enable) {
             this.graphInfobox = this.buildInfobox(infobox);
             this.graphInfobox.initEvent($(this.options.selector));
@@ -1610,13 +1609,13 @@ var HieknSDKConceptTree = (function () {
             nameKey: 'name',
             onNodeClick: $.noop,
             nodeHoverTools: {
-                infobox: {
+                infoboxSetting: {
                     enable: false
                 },
-                graph: {
+                graphSetting: {
                     enable: false,
                     instanceEnable: false,
-                    infobox: {
+                    infoboxSetting: {
                         enable: false
                     }
                 }
@@ -1640,11 +1639,11 @@ var HieknSDKConceptTree = (function () {
         this.$container.addClass('hiekn-concept-tree').append('<ul class="ztree" id="' + this.treeId + '"></ul>');
         this.zTreeSettings = this.updateZTreeSettings();
         this.zTree = $.fn.zTree.init(this.$container.find('.ztree'), this.zTreeSettings);
-        if (this.options.nodeHoverTools.graph.enable) {
+        if (this.options.nodeHoverTools.graphSetting.enable) {
             this.buildGraph();
         }
-        if (this.options.nodeHoverTools.infobox.enable) {
-            this.treeInfobox = this.buildInfobox(this.options.nodeHoverTools.infobox);
+        if (this.options.nodeHoverTools.infoboxSetting.enable) {
+            this.treeInfobox = this.buildInfobox(this.options.nodeHoverTools.infoboxSetting);
         }
         if (this.options.instance.enable) {
             var id = HieknSDKUtils.randomId(this.options.namespace + '-prompt-');
@@ -1731,7 +1730,9 @@ var HieknSDKConceptTree = (function () {
         var selector = HieknSDKUtils.randomId(this.options.namespace + '-tgc2-');
         this.$graphContainer = $('<div class="modal fade hiekn-concept-tree-graph-modal" id="' + selector + '-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">' +
             '<div class="modal-dialog modal-lg">' +
-            '<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal"><i class="fa fa-times-circle"></i></button>' +
+            '<div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">' +
+            '<svg height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>' +
+            '</button>' +
             '<h4 class="modal-title"><span name="title"></span></h4></div><div class="modal-body"><div class="' + selector + '"></div></div></div></div></div>');
         $('body').append(this.$graphContainer);
         var settings = {
@@ -1739,13 +1740,13 @@ var HieknSDKConceptTree = (function () {
             baseUrl: this.options.baseUrl,
             dataFilter: this.options.dataFilter,
             kgName: this.options.kgName,
-            infobox: this.options.nodeHoverTools.graph.infobox,
-            instanceEnable: this.options.nodeHoverTools.graph.instanceEnable,
+            infoboxSetting: this.options.nodeHoverTools.graphSetting.infoboxSetting,
+            instanceEnable: this.options.nodeHoverTools.graphSetting.instanceEnable,
             promptSettings: {
                 dataFilter: this.options.dataFilter
             }
         };
-        $.extend(true, settings, this.options.nodeHoverTools.graph.conceptGraphSettings);
+        $.extend(true, settings, this.options.nodeHoverTools.graphSetting.conceptGraphSettings);
         this.tgc2ConceptGraph = new HieknConceptGraphService(settings);
     };
     HieknSDKConceptTree.prototype.dataFilter = function (treeId, parentNode, data) {
@@ -3299,6 +3300,7 @@ var HieknNetChartUpdateService = (function () {
     }
     HieknNetChartUpdateService.updateOptions = function (options) {
         options = HieknSDKService.updateOptionsData(options);
+        options.infoboxSetting = { enable: options.infobox };
         options.enableAutoUpdateStyle != undefined && (options.autoUpdateStyle = options.enableAutoUpdateStyle);
         return options;
     };
@@ -3422,6 +3424,9 @@ var HieknConceptTreeService = (function (_super) {
     function HieknConceptTreeService(options) {
         var _this = this;
         options = HieknSDKService.updateOptionsData(options);
+        options.nodeHoverTools.infoboxSetting = options.nodeHoverTools.infobox;
+        options.nodeHoverTools.graphSetting = options.nodeHoverTools.graph;
+        options.nodeHoverTools.graphSetting.infoboxSetting = options.nodeHoverTools.graphSetting.infobox;
         _this = _super.call(this, options) || this;
         return _this;
     }

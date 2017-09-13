@@ -5,7 +5,7 @@ interface HieknConceptGraphSetting extends HieknBaseSetting {
     emphasesColor?: string;
     emphasesLightColor?: string;
     instanceEnable?: boolean;
-    infobox?: HieknInfoboxSetting;
+    infoboxSetting?: HieknNetChartInfoboxSetting;
     lightColor?: string;
     primaryColor?: string;
     primaryLightColor?: string;
@@ -100,7 +100,7 @@ class HieknSDKConceptGraph {
             }
         };
         this.options = $.extend(true, {}, defaultOptions, options);
-        let infobox = this.options.infobox;
+        let infobox = this.options.infoboxSetting;
         if (infobox && infobox.enable) {
             this.graphInfobox = this.buildInfobox(infobox);
             this.graphInfobox.initEvent($(this.options.selector));
