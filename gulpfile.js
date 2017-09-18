@@ -5,7 +5,7 @@ var pkgLock = require('./package-lock.json');
 var tsconfig = require('./tsconfig.json');
 var bowerFile = require('./bower.json');
 var gulp = require('gulp');
-var gulpLess = require('gulp-less');
+var less = require('gulp-less');
 var uglify = require('gulp-uglify');
 var cleanCss = require('gulp-clean-css');
 var concat = require('gulp-concat');
@@ -17,6 +17,8 @@ var jsonfile = require('jsonfile');
 var plumber = require('gulp-plumber');
 var ts = require("gulp-typescript");
 var watch = require('gulp-watch');
+var merge = require('merge2');
+var sourcemaps = require('gulp-sourcemaps');
 
 var lib = 'lib/';
 var src = 'src/';
@@ -27,6 +29,7 @@ var tsDevFile = pkg.name + '.ts';
 var cssFile = pkg.name + '.min.css';
 var cssDevFile = pkg.name + '.css';
 var lessDevFile = pkg.name + '-experimental.less';
+var lessFile = pkg.name + '.less';
 var LICENSE_TEMPLATE =
     '/**\n\
      * @author: \n\
@@ -37,15 +40,11 @@ var LICENSE_TEMPLATE =
      *    Copyright 2017, jiangrun. All rights reserved.\n\
      */';
 
-gulp.task('clean', ['clean-js', 'clean-css'], function (cb) {
-    return del(dst + '**/*', cb);
+gulp.task('clean-script', function (cb) {
+    return del([dst + '**/*.js', dst + '**/*.js.map', dst + '**/*.ts'], cb);
 });
 
-gulp.task('clean-js', function (cb) {
-    return del(dst + '**/*.js', cb);
-});
-
-gulp.task('concat-src', ['clean-js'], function () {
+gulp.task('concat-src', ['clean-script'], function () {
     return gulp.src([
         src + 'ts/netchart/netchart.ts',
         src + 'ts/netchart/*.ts',
@@ -53,37 +52,47 @@ gulp.task('concat-src', ['clean-js'], function () {
         src + 'ts/stat/*.ts',
         src + 'ts/*.ts',
         src + 'ts/upgrade/*.ts'
-    ]).pipe(concat(tsDevFile)).pipe(gulp.dest(dst));
+    ]).pipe(concat(tsDevFile)).pipe(replace(/\/\/\/.*>/g, '')).pipe(gulp.dest(dst));
 });
 
 gulp.task('compile-ts', ['concat-src'], function () {
-    return gulp.src(tsDevFile).pipe(ts(tsconfig.compilerOptions)).pipe(gulp.dest(dst));
+    var compilerOptions = tsconfig.compilerOptions;
+    compilerOptions.sourceMap = true;
+    compilerOptions.declaration = true;
+    var tsProject = ts.createProject(compilerOptions);
+    var tsResult = gulp.src([dst + tsDevFile, 'typings/*.d.ts']).pipe(sourcemaps.init()).pipe(tsProject());
+    return merge([
+        tsResult.dts.pipe(gulp.dest(dst)),
+        tsResult.js.pipe(sourcemaps.write()).pipe(gulp.dest(dst)),
+        tsResult.js.pipe(concat(jsFile)).pipe(uglify()).pipe(gulp.dest(dst))
+    ]);
 });
 
-gulp.task('concat-uglify-js', function () {
-    return gulp.src(dst + '/' + jsDevFile).pipe(concat(jsFile)).pipe(uglify()).pipe(gulp.dest(dst));
+gulp.task('uglify-js', ['compile-ts'], function () {
+    //return gulp.src(dst + '/' + jsDevFile).pipe(concat(jsFile)).pipe(uglify()).pipe(gulp.dest(dst));
 });
 
-gulp.task('clean-css', function (cb) {
-    return del(src + '**/*.css', cb);
+gulp.task('clean-style', function (cb) {
+    return del([dst + '*.css', dst + '*.less'], cb);
 });
 
-gulp.task('concat-less', function () {
-    return gulp.src(['' + src + 'define.less', src + '**/*.less']).pipe(concat(lessDevFile)).pipe(replace(/@import .*;/g, '')).pipe(gulp.dest(dst));
+gulp.task('concat-less', ['clean-style'], function () {
+    return gulp.src(['!' + src + 'define.less', src + '**/*.less']).pipe(concat(lessFile)).pipe(replace(/@import .*;/g, '')).pipe(gulp.dest(dst));
 });
 
-gulp.task('compile-less', ['clean-css'], function () {
-    return gulp.src(src + '**/*.less')
-        .pipe(gulpLess())
-        .pipe(gulp.dest(src));
+gulp.task('concat-define', ['concat-less'], function () {
+    return gulp.src([src + 'define.less', dst + lessFile]).pipe(concat(lessFile)).pipe(gulp.dest(dst));
 });
 
-gulp.task('concat-css', ['compile-less'], function () {
-    return gulp.src(src + '**/*.css').pipe(concat(cssDevFile)).pipe(gulp.dest(dst));
+gulp.task('compile-less', ['concat-less'], function () {
+    gulp.src([dst + lessFile]).pipe(concat(lessDevFile)).pipe(gulp.dest(dst));
+    return gulp.src(dst + lessFile)
+        .pipe(less())
+        .pipe(gulp.dest(dst));
 });
 
-gulp.task('minify-css', ['concat-css'], function () {
-    return gulp.src(dst + '/' + cssDevFile).pipe(concat(cssFile)).pipe(cleanCss({compatibility: 'ie8'})).pipe(gulp.dest(dst));
+gulp.task('minify-css', ['compile-less'], function () {
+    return gulp.src(dst + cssDevFile).pipe(concat(cssFile)).pipe(cleanCss({compatibility: 'ie8'})).pipe(gulp.dest(dst));
 });
 
 gulp.task('clean-lib', function (cb) {
@@ -165,7 +174,7 @@ gulp.task('build-bower-file', function () {
     jsonfile.writeFile('./bower.json', bowerFile);
 });
 
-gulp.task('build', ['clean', 'build-bower-file', 'compile-ts', 'minify-css', 'concat-less'], function () {
+gulp.task('build', ['clean-src-gent', 'build-bower-file', 'uglify-js', 'minify-css'], function () {
     gulp.src([dst + '**/*.js', dst + '**/*.css'])
         .pipe(license(LICENSE_TEMPLATE))
         .pipe(gulp.dest(dst));
@@ -173,7 +182,12 @@ gulp.task('build', ['clean', 'build-bower-file', 'compile-ts', 'minify-css', 'co
 
 gulp.task('watch', function () {
     gulp.watch([src + '**/*.less'], ['minify-css']);
-    gulp.watch([src + '**/*.js'], ['concat-uglify-js']);
+    gulp.watch([src + '**/*.js'], ['uglify-js']);
 });
 
 gulp.task('default', ['build']);
+
+
+gulp.task('clean-src-gent', function (cb) {
+    return del([src + 'ts/**/*.js', src + 'ts/**/*.map', src + 'ts/**/*.d.ts', src + 'less/**/*.css'], cb);
+});

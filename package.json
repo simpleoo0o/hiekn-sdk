@@ -26,6 +26,7 @@
     "gulp-licenser": "^1.0.2",
     "gulp-plumber": "^1.1.0",
     "gulp-replace": "^0.5.4",
+    "gulp-sourcemaps": "^2.6.1",
     "gulp-typescript": "^3.2.2",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
@@ -33,6 +34,7 @@
     "jsonfile": "^3.0.0",
     "lite-server": "^2.3.0",
     "main-bower-files": "^2.13.1",
+    "merge2": "^1.2.0",
     "typescript": "^2.5.2"
   },
   "scripts": {

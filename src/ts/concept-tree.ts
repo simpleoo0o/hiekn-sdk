@@ -36,7 +36,7 @@ class HieknSDKConceptTree {
     $graphContainer: JQuery;
     $instanceContainer: JQuery;
     treeId: string;
-    clickTimeout: number;
+    clickTimeout: any;
     isFirst = true;
     lastSelectedNode: any;
     startAsync = false;

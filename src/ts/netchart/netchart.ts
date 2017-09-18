@@ -546,17 +546,17 @@ abstract class HieknSDKNetChart {
                 } else {
                     node.image = data.img;
                 }
-                if (!$.isEmptyObject(nodeIds) || options.legendClass) {
-                    if (nodeIds[node.id] || options.legendClass == classId) {
-                    } else {
-                        node.image = '';
-                    }
-                } else {
-                    if (this.tgc2.inStart(node.id) || node.hovered) {
-                    } else {
-                        node.image = '';
-                    }
-                }
+                // if (!$.isEmptyObject(nodeIds) || options.legendClass) {
+                //     if (nodeIds[node.id] || options.legendClass == classId) {
+                //     } else {
+                //         node.image = '';
+                //     }
+                // } else {
+                //     if (this.tgc2.inStart(node.id) || node.hovered) {
+                //     } else {
+                //         node.image = '';
+                //     }
+                // }
                 // && !$.isEmptyObject(nodeIds)
                 // if (!this.tgc2.inStart(node.id)
                 //     && !nodeIds[node.id]

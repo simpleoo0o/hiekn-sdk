@@ -18,9 +18,11 @@
       "node_modules/@types/"
     ]
   },
-  "compileOnSave": true,
+  "compileOnSave": false,
+  "exclude": [
+    "src/**/*"
+  ],
   "include": [
-    "src/**/*",
     "dist/**/*"
   ]
 }

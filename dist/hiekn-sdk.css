@@ -7,7 +7,6 @@
      *    Copyright 2017, jiangrun. All rights reserved.
      */
 
-/* define end */
 .tgc2.tgc2-concept-graph {
   font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', Roboto, Helvetica Neue, sans-serif;
 }
@@ -49,8 +48,6 @@
 .tgc2.tgc2-concept-graph .tgc2-info-top .instance .legend-circle-o {
   border: 2px solid #00b38a;
 }
-
-/* define end */
 @-webkit-keyframes fa-spin {
   0% {
     -webkit-transform: rotate(0deg);
@@ -332,8 +329,6 @@
   padding: 0;
   height: 450px;
 }
-
-/* define end */
 .btn-primary,
 .btn-primary:focus,
 .btn-primary:active {
@@ -404,9 +399,6 @@
   margin-left: -128px;
   margin-top: -16px;
 }
-
-/* define end */
-
 /* define end */
 .hiekn-infobox {
   font-size: 12px;
@@ -569,8 +561,6 @@
 .tgc2 .DVSL-Menu .hiekn-infobox-body .tab-pane li {
   padding: 4px 0;
 }
-
-/* define end */
 ul.hiekn-search-prompt li {
   height: 30px;
   line-height: 30px;
@@ -597,8 +587,6 @@ ul.hiekn-search-prompt li .prompt-tip-title {
 ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   font-weight: bold;
 }
-
-/* define end */
 .hiekn-resource-nav-container {
   position: relative;
   height: 60px;
@@ -717,8 +705,6 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
 .hiekn-resource-nav-container .hiekn-resource-nav-more-container li.active a {
   color: #00b38a;
 }
-
-/* define end */
 .hiekn-table .hiekn-table-filter {
   padding: 30px 0;
 }
@@ -920,8 +906,6 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
 .hiekn-table .hiekn-table-page {
   text-align: center;
 }
-
-/* define end */
 .tgc2 .DVSL-Menu {
   background: #fff;
   border-radius: 4px;
