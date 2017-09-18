@@ -177,11 +177,20 @@ gulp.task('build', ['clean-src-gent', 'build-bower-file', 'compile-ts', 'minify-
 });
 
 gulp.task('watch', function () {
+    gulp.watch([src + '**/*.less'], ['compile-src-less']);
 });
 
 gulp.task('default', ['build']);
 
 
 gulp.task('clean-src-gent', function (cb) {
-    return del([src + 'ts/**/*.js', src + 'ts/**/*.map', src + 'ts/**/*.d.ts', src + 'less/**/*.css'], cb);
+    return del([src + 'ts/**/*.js', src + '**/*.map', src + 'ts/**/*.d.ts', src + 'less/**/*.css'], cb);
+});
+
+gulp.task('compile-src-less', function () {
+    return gulp.src([src + 'less/*.less'])
+        .pipe(sourcemaps.init())
+        .pipe(less())
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(src + 'less/'));
 });
