@@ -8,3 +8,4 @@ src/**/*.css
 src/**/*.map
 src/ts/**/*.js
 src/ts/**/*.d.ts
+test
