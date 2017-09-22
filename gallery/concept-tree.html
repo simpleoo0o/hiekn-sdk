@@ -63,13 +63,13 @@
                 }
             }
         };
-        config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        config.baseUrl = 'https://kg.hiekn.com:8143/plantdata_console/sdk/';
         config.data = {a:1};
         config.data2 = {b:2};
         config.instance = {
             enable: true,
             queryData:{a:5}, formData:{b:6},
-            url: 'http://kg.hiekn.com:8888/plantdata_console/console/edit/instance/get/instances/conceptId',
+            url: 'https://kg.hiekn.com:8143/plantdata_console/console/edit/instance/get/instances/conceptId',
             onClick: function (node) {
                 console.log(node);
             },
@@ -77,7 +77,7 @@
               console.log('success',data);
             },
             searchSettings: {
-                url: 'http://kg.hiekn.com:8888/plantdata_console/console/edit/general/get/prompt/fuzzy?type=110',
+                url: 'https://kg.hiekn.com:8143/plantdata_console/console/edit/general/get/prompt/fuzzy?type=110',
                 type: 0,
                 paramName: 'text',
                 queryData:{a:6}, formData:{b:7},

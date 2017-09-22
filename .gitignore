@@ -9,3 +9,5 @@ src/**/*.map
 src/ts/**/*.js
 src/ts/**/*.d.ts
 test
+demo.html
+hiekn-config.json

@@ -1,6 +1,7 @@
 'use strict';
 
 var pkg = require('./package.json');
+var hieknConfig = require('./hiekn-config.json');
 var pkgLock = require('./package-lock.json');
 var tsconfig = require('./tsconfig.json');
 var bowerFile = require('./bower.json');
@@ -19,6 +20,7 @@ var ts = require("gulp-typescript");
 var watch = require('gulp-watch');
 var merge = require('merge2');
 var sourcemaps = require('gulp-sourcemaps');
+var moment = require('moment');
 
 var lib = 'lib/';
 var src = 'src/';
@@ -170,7 +172,7 @@ gulp.task('build-bower-file', function () {
     jsonfile.writeFile('./bower.json', bowerFile);
 });
 
-gulp.task('build', ['clean-src-gent', 'build-bower-file', 'compile-ts', 'minify-css'], function () {
+gulp.task('build', ['clean-src-gent', 'update-hiekn-config', 'build-bower-file', 'compile-ts', 'minify-css'], function () {
     gulp.src([dst + '**/*.js', dst + '**/*.css'])
         .pipe(license(LICENSE_TEMPLATE))
         .pipe(gulp.dest(dst));
@@ -193,4 +195,12 @@ gulp.task('compile-src-less', function () {
         .pipe(less())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(src + 'less/'));
+});
+
+gulp.task('update-hiekn-config', function () {
+    hieknConfig.name = pkg.name;
+    hieknConfig.version = pkg.version;
+    hieknConfig.publishTime = moment(new Date()).format('YY-MM-DD HH:mm');
+    jsonfile.spaces = 2;
+    jsonfile.writeFile('./hiekn-config.json', hieknConfig);
 });
