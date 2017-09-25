@@ -20,6 +20,9 @@
     <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.staticfile.org/echarts/3.5.0/echarts.min.js"></script>
+    <script src="https://cdn.staticfile.org/echarts/3.5.0/extension/bmap.min.js"></script>
+    <script src="../bower_components/echarts/map/js/china.js"></script>
+    <script src="../json/city/china-main-city-map.js"></script>
     <script src="../assets/echarts-wordcloud.min.js"></script>
     <script src="../lib/moment.min.js"></script>
     <script src="../lib/jquery.hieknjs.min.js"></script>
@@ -49,56 +52,26 @@
 //            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
             return param;
         };
-        config.dataFilter = function (data) {
-            console.log(data);
-            return data;
-        };
         config.config = {
-            'id': '3',
-            type: "pie",
+            id: 4,
+            type: 'map',
             querySettings: {
-                aggs: {
-                    by_key1: {
-                        terms: {
-                            field: "ins",
-                            size: 6
-                        }
-                    }
-                },
-                databases: ["u260"],
-                tables: ["u260_data_543b8811"],
-                dimension: "",
-                returnType: 1,
-                pageSize: ""
+                databases: ['u260'],
+                tables: ['u260_data_d9926d73', 'u260_data_cd8de080', 'u260_data_fb569ee0', 'u260_data_113ca055', 'u260_data_4eb523a0', 'u260_data_7b5f45f8', 'u260_data_ab5217'],
+                aggs: { "by_key1": { "terms": { "field": "_type" } } },
+                returnType: 1
             },
-            seriesName: {
-                // "中国科学院大气物理研究所": "中国科学院大气物理研究所"
-            },
+//            changeXY: true,
             chartSettings: {
                 title: {
-                    text: "知识点相关机构发文数",
+                    text:'hiekn',
                     textStyle: {
-                        color: "#666",
+                        color: '#666',
                         fontSize: 16
                     },
-                    left: "center"
+                    left: 'center'
                 },
-                series: {
-                    avoidLabelOverlap: !1,
-                    label: {
-                        normal: {
-                            show: !1,
-                            position: "center"
-                        },
-                        emphasis: {
-                            show: !0,
-                            formatter: "{d} %",
-                            textStyle: {
-                                fontSize: "30"
-                            }
-                        }
-                    }
-                }
+//                openClick:true
             }
         };
         config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
