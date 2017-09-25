@@ -975,9 +975,7 @@ ul.hiekn-search-prompt li .prompt-tip-title .highlight {
   text-align: center;
   font-size: 48px;
   padding: 50px 0;
-  -webkit-box-flex: 1 1 0%;
   -webkit-flex: 1 1 0%;
-  -moz-box-flex: 1 1 0%;
   -moz-flex: 1 1 0%;
   -ms-flex: 1 1 0%;
   flex: 1 1 0%;

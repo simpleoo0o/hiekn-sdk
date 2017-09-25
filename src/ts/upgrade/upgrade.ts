@@ -182,6 +182,12 @@ class HieknStatService {
             return new HieknSDKStatLineBar(options);
         } else if (type == 'wordCloud') {
             return new HieknSDKStatWordCloud(options);
+        } else if (type == 'radar') {
+            return new HieknSDKStatRadar(options);
+        } else if (type == 'scatter') {
+            return new HieknSDKStatScatter(options);
+        } else if (type == 'map') {
+            return new HieknSDKStatMap(options);
         }
     }
 }

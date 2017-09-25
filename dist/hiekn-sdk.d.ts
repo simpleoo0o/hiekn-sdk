@@ -216,7 +216,16 @@ declare abstract class HieknSDKStat {
 declare class HieknSDKStatLineBar extends HieknSDKStat {
     protected drawChart(): void;
 }
+declare class HieknSDKStatMap extends HieknSDKStat {
+    protected drawChart(): void;
+}
 declare class HieknSDKStatPie extends HieknSDKStat {
+    protected drawChart(): void;
+}
+declare class HieknSDKStatRadar extends HieknSDKStat {
+    protected drawChart(): void;
+}
+declare class HieknSDKStatScatter extends HieknSDKStat {
     protected drawChart(): void;
 }
 declare class HieknSDKStatWordCloud extends HieknSDKStat {

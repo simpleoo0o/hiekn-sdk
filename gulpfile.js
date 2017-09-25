@@ -65,7 +65,7 @@ gulp.task('compile-ts', ['concat-src'], function () {
     var tsResult = gulp.src([dst + tsDevFile, 'typings/*.d.ts']).pipe(sourcemaps.init()).pipe(tsProject());
     return merge([
         tsResult.dts.pipe(gulp.dest(dst)),
-        tsResult.js.pipe(sourcemaps.write()).pipe(gulp.dest(dst)),
+        tsResult.js.pipe(sourcemaps.write('./')).pipe(gulp.dest(dst)),
         tsResult.js.pipe(concat(jsFile)).pipe(uglify()).pipe(gulp.dest(dst))
     ]);
 });
