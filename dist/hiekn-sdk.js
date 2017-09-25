@@ -1034,7 +1034,7 @@ var HieknSDKStatGauge = /** @class */ (function (_super) {
                 }
             },
             detail: { formatter: '{value}%' },
-            data: stat.data
+            data: d.series
         };
         var series = {};
         if (stat.chartSettings && stat.chartSettings.series) {
@@ -1066,6 +1066,109 @@ var HieknSDKStatGauge = /** @class */ (function (_super) {
         this.chart.setOption(option);
     };
     return HieknSDKStatGauge;
+}(HieknSDKStat));
+var HieknSDKStatGraph = /** @class */ (function (_super) {
+    __extends(HieknSDKStatGraph, _super);
+    function HieknSDKStatGraph() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    HieknSDKStatGraph.prototype.drawChart = function () {
+        var d = this.stat;
+        var stat = this.options.config;
+        var defaultSeries = {
+            name: '',
+            type: 'graph',
+            layout: 'force',
+            force: {
+                repulsion: [100, 500],
+                edgeLength: [50, 200],
+                gravity: 0.1
+            },
+            tooltip: {
+                formatter: "{b}"
+            },
+            data: d.series.nodes,
+            links: d.series.links,
+            lineStyle: {
+                normal: {
+                    color: 'source',
+                    curveness: 0,
+                    type: "solid"
+                }
+            },
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+                    formatter: function (params) {
+                        return params.data.subtext2;
+                    }
+                }
+            }
+        };
+        var series = {};
+        if (stat.chartSettings && stat.chartSettings.series) {
+            series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
+        }
+        else {
+            series = defaultSeries;
+        }
+        this.chart = echarts.init(this.$container[0]);
+        var defaultOption = {
+            backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
+                    offset: 0,
+                    color: '#fff'
+                }, {
+                    offset: 1,
+                    color: '#fff'
+                }]),
+            title: {
+                text: "solid",
+                top: "top",
+                left: "center"
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: [{
+                    formatter: function (name) {
+                        return echarts.format.truncateText(name, 40, '14px Microsoft Yahei', '…');
+                    },
+                    tooltip: {
+                        show: true
+                    },
+                    selectedMode: 'false',
+                    bottom: 20
+                }],
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: {
+                        show: true,
+                        readOnly: true
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            animationDuration: 1000,
+            animationEasingUpdate: 'quinticInOut'
+        };
+        var option = {};
+        if (stat.chartSettings) {
+            option = $.extend(true, {}, defaultOption, stat.chartSettings);
+        }
+        else {
+            option = defaultOption;
+        }
+        option.series = series;
+        this.chart.setOption(option);
+    };
+    return HieknSDKStatGraph;
 }(HieknSDKStat));
 var HieknSDKStatHeatmap = /** @class */ (function (_super) {
     __extends(HieknSDKStatHeatmap, _super);
@@ -1779,121 +1882,6 @@ var HieknSDKStatScatter = /** @class */ (function (_super) {
         this.chart.setOption(option);
     };
     return HieknSDKStatScatter;
-}(HieknSDKStat));
-var HieknSDKStatSolid = /** @class */ (function (_super) {
-    __extends(HieknSDKStatSolid, _super);
-    function HieknSDKStatSolid() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    HieknSDKStatSolid.prototype.drawChart = function () {
-        var d = this.stat;
-        var stat = this.options.config;
-        var defaultSeries = {
-            name: '',
-            type: 'solid',
-            layout: 'force',
-            force: {
-                repulsion: [100, 500],
-                edgeLength: [50, 200],
-                gravity: 0.1
-            },
-            tooltip: {
-                formatter: function (params) {
-                    var sub2 = "", sub1 = "";
-                    if (!!params.data.subtext1) {
-                        sub1 = params.data.subtext1 + '<br />';
-                    }
-                    if (!!params.data.subtext2) {
-                        sub2 = params.data.subtext2;
-                    }
-                    if (sub1 || sub2) {
-                        return sub1 + sub2;
-                    }
-                }
-            },
-            data: d.series.nodes,
-            links: d.series.links,
-            lineStyle: {
-                normal: {
-                    color: 'source',
-                    curveness: 0,
-                    type: "solid"
-                }
-            },
-            label: {
-                normal: {
-                    show: true,
-                    position: 'top',
-                    formatter: function (params) {
-                        return params.data.subtext2;
-                    }
-                }
-            }
-        };
-        var series = {};
-        if (stat.chartSettings && stat.chartSettings.series) {
-            series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
-        }
-        else {
-            series = defaultSeries;
-        }
-        this.chart = echarts.init(this.$container[0]);
-        var defaultOption = {
-            backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
-                    offset: 0,
-                    color: '#fff'
-                }, {
-                    offset: 1,
-                    color: '#fff'
-                }]),
-            title: {
-                text: "solid",
-                top: "top",
-                left: "center"
-            },
-            tooltip: {
-                trigger: 'item'
-            },
-            legend: [{
-                    formatter: function (name) {
-                        return echarts.format.truncateText(name, 40, '14px Microsoft Yahei', '…');
-                    },
-                    tooltip: {
-                        show: true
-                    },
-                    selectedMode: 'false',
-                    bottom: 20
-                }],
-            toolbox: {
-                show: true,
-                feature: {
-                    dataView: {
-                        show: true,
-                        readOnly: true
-                    },
-                    restore: {
-                        show: true
-                    },
-                    saveAsImage: {
-                        show: true
-                    }
-                }
-            },
-            animationDuration: 1000,
-            animationEasingUpdate: 'quinticInOut'
-        };
-        var option = {};
-        if (stat.chartSettings) {
-            option = $.extend(true, {}, defaultOption, stat.chartSettings);
-        }
-        else {
-            option = defaultOption;
-        }
-        option.series = series;
-        console.log(JSON.stringify(option));
-        this.chart.setOption(option);
-    };
-    return HieknSDKStatSolid;
 }(HieknSDKStat));
 var HieknSDKStatWordCloud = /** @class */ (function (_super) {
     __extends(HieknSDKStatWordCloud, _super);
@@ -4051,8 +4039,8 @@ var HieknStatService = /** @class */ (function () {
         else if (type == 'heatmap') {
             return new HieknSDKStatHeatmap(options);
         }
-        else if (type == 'solid') {
-            return new HieknSDKStatSolid(options);
+        else if (type == 'graph') {
+            return new HieknSDKStatGraph(options);
         }
     }
     return HieknStatService;

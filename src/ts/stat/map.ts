@@ -1,6 +1,7 @@
+declare let cityMap: any;
 class HieknSDKStatMap extends HieknSDKStat {
     protected drawChart() {
-        const stat = this.options.config;
+        const stat:any = this.options.config;
         this.chart = echarts.init(this.$container[0]);
         const d = this.stat;
         const specificData = d.series;
@@ -135,7 +136,7 @@ class HieknSDKStatMap extends HieknSDKStat {
             animationDurationUpdate: 1000
 
         };
-        let option = {};
+        let option:any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {

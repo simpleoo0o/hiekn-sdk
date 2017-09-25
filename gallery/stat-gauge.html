@@ -47,7 +47,6 @@
         var config = {};
         config.container = '#container';
         config.beforeLoad = function (param) {
-//            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
             return param;
         };
 
@@ -61,7 +60,6 @@
                 aggs: {"by_key1": {"terms": {"field": "_type"}}},
                 returnType: 1
             },
-            data: [{value: 66, name: '完成率'}],
             chartSettings: {
                 title: {
                     text: 'hiekn',

@@ -192,8 +192,8 @@ class HieknStatService {
             return new HieknSDKStatGauge(options);
         } else if (type == 'heatmap') {
             return new HieknSDKStatHeatmap(options);
-        } else if (type == 'solid') {
-            return new HieknSDKStatSolid(options);
+        } else if (type == 'graph') {
+            return new HieknSDKStatGraph(options);
         }
     }
 }

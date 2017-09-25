@@ -8,15 +8,15 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
             coordinateSystem: 'calendar',
             data: data
         };
-        let series = {};
+        let series: any = {};
         if (stat.chartSettings && stat.chartSettings.series) {
             series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
         } else {
             series = defaultSeries;
         }
         this.chart = echarts.init(this.$container[0]);
-        let direction='horizontal';
-        const defaultOption ={
+        let direction = 'horizontal';
+        const defaultOption = {
             title: {
                 top: 30,
                 left: 'center',
@@ -25,22 +25,22 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
             graphic: {
                 id: 'left-btn',
                 type: 'circle',
-                shape: { r: 20 },
+                shape: {r: 20},
                 style: {
                     text: '+',
                     fill: '#eee'
                 },
                 left: 10,
                 top: 10,
-                onclick:  () =>{
-                    if(direction=='horizontal'){
-                        this.chart.setOption(option={
+                onclick: () => {
+                    if (direction == 'horizontal') {
+                        this.chart.setOption(option = {
                             title: {
                                 left: 111,
                             },
                             visualMap: {
                                 orient: 'vertical',
-                                left:65
+                                left: 65
                             },
                             calendar: {
                                 top: 40,
@@ -51,9 +51,9 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
                                 yearLabel: {show: false}
                             }
                         })
-                        direction='vertical';
-                    }else{
-                        this.chart.setOption(option={
+                        direction = 'vertical';
+                    } else {
+                        this.chart.setOption(option = {
                             title: {
                                 left: 'center',
                             },
@@ -71,11 +71,11 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
                                 yearLabel: {show: false}
                             }
                         });
-                        direction='horizontal';
+                        direction = 'horizontal';
                     }
                 }
             },
-            tooltip : {},
+            tooltip: {},
             visualMap: {
                 min: 0,
                 max: 10000,
@@ -99,7 +99,7 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
                 yearLabel: {show: false}
             }
         }
-        let option = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {

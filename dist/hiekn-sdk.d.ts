@@ -216,12 +216,16 @@ declare abstract class HieknSDKStat {
 declare class HieknSDKStatGauge extends HieknSDKStat {
     protected drawChart(): void;
 }
+declare class HieknSDKStatGraph extends HieknSDKStat {
+    protected drawChart(): void;
+}
 declare class HieknSDKStatHeatmap extends HieknSDKStat {
     protected drawChart(): void;
 }
 declare class HieknSDKStatLineBar extends HieknSDKStat {
     protected drawChart(): void;
 }
+declare let cityMap: any;
 declare class HieknSDKStatMap extends HieknSDKStat {
     protected drawChart(): void;
 }
@@ -232,9 +236,6 @@ declare class HieknSDKStatRadar extends HieknSDKStat {
     protected drawChart(): void;
 }
 declare class HieknSDKStatScatter extends HieknSDKStat {
-    protected drawChart(): void;
-}
-declare class HieknSDKStatSolid extends HieknSDKStat {
     protected drawChart(): void;
 }
 declare class HieknSDKStatWordCloud extends HieknSDKStat {

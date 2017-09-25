@@ -1,10 +1,10 @@
-class HieknSDKStatSolid extends HieknSDKStat {
+class HieknSDKStatGraph extends HieknSDKStat {
     protected drawChart() {
         const d = this.stat;
         const stat = this.options.config;
         const defaultSeries = {
             name: '',
-            type: 'solid',
+            type: 'graph',
             layout: 'force',
 
             force: {
@@ -13,18 +13,7 @@ class HieknSDKStatSolid extends HieknSDKStat {
                 gravity: 0.1
             },
             tooltip: {
-                formatter: (params: any) => {
-                    let sub2 = "", sub1 = "";
-                    if (!!params.data.subtext1) {
-                        sub1 = params.data.subtext1 + '<br />'
-                    }
-                    if (!!params.data.subtext2) {
-                        sub2 = params.data.subtext2
-                    }
-                    if (sub1 || sub2) {
-                        return sub1 + sub2;
-                    }
-                }
+                formatter: "{b}"
             },
             data: d.series.nodes,
             links: d.series.links,
@@ -39,7 +28,7 @@ class HieknSDKStatSolid extends HieknSDKStat {
                 normal: {
                     show: true,
                     position: 'top',
-                    formatter: function (params) {
+                    formatter: (params:any) => {
                         return params.data.subtext2
                     }
 
@@ -97,14 +86,13 @@ class HieknSDKStatSolid extends HieknSDKStat {
             animationDuration: 1000,
             animationEasingUpdate: 'quinticInOut'
         }
-        let option = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {
             option = defaultOption;
         }
         option.series = series;
-        console.log(JSON.stringify(option));
         this.chart.setOption(option);
     }
 }

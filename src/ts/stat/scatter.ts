@@ -9,13 +9,13 @@ class HieknSDKStatScatter extends HieknSDKStat {
                 name: stat.chartSettings.legend.data ? stat.chartSettings.legend.data[i] : '',
                 data: data.series[i],
                 type: 'scatter',
-                symbolSize: function (data: any) {
+                symbolSize: (data: any) => {
                     return Math.sqrt(data[2]) / 5e2;
                 },
                 label: {
                     emphasis: {
                         show: true,
-                        formatter: function (param: any) {
+                        formatter: (param: any) => {
                             return param.data[3];
                         },
                         position: 'top'

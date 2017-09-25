@@ -1,7 +1,7 @@
 class HieknSDKStatGauge extends HieknSDKStat {
     protected drawChart() {
         const d = this.stat;
-        const stat = this.options.config;
+        let stat:any  = this.options.config;
 
         const defaultSeries = {
             name: '',
@@ -15,7 +15,7 @@ class HieknSDKStatGauge extends HieknSDKStat {
                 }
             },
             detail: {formatter: '{value}%'},
-            data: stat.data
+            data: d.series
         };
 
         let series = {};
@@ -36,7 +36,7 @@ class HieknSDKStatGauge extends HieknSDKStat {
                 }
             }
         };
-        let option = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {
@@ -44,7 +44,5 @@ class HieknSDKStatGauge extends HieknSDKStat {
         }
         option.series = [series];
         this.chart.setOption(option);
-
-
     }
 }

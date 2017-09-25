@@ -1104,7 +1104,9 @@ abstract class HieknSDKStat {
 class HieknSDKStatGauge extends HieknSDKStat {
     protected drawChart() {
         const d = this.stat;
-        const stat = this.options.config;
+        let stat:any  = this.options.config;
+
+
 
         const defaultSeries = {
             name: '',
@@ -1118,7 +1120,7 @@ class HieknSDKStatGauge extends HieknSDKStat {
                 }
             },
             detail: {formatter: '{value}%'},
-            data: stat.data
+            data: d.series
         };
 
         let series = {};
@@ -1139,7 +1141,7 @@ class HieknSDKStatGauge extends HieknSDKStat {
                 }
             }
         };
-        let option = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {
@@ -1149,6 +1151,104 @@ class HieknSDKStatGauge extends HieknSDKStat {
         this.chart.setOption(option);
 
 
+    }
+}
+class HieknSDKStatGraph extends HieknSDKStat {
+    protected drawChart() {
+        const d = this.stat;
+        const stat = this.options.config;
+        const defaultSeries = {
+            name: '',
+            type: 'graph',
+            layout: 'force',
+
+            force: {
+                repulsion: [100, 500],
+                edgeLength: [50, 200],
+                gravity: 0.1
+            },
+            tooltip: {
+                formatter: "{b}"
+            },
+            data: d.series.nodes,
+            links: d.series.links,
+            lineStyle: {
+                normal: {
+                    color: 'source',
+                    curveness: 0,
+                    type: "solid"
+                }
+            },
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+                    formatter: (params:any) => {
+                        return params.data.subtext2
+                    }
+
+                }
+            }
+        }
+        let series = {};
+        if (stat.chartSettings && stat.chartSettings.series) {
+            series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
+        } else {
+            series = defaultSeries;
+        }
+        this.chart = echarts.init(this.$container[0]);
+        const defaultOption = {
+            backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
+                offset: 0,
+                color: '#fff'
+            }, {
+                offset: 1,
+                color: '#fff'
+            }]),
+            title: {
+                text: "solid",
+                top: "top",
+                left: "center"
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: [{
+                formatter: (name: any) => {
+                    return echarts.format.truncateText(name, 40, '14px Microsoft Yahei', '…');
+                },
+                tooltip: {
+                    show: true
+                },
+                selectedMode: 'false',
+                bottom: 20
+            }],
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: {
+                        show: true,
+                        readOnly: true
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            animationDuration: 1000,
+            animationEasingUpdate: 'quinticInOut'
+        }
+        let option: any = {};
+        if (stat.chartSettings) {
+            option = $.extend(true, {}, defaultOption, stat.chartSettings);
+        } else {
+            option = defaultOption;
+        }
+        option.series = series;
+        this.chart.setOption(option);
     }
 }
 class HieknSDKStatHeatmap extends HieknSDKStat {
@@ -1161,15 +1261,15 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
             coordinateSystem: 'calendar',
             data: data
         };
-        let series = {};
+        let series: any = {};
         if (stat.chartSettings && stat.chartSettings.series) {
             series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
         } else {
             series = defaultSeries;
         }
         this.chart = echarts.init(this.$container[0]);
-        let direction='horizontal';
-        const defaultOption ={
+        let direction = 'horizontal';
+        const defaultOption = {
             title: {
                 top: 30,
                 left: 'center',
@@ -1178,22 +1278,22 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
             graphic: {
                 id: 'left-btn',
                 type: 'circle',
-                shape: { r: 20 },
+                shape: {r: 20},
                 style: {
                     text: '+',
                     fill: '#eee'
                 },
                 left: 10,
                 top: 10,
-                onclick:  () =>{
-                    if(direction=='horizontal'){
-                        this.chart.setOption(option={
+                onclick: () => {
+                    if (direction == 'horizontal') {
+                        this.chart.setOption(option = {
                             title: {
                                 left: 111,
                             },
                             visualMap: {
                                 orient: 'vertical',
-                                left:65
+                                left: 65
                             },
                             calendar: {
                                 top: 40,
@@ -1204,9 +1304,9 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
                                 yearLabel: {show: false}
                             }
                         })
-                        direction='vertical';
-                    }else{
-                        this.chart.setOption(option={
+                        direction = 'vertical';
+                    } else {
+                        this.chart.setOption(option = {
                             title: {
                                 left: 'center',
                             },
@@ -1224,11 +1324,11 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
                                 yearLabel: {show: false}
                             }
                         });
-                        direction='horizontal';
+                        direction = 'horizontal';
                     }
                 }
             },
-            tooltip : {},
+            tooltip: {},
             visualMap: {
                 min: 0,
                 max: 10000,
@@ -1252,7 +1352,7 @@ class HieknSDKStatHeatmap extends HieknSDKStat {
                 yearLabel: {show: false}
             }
         }
-        let option = {};
+        let option: any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {
@@ -1385,9 +1485,10 @@ class HieknSDKStatLineBar extends HieknSDKStat {
         this.chart.setOption(option);
     }
 }
+declare let cityMap: any;
 class HieknSDKStatMap extends HieknSDKStat {
     protected drawChart() {
-        const stat = this.options.config;
+        const stat:any = this.options.config;
         this.chart = echarts.init(this.$container[0]);
         const d = this.stat;
         const specificData = d.series;
@@ -1522,7 +1623,7 @@ class HieknSDKStatMap extends HieknSDKStat {
             animationDurationUpdate: 1000
 
         };
-        let option = {};
+        let option:any = {};
         if (stat.chartSettings) {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {
@@ -1760,13 +1861,13 @@ class HieknSDKStatScatter extends HieknSDKStat {
                 name: stat.chartSettings.legend.data ? stat.chartSettings.legend.data[i] : '',
                 data: data.series[i],
                 type: 'scatter',
-                symbolSize: function (data: any) {
+                symbolSize: (data: any) => {
                     return Math.sqrt(data[2]) / 5e2;
                 },
                 label: {
                     emphasis: {
                         show: true,
-                        formatter: function (param: any) {
+                        formatter: (param: any) => {
                             return param.data[3];
                         },
                         position: 'top'
@@ -1820,116 +1921,6 @@ class HieknSDKStatScatter extends HieknSDKStat {
         } else {
             option = defaultOption;
         }
-        this.chart.setOption(option);
-    }
-}
-class HieknSDKStatSolid extends HieknSDKStat {
-    protected drawChart() {
-        const d = this.stat;
-        const stat = this.options.config;
-        const defaultSeries = {
-            name: '',
-            type: 'solid',
-            layout: 'force',
-
-            force: {
-                repulsion: [100, 500],
-                edgeLength: [50, 200],
-                gravity: 0.1
-            },
-            tooltip: {
-                formatter: (params: any) => {
-                    let sub2 = "", sub1 = "";
-                    if (!!params.data.subtext1) {
-                        sub1 = params.data.subtext1 + '<br />'
-                    }
-                    if (!!params.data.subtext2) {
-                        sub2 = params.data.subtext2
-                    }
-                    if (sub1 || sub2) {
-                        return sub1 + sub2;
-                    }
-                }
-            },
-            data: d.series.nodes,
-            links: d.series.links,
-            lineStyle: {
-                normal: {
-                    color: 'source',
-                    curveness: 0,
-                    type: "solid"
-                }
-            },
-            label: {
-                normal: {
-                    show: true,
-                    position: 'top',
-                    formatter: function (params) {
-                        return params.data.subtext2
-                    }
-
-                }
-            }
-        }
-        let series = {};
-        if (stat.chartSettings && stat.chartSettings.series) {
-            series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
-        } else {
-            series = defaultSeries;
-        }
-        this.chart = echarts.init(this.$container[0]);
-        const defaultOption = {
-            backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
-                offset: 0,
-                color: '#fff'
-            }, {
-                offset: 1,
-                color: '#fff'
-            }]),
-            title: {
-                text: "solid",
-                top: "top",
-                left: "center"
-            },
-            tooltip: {
-                trigger: 'item'
-            },
-            legend: [{
-                formatter: (name: any) => {
-                    return echarts.format.truncateText(name, 40, '14px Microsoft Yahei', '…');
-                },
-                tooltip: {
-                    show: true
-                },
-                selectedMode: 'false',
-                bottom: 20
-            }],
-            toolbox: {
-                show: true,
-                feature: {
-                    dataView: {
-                        show: true,
-                        readOnly: true
-                    },
-                    restore: {
-                        show: true
-                    },
-                    saveAsImage: {
-                        show: true
-                    }
-                }
-            },
-            animationDuration: 1000,
-            animationEasingUpdate: 'quinticInOut'
-        }
-        let option = {};
-        if (stat.chartSettings) {
-            option = $.extend(true, {}, defaultOption, stat.chartSettings);
-        } else {
-            option = defaultOption;
-        }
-        option.series = series;
-        console.log(JSON.stringify(option));
         this.chart.setOption(option);
     }
 }
@@ -4254,8 +4245,8 @@ class HieknStatService {
             return new HieknSDKStatGauge(options);
         } else if (type == 'heatmap') {
             return new HieknSDKStatHeatmap(options);
-        } else if (type == 'solid') {
-            return new HieknSDKStatSolid(options);
+        } else if (type == 'graph') {
+            return new HieknSDKStatGraph(options);
         }
     }
 }
