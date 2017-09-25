@@ -944,6 +944,7 @@
                 option = defaultOption;
             }
             option.series = [series];
+            console.log(JSON.stringify(option));
             self.chart.setOption(option);
         }
 
@@ -966,9 +967,9 @@
                         // self.stat = data.rsData[0];
                         // self.stat = radarData;
                         // self.stat = scatterData
-                        self.stat = mapData;
+                        // self.stat = mapData;
                         // self.stat = heatmap;
-                        // self.stat = solidData;
+                        self.stat = solidData;
                         self.drawChart();
                     }
                 },
