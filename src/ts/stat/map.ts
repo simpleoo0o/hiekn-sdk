@@ -3,8 +3,7 @@ class HieknSDKStatMap extends HieknSDKStat {
         const stat = this.options.config;
         this.chart = echarts.init(this.$container[0]);
         const d = this.stat;
-        const data = d.series;
-        console.log(data)
+        const specificData = d.series;
 
         //34个省、市、自治区的名字拼音映射数组
         const provinces = {
@@ -72,7 +71,7 @@ class HieknSDKStatMap extends HieknSDKStat {
         let defaultOption = {
             backgroundColor: '#fff',
             title: {
-                text: '地图',
+                text: '',
                 left: 'center',
                 textStyle: {
                     color: '#fff',
@@ -218,12 +217,11 @@ class HieknSDKStatMap extends HieknSDKStat {
                             areaColor: 'darkorange'
                         }
                     },
-                    data: data
+                    data: specificData
                 }
             ];
 
             //渲染地图
-            console.log(JSON.stringify(option));
             this.chart.setOption(option);
         }
     }

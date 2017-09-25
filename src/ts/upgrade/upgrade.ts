@@ -188,6 +188,12 @@ class HieknStatService {
             return new HieknSDKStatScatter(options);
         } else if (type == 'map') {
             return new HieknSDKStatMap(options);
+        } else if (type == 'gauge') {
+            return new HieknSDKStatGauge(options);
+        } else if (type == 'heatmap') {
+            return new HieknSDKStatHeatmap(options);
+        } else if (type == 'solid') {
+            return new HieknSDKStatSolid(options);
         }
     }
 }

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <title>Stat Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="initial-scale=1"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/latest/toastr.min.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="../lib/jquery.hieknjs.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../lib/hiekn-prompt.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../dist/hiekn-sdk.min.css" type="text/css"/>
+
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="https://cdn.staticfile.org/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.staticfile.org/echarts/3.5.0/echarts.min.js"></script>
+    <script src="../assets/echarts-wordcloud.min.js"></script>
+    <script src="../json/city/china-main-city-map.js"></script>
+    <script src="../lib/moment.min.js"></script>
+    <script src="../lib/jquery.hieknjs.min.js"></script>
+    <script src="../lib/hiekn-prompt.min.js"></script>
+    <script src="../dist/hiekn-sdk.js"></script>
+</head>
+
+<body>
+<div id="container" style="width: 50%;height: 400px"></div>
+<script>
+    window.onmessage = function (event) {
+        var config = event.data;
+        var settings = eval('(' + config + ')');
+        initData(settings);
+    };
+
+    function initData(config) {
+        $(config.container).empty();
+        var service = new HieknStatService(config);
+        service.load();
+        console.log(service);
+    }
+
+    $(function () {
+        var config = {};
+        config.container = '#container';
+        config.beforeLoad = function (param) {
+//            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
+            return param;
+        };
+
+
+        config.dataFilter = function (data) {
+            return JSON.stringify({
+                "code": 200,
+                "msg": "",
+                "data": {
+                    "rsData": [
+                        {
+                            "xAxis": [
+                                {
+                                    "data": []
+                                }
+                            ],
+                            "series": {
+                                nodes: [{
+                                    "name": "刘备2239",
+                                    "value": 20,
+                                    subtext:'mings',
+                                    subtext2:'mingssss',
+                                    "symbolSize": 40,
+                                    "draggable": "true"
+                                },{
+                                    "name": "关羽",
+                                    // "x": 0,
+                                    // y: 0,
+                                    "symbolSize": 10,
+                                    "draggable": "true",
+                                    "value":20
+                                },{
+                                    "name": "曹操",
+                                    // "x": 0,
+                                    // y: 0,
+                                    "symbolSize": 30,
+                                    "draggable": "true",
+                                    "value":20,
+                                    // symbolOffset:['50%','50%']
+                                },{
+                                    "name": "许褚",
+                                    "value": 100,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                },{
+                                    "name": "典韦",
+                                    "value": 100,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                },{
+                                    "name": "玄德",
+                                    "value": 20,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                },{
+                                    "name": "曹冲",
+                                    "value": 50,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                },{
+                                    "name": "张辽",
+                                    "value": 50,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                },{
+                                    "name": "关云",
+                                    "value": 20,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                },{
+                                    "name": "张飞",
+                                    "value": 20,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                },{
+                                    "name": "云长",
+                                    "value": 10,
+                                    "symbolSize": 10,
+                                    "draggable": "true"
+                                }],
+                                links:[{
+                                    "source": "刘备2239",
+                                    "target": "曹操",
+                                    value:30,
+                                    subtext1:'ming'
+                                },{
+                                    "source": "刘备2239",
+                                    "target": "张飞",
+                                    value:300
+                                },{
+                                    "source": "关羽",
+                                    "target": "云长",
+                                    value:300
+                                },{
+                                    "source": "刘备2239",
+                                    "target": "关云",
+                                    value:300
+                                },{
+                                    "source": "刘备2239",
+                                    "target": "玄德",
+                                    value:300
+                                },{
+                                    "source": "刘备2239",
+                                    "target": "关羽",
+                                    value:300
+                                },{
+                                    "source": "曹操",
+                                    "target": "典韦",
+                                    value:300
+                                },{
+                                    "source": "曹操",
+                                    "target": "许褚",
+                                    value:300
+                                },{
+                                    "source": "曹操",
+                                    "target": "曹冲",
+                                    value:300
+                                },{
+                                    "source": "曹操",
+                                    "target": "张辽",
+                                    value:300
+                                }]
+                            }
+                        }
+                    ]
+                }
+            });
+        };
+
+        config.config = {
+            id: 9,
+            type: 'solid',
+            querySettings: {
+                databases: ['u260'],
+                tables: ['u260_data_d9926d73', 'u260_data_cd8de080', 'u260_data_fb569ee0', 'u260_data_113ca055', 'u260_data_4eb523a0', 'u260_data_7b5f45f8', 'u260_data_ab5217'],
+                aggs: {"by_key1": {"terms": {"field": "_type"}}},
+                returnType: 1
+            },
+            chartSettings: {
+                title: {
+                    text: 'hiekn',
+                    textStyle: {
+                        color: '#666',
+                        fontSize: 16
+                    },
+                    left: 'center'
+                }
+            }
+        };
+
+
+        config.baseUrl = 'http://kg.hiekn.com:8888/plantdata_console/sdk/';
+        hieknjs.getSearchParm('init') !== '0' && initData(config);
+
+    });
+</script>
+</body>
+</html>

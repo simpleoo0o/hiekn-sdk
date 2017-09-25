@@ -28,7 +28,7 @@ class HieknSDKStatScatter extends HieknSDKStat {
                 }
             })
         }
-        ;
+
 
         let series = [];
         if (stat.chartSettings && stat.chartSettings.series) {

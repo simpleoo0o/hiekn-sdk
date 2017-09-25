@@ -1101,6 +1101,167 @@ abstract class HieknSDKStat {
         HieknSDKUtils.ajax(newOptions);
     }
 }
+class HieknSDKStatGauge extends HieknSDKStat {
+    protected drawChart() {
+        const d = this.stat;
+        const stat = this.options.config;
+
+        const defaultSeries = {
+            name: '',
+            type: 'gauge',
+            axisLine: {
+                show: true,
+                lineStyle: {
+                    width: 30,
+                    shadowBlur: 0,
+                    color: [[0.25, this.options.chartColor[2]], [0.5, this.options.chartColor[0]], [0.75, this.options.chartColor[1]], [1, this.options.chartColor[3]]]
+                }
+            },
+            detail: {formatter: '{value}%'},
+            data: stat.data
+        };
+
+        let series = {};
+        if (stat.chartSettings && stat.chartSettings.series) {
+            series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
+        } else {
+            series = defaultSeries;
+        }
+        this.chart = echarts.init(this.$container[0]);
+        const defaultOption = {
+            tooltip: {
+                formatter: "{a} <br/>{b} : {c}%"
+            },
+            toolbox: {
+                feature: {
+                    restore: {},
+                    saveAsImage: {}
+                }
+            }
+        };
+        let option = {};
+        if (stat.chartSettings) {
+            option = $.extend(true, {}, defaultOption, stat.chartSettings);
+        } else {
+            option = defaultOption;
+        }
+        option.series = [series];
+        this.chart.setOption(option);
+
+
+    }
+}
+class HieknSDKStatHeatmap extends HieknSDKStat {
+    protected drawChart() {
+        const d = this.stat;
+        const data = d.series;
+        const stat = this.options.config;
+        const defaultSeries = {
+            type: 'heatmap',
+            coordinateSystem: 'calendar',
+            data: data
+        };
+        let series = {};
+        if (stat.chartSettings && stat.chartSettings.series) {
+            series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
+        } else {
+            series = defaultSeries;
+        }
+        this.chart = echarts.init(this.$container[0]);
+        let direction='horizontal';
+        const defaultOption ={
+            title: {
+                top: 30,
+                left: 'center',
+                text: ''
+            },
+            graphic: {
+                id: 'left-btn',
+                type: 'circle',
+                shape: { r: 20 },
+                style: {
+                    text: '+',
+                    fill: '#eee'
+                },
+                left: 10,
+                top: 10,
+                onclick:  () =>{
+                    if(direction=='horizontal'){
+                        this.chart.setOption(option={
+                            title: {
+                                left: 111,
+                            },
+                            visualMap: {
+                                orient: 'vertical',
+                                left:65
+                            },
+                            calendar: {
+                                top: 40,
+                                left: 'center',
+                                bottom: 10,
+                                orient: 'vertical',
+                                cellSize: [13, 'auto'],
+                                yearLabel: {show: false}
+                            }
+                        })
+                        direction='vertical';
+                    }else{
+                        this.chart.setOption(option={
+                            title: {
+                                left: 'center',
+                            },
+                            visualMap: {
+                                orient: 'horizontal',
+                                left: 'center',
+                                top: 65,
+                            },
+                            calendar: {
+                                top: 120,
+                                left: 30,
+                                right: 30,
+                                orient: 'horizontal',
+                                cellSize: ['auto', 13],
+                                yearLabel: {show: false}
+                            }
+                        });
+                        direction='horizontal';
+                    }
+                }
+            },
+            tooltip : {},
+            visualMap: {
+                min: 0,
+                max: 10000,
+                type: 'piecewise',
+                orient: 'horizontal',
+                left: 'center',
+                top: 65,
+                textStyle: {
+                    color: '#000'
+                }
+            },
+            calendar: {
+                top: 120,
+                left: 30,
+                right: 30,
+                cellSize: ['auto', 13],
+                range: '2016',
+                itemStyle: {
+                    normal: {borderWidth: 0.5}
+                },
+                yearLabel: {show: false}
+            }
+        }
+        let option = {};
+        if (stat.chartSettings) {
+            option = $.extend(true, {}, defaultOption, stat.chartSettings);
+        } else {
+            option = defaultOption;
+        }
+        option.series = [series];
+        this.chart.setOption(option);
+    }
+}
 class HieknSDKStatLineBar extends HieknSDKStat {
     protected drawChart() {
         const type = this.options.config.type;
@@ -1229,8 +1390,7 @@ class HieknSDKStatMap extends HieknSDKStat {
         const stat = this.options.config;
         this.chart = echarts.init(this.$container[0]);
         const d = this.stat;
-        const data = d.series;
-        console.log(data)
+        const specificData = d.series;
 
         //34个省、市、自治区的名字拼音映射数组
         const provinces = {
@@ -1298,7 +1458,7 @@ class HieknSDKStatMap extends HieknSDKStat {
         let defaultOption = {
             backgroundColor: '#fff',
             title: {
-                text: '地图',
+                text: '',
                 left: 'center',
                 textStyle: {
                     color: '#fff',
@@ -1444,12 +1604,11 @@ class HieknSDKStatMap extends HieknSDKStat {
                             areaColor: 'darkorange'
                         }
                     },
-                    data: data
+                    data: specificData
                 }
             ];
 
             //渲染地图
-            console.log(JSON.stringify(option));
             this.chart.setOption(option);
         }
     }
@@ -1620,7 +1779,7 @@ class HieknSDKStatScatter extends HieknSDKStat {
                 }
             })
         }
-        ;
+
 
         let series = [];
         if (stat.chartSettings && stat.chartSettings.series) {
@@ -1661,6 +1820,116 @@ class HieknSDKStatScatter extends HieknSDKStat {
         } else {
             option = defaultOption;
         }
+        this.chart.setOption(option);
+    }
+}
+class HieknSDKStatSolid extends HieknSDKStat {
+    protected drawChart() {
+        const d = this.stat;
+        const stat = this.options.config;
+        const defaultSeries = {
+            name: '',
+            type: 'solid',
+            layout: 'force',
+
+            force: {
+                repulsion: [100, 500],
+                edgeLength: [50, 200],
+                gravity: 0.1
+            },
+            tooltip: {
+                formatter: (params: any) => {
+                    let sub2 = "", sub1 = "";
+                    if (!!params.data.subtext1) {
+                        sub1 = params.data.subtext1 + '<br />'
+                    }
+                    if (!!params.data.subtext2) {
+                        sub2 = params.data.subtext2
+                    }
+                    if (sub1 || sub2) {
+                        return sub1 + sub2;
+                    }
+                }
+            },
+            data: d.series.nodes,
+            links: d.series.links,
+            lineStyle: {
+                normal: {
+                    color: 'source',
+                    curveness: 0,
+                    type: "solid"
+                }
+            },
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+                    formatter: function (params) {
+                        return params.data.subtext2
+                    }
+
+                }
+            }
+        }
+        let series = {};
+        if (stat.chartSettings && stat.chartSettings.series) {
+            series = $.extend(true, {}, defaultSeries, stat.chartSettings.series);
+        } else {
+            series = defaultSeries;
+        }
+        this.chart = echarts.init(this.$container[0]);
+        const defaultOption = {
+            backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
+                offset: 0,
+                color: '#fff'
+            }, {
+                offset: 1,
+                color: '#fff'
+            }]),
+            title: {
+                text: "solid",
+                top: "top",
+                left: "center"
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: [{
+                formatter: (name: any) => {
+                    return echarts.format.truncateText(name, 40, '14px Microsoft Yahei', '…');
+                },
+                tooltip: {
+                    show: true
+                },
+                selectedMode: 'false',
+                bottom: 20
+            }],
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: {
+                        show: true,
+                        readOnly: true
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            animationDuration: 1000,
+            animationEasingUpdate: 'quinticInOut'
+        }
+        let option = {};
+        if (stat.chartSettings) {
+            option = $.extend(true, {}, defaultOption, stat.chartSettings);
+        } else {
+            option = defaultOption;
+        }
+        option.series = series;
+        console.log(JSON.stringify(option));
         this.chart.setOption(option);
     }
 }
@@ -3981,6 +4250,12 @@ class HieknStatService {
             return new HieknSDKStatScatter(options);
         } else if (type == 'map') {
             return new HieknSDKStatMap(options);
+        } else if (type == 'gauge') {
+            return new HieknSDKStatGauge(options);
+        } else if (type == 'heatmap') {
+            return new HieknSDKStatHeatmap(options);
+        } else if (type == 'solid') {
+            return new HieknSDKStatSolid(options);
         }
     }
 }
