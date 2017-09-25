@@ -1289,45 +1289,11 @@ class HieknSDKStatMap extends HieknSDKStat {
             renderMap('china', d);
         });
 
-        //地图点击事件
-        this.chart.on('click', params => {
-            // console.log(params);
-            if (params.name in provinces) {
-                //如果点击的是34个省、市、自治区，绘制选中地区的二级地图
-                $.getJSON('../json/province/' + provinces[params.name] + '.json', data => {
-                    echarts.registerMap(params.name, data);
-                    const d = [];
-                    for (let i = 0; i < data.features.length; i++) {
-                        d.push({
-                            name: data.features[i].properties.name
-                        })
-                    }
-                    renderMap(params.name, d);
-                });
-            } else if (params.seriesName in provinces) {
-                //如果是【直辖市/特别行政区】只有二级下钻
-                if (special.indexOf(params.seriesName) >= 0) {
-                    renderMap('china', mapdata);
-                } else {
-                    //显示县级地图
-                    $.getJSON('../json/city/' + cityMap[params.name] + '.json', data => {
-                        echarts.registerMap(params.name, data);
-                        const d = [];
-                        for (let i = 0; i < data.features.length; i++) {
-                            d.push({
-                                name: data.features[i].properties.name
-                            })
-                        }
-                        renderMap(params.name, d);
-                    });
-                }
-            } else {
-                renderMap('china', mapdata);
-            }
-        });
+
 
         //初始化绘制全国地图配置
-        const defaultOption = {
+        let defaultOption = {
+            openClick:false,
             backgroundColor: '#fff',
             title: {
                 text: '地图',
@@ -1399,6 +1365,47 @@ class HieknSDKStatMap extends HieknSDKStat {
             option = $.extend(true, {}, defaultOption, stat.chartSettings);
         } else {
             option = defaultOption;
+        }
+
+        console.log(option.openClick);
+
+        if(option.openClick){
+            //地图点击事件
+            this.chart.on('click', (params:any) => {
+                // console.log(params);
+                if (params.name in provinces) {
+                    //如果点击的是34个省、市、自治区，绘制选中地区的二级地图
+                    $.getJSON('../json/province/' + provinces[params.name] + '.json', data => {
+                        echarts.registerMap(params.name, data);
+                        const d = [];
+                        for (let i = 0; i < data.features.length; i++) {
+                            d.push({
+                                name: data.features[i].properties.name
+                            })
+                        }
+                        renderMap(params.name, d);
+                    });
+                } else if (params.seriesName in provinces) {
+                    //如果是【直辖市/特别行政区】只有二级下钻
+                    if (special.indexOf(params.seriesName) >= 0) {
+                        renderMap('china', mapdata);
+                    } else {
+                        //显示县级地图
+                        $.getJSON('../json/city/' + cityMap[params.name] + '.json', data => {
+                            echarts.registerMap(params.name, data);
+                            const d = [];
+                            for (let i = 0; i < data.features.length; i++) {
+                                d.push({
+                                    name: data.features[i].properties.name
+                                })
+                            }
+                            renderMap(params.name, d);
+                        });
+                    }
+                } else {
+                    renderMap('china', mapdata);
+                }
+            });
         }
         let renderMap = (map: any, data: any) => {
             option.title.subtext = map;
