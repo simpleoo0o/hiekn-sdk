@@ -490,6 +490,17 @@
                         fontSize: 16
                     },
                     left: 'center'
+                },
+                visualMap: {
+                    min: 0,
+                    max: 2000,
+                    left: 'left',
+                    top: 'bottom',
+                    text: ['高', '低'],           // 文本，默认为数值文本
+                    inRange: {
+                        color: ['#fff','#000']
+                    },
+                    calculable: true
                 }
             }
         };

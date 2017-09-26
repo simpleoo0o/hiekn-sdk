@@ -51,6 +51,7 @@
 //            param.query = '{"bool":{"must":[{"terms":{"annotation_tag.id":["2"]}}]}}';
             return param;
         };
+
         config.dataFilter = function (data) {
             return JSON.stringify({
                 "code": 200,
